@@ -1,8 +1,12 @@
-"use client";
-import React, { useState } from "react";
-import { signIn } from "next-auth/react";
+'use client'
+
+import React, { useState } from "react"
+import { signIn } from "next-auth/react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { Loader2, Github } from "lucide-react"
 import '@/app/globals.css'
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -10,124 +14,145 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import Link from "next/link";
-import { useToast } from "@/hooks/use-toast";
-import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
-const page = () => {
-  const { toast } = useToast();
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+} from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { useToast } from "@/hooks/use-toast"
+import { cn } from "@/lib/utils"
+
+export default function SignInPage() {
+  const { toast } = useToast()
+  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
   const [values, setValues] = useState({
     email: "",
     password: "",
-  });
+  })
 
-  const handleSubmit = async () => {
-    setIsLoading(true);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
     try {
       const response = await signIn("credentials", {
         redirect: false,
         email: values.email,
         password: values.password,
-      });
+      })
 
       if (response?.error) {
         if (response.error === "CredentialsSignin") {
           toast({
             title: "Login Failed",
-            description: "Incorrect username or password",
+            description: "Incorrect email or password",
             variant: "destructive",
-          });
+          })
         } else {
           toast({
             title: "Error",
             description: response.error,
             variant: "destructive",
-          });
+          })
         }
-      }
-
-      if (response?.url) {
-        router.replace("/dashboard");
+      } else if (response?.url) {
+        router.replace("/dashboard")
       }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Error while Signing in",
+        description: "An unexpected error occurred. Please try again.",
         variant: "destructive",
-      });
+      })
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
+
+  const handleGithubSignIn = () => {
+    signIn('github', { callbackUrl: '/dashboard' })
+  }
 
   return (
-    <div className="bg-primary flex items-center justify-center min-h-screen">
-      <Card className="max-w-lg w-full">
-        <CardHeader>
-          <CardTitle>Sign In</CardTitle>
-          <CardDescription>
-            Deploy your new project in one-click.
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-primary to-primary-foreground">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl font-bold text-center">Sign In</CardTitle>
+          <CardDescription className="text-center">
+            Enter your credentials to access your account
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
-            <div className="grid w-full items-center gap-4">
-              <div className="flex flex-col space-y-1.5">
-                <div>
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    value={values.email}
-                    onChange={(e) =>
-                      setValues({ ...values, email: e.target.value })
-                    }
-                    id="email"
-                    placeholder="kushchaudhary@gmail.com"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="password">Password</Label>
-                  <Input
-                    value={values.password}
-                    onChange={(e) =>
-                      setValues({ ...values, password: e.target.value })
-                    }
-                    id="password"
-                    type="password"
-                    placeholder="******"
-                  />
-                </div>
-              </div>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="m@example.com"
+                value={values.email}
+                onChange={(e) => setValues({ ...values, email: e.target.value })}
+                required
+              />
             </div>
-            <Button disabled={isLoading} onClick={handleSubmit}>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                value={values.password}
+                onChange={(e) => setValues({ ...values, password: e.target.value })}
+                required
+              />
+            </div>
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={isLoading}
+            >
               {isLoading ? (
-                <span className="flex items-center justify-center gap-2">
-                  <Loader2 className="animate-spin" />
-                  Signing...
+                <span className="flex items-center justify-center">
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Signing in...
                 </span>
               ) : (
-                "Signin"
+                "Sign In"
               )}
             </Button>
-
-            <Button onClick={() => signIn('github')}>Sign in with GitHub</Button>
           </form>
+          <div className="relative my-4">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">
+                Or continue with
+              </span>
+            </div>
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            onClick={handleGithubSignIn}
+          >
+            <Github className="mr-2 h-4 w-4" />
+            Sign in with GitHub
+          </Button>
         </CardContent>
-        <CardFooter className="flex justify-between">
-          <h1>
-            Not have an account?{" "}
-            <Link href={"/signup"} className="text-blue-600 underline">
-              signup
+        <CardFooter>
+          <p className="text-center text-sm text-muted-foreground w-full">
+            Don't have an account?{" "}
+            <Link
+              href="/signup"
+              className={cn(
+                "font-medium text-primary underline underline-offset-4 hover:text-primary-foreground transition-colors"
+              )}
+            >
+              Sign up
             </Link>
-          </h1>
+          </p>
         </CardFooter>
       </Card>
     </div>
-  );
-};
-
-export default page;
+  )
+}
