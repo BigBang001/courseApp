@@ -3,7 +3,6 @@ import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from 'bcryptjs';
 import GitHubProvider from 'next-auth/providers/github';
-import { use } from "react";
 
 export const authOptions: NextAuthOptions = {
     providers: [

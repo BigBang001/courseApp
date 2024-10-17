@@ -1,88 +1,149 @@
-import React, { useEffect, useState } from "react"
-import axios from "axios"
-import { Star } from "lucide-react"
+import React, { useEffect, useState } from "react";
+import axios, { AxiosError } from "axios";
+import { Edit, Star, Trash2 } from "lucide-react";
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Skeleton } from "@/components/ui/skeleton"
-import { useToast } from "@/hooks/use-toast"
-import { Course } from "@/types/courseType"
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/hooks/use-toast";
+import { Course } from "@/types/courseType";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog";
+import Image from "next/image";
 
 const CreatedCourses = () => {
-  const [courses, setCourses] = useState<Course[]>([])
-  const [isLoading, setIsLoading] = useState(false)
-  const { toast } = useToast()
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchCourses = async () => {
-      setIsLoading(true)
+      setIsLoading(true);
       try {
-        const response = await axios.get("/api/user-courses")
-        setCourses(response.data.courses)
-      } catch (error: any) {
-        console.log(error)
+        const response = await axios.get("/api/user-courses");
+        setCourses(response.data.courses);
+      } catch (error) {
+        const axiosError = error as AxiosError
         toast({
           title: "Error",
-          description: error.message,
+          description: axiosError.message,
           variant: "destructive",
-        })
+        });
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
-    fetchCourses()
-  }, [toast])
+    };
+    fetchCourses();
+  }, [toast]);
 
   return (
     <div className="container mx-auto py-8">
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {isLoading
-          ? Array(6)
-              .fill(null)
-              .map((_, index) => <SkeletonCard key={index} />)
-          : courses.map((course) => (
-              <CourseCard key={course.id} {...course} />
-            ))}
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 relative">
+        {isLoading ? (
+          Array(6)
+            .fill(null)
+            .map((_, index) => <SkeletonCard key={index} />)
+        ) : courses.length > 0 ? (
+          courses.map((course) => <CourseCard key={course.id} {...course} />)
+        ) : (
+          <p className="font font-semibold italic">No course found...</p>
+        )}
       </div>
     </div>
-  )
-}
+  );
+};
 
 function CourseCard(course: Course) {
+  const { toast } = useToast();
+
+  const handleDeleteCourse = async () => {
+    try {
+      const response = await axios.post(`/api/delete-course/${course.id}`);
+      if (response.status === 200) {
+        toast({
+          title: "Deleted",
+          description: "Course Deleted succesfully",
+        });
+      }
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      toast({
+        title: "Error",
+        description: axiosError.message,
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
-    <Card className="overflow-hidden flex flex-col h-full">
-      <div className="aspect-video overflow-hidden">
-        <img
-          className="h-full w-full object-cover transition-transform hover:scale-105"
-          src={course.thumbnail}
-          alt={course.title}
+    <Card className="relative overflow-hidden flex flex-col h-full">
+      <div className="aspect-video h-full w-full z-10 absolute overflow-hidden">
+        <Image
+          className="h-full w-full object-cover"
+          src={course.thumbnail!}
+          alt={course.title!}
         />
       </div>
-      <CardHeader className="p-4">
-        <CardTitle className="capitalize text-xl line-clamp-1">{course.title}</CardTitle>
-      </CardHeader>
-      <CardContent className="p-4 pt-0 flex-grow">
-        <div className="flex items-center gap-2 mb-2">
-          <span className="font-semibold">4.0</span>
-          <div className="flex">
-            {[1, 2, 3, 4, 5].map((_, index) => (
-              <Star key={index} className="fill-yellow-400 text-yellow-400" size={16} />
-            ))}
+      <div className="z-50 flex flex-col bg-black/90">
+        {" "}
+        <CardHeader>
+          <CardTitle className="capitalize text-xl line-clamp-1">
+            {course.title}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="flex-grow">
+          <div className="flex items-center gap-2">
+            <span className="font-semibold">4.0</span>
+            <div className="flex">
+              {[1, 2, 3, 4, 5].map((_, index) => (
+                <Star
+                  key={index}
+                  className="fill-yellow-400 text-yellow-400"
+                  size={16}
+                />
+              ))}
+            </div>
           </div>
-        </div>
-        <div className="text-lg font-semibold">
-          ₹{course.price}
-          <span className="ml-2 text-sm line-through text-muted-foreground">
-            ₹{course.price! + 2000}
-          </span>
-        </div>
-      </CardContent>
-      <CardFooter className="p-4 pt-0">
-        <Button className="w-full">Edit Course</Button>
-      </CardFooter>
+          <div className="text-lg font-semibold">₹{course.price}</div>
+          <div className="createdAt">{course.createdAt?.toString()}</div>
+        </CardContent>
+        <CardFooter className="flex gap-1">
+          <Button className="font-semibold" variant={"link"} size={"sm"}>
+            <Edit /> Edit Course
+          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive" size={"sm"} className="font-semibold">
+                <Trash2 />
+                Delete Course
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  Are you sure you want to delete this Course?
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  {course.title}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDeleteCourse}>
+                  Confirm
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </CardFooter>
+      </div>
     </Card>
-  )
+  );
 }
 
 const SkeletonCard = () => (
@@ -103,6 +164,6 @@ const SkeletonCard = () => (
       <Skeleton className="h-10 w-full" />
     </div>
   </Card>
-)
+);
 
-export default CreatedCourses
+export default CreatedCourses;

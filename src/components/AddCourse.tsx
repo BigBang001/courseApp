@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { Loader2 } from "lucide-react";
 import dynamic from "next/dynamic";
 import "react-quill/dist/quill.snow.css";
@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "./ui/textarea";
+import { useRouter } from "next/navigation";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -59,6 +60,7 @@ const formats = [
 
 export default function AddCourse() {
   const { toast } = useToast();
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [values, setValues] = useState({
     title: "",
@@ -79,23 +81,16 @@ export default function AddCourse() {
       console.log(response);
       toast({
         title: "Created!",
-        description: `${response.data.title} course Created Successfully`,
+        description: `${response.data.course.title} course Created Successfully`,
         variant: "default",
       });
-      setValues({
-        title: "",
-        description: "",
-        thumbnail: "",
-        price: 0,
-        duration: "",
-        level: "",
-        tags: "",
-        shortDescription: "",
-      });
+      router.push("/explore");
     } catch (error: any) {
+      console.log(error);
       toast({
         title: "Error",
-        description: error.response.data.error[0].message || "Error while creating Course",
+        description:
+          error.response.data.error[0].message || "Error while creating Course",
         variant: "destructive",
       });
     } finally {

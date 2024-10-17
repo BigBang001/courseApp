@@ -25,7 +25,7 @@ export async function POST(request: Request) {
         }, { status: 400 })
     }
 
-    if (!session?.user) {
+    if (!session?.user || !session) {
         return NextResponse.json({
             success: false,
             message: "Unauthorized",
@@ -37,14 +37,15 @@ export async function POST(request: Request) {
         
         const user = await prisma.user.findFirst({
             where: {
-                email: session.user.email
+                email: session.user.email,
+                role : "admin"
             }
         });
 
         if (!user) {
             return NextResponse.json({
                 success: false,
-                message: "User not found",
+                message: "User not found || User not admin",
             }, { status: 404 });
         }
 
@@ -61,9 +62,6 @@ export async function POST(request: Request) {
                 tags
             }
         });
-
-        console.log(course);
-        
 
         return NextResponse.json({
             success: true,

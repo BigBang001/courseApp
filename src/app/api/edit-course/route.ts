@@ -20,7 +20,7 @@ export async function PUT(request: Request, courseId: string) {
             }, { status: 404 })
         }
 
-        const editCourse = await prisma.course.update({
+        await prisma.course.update({
             where: {
                 id: courseId
             },

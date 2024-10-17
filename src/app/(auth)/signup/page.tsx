@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import Link from "next/link";
 import { Github, Loader2 } from "lucide-react";
 
@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface FormValues {
   fullName: string;
@@ -37,6 +38,7 @@ interface FormValues {
 
 export default function SignUpPage() {
   const { toast } = useToast();
+  const  router = useRouter();
   const [loading, setLoading] = useState(false);
   const [values, setValues] = useState<FormValues>({
     fullName: "",
@@ -55,7 +57,10 @@ export default function SignUpPage() {
         description: response.data.message,
         variant: "default",
       });
+
+      router.replace("/signin")
     } catch (error) {
+      console.log(error);
       toast({
         title: "Error",
         description: "Error while Registering User.",
@@ -67,7 +72,7 @@ export default function SignUpPage() {
   };
 
   const handleGithubSignIn = () => {
-    signIn('github',{callbackUrl : "/dashboard"})
+    signIn('github',{callbackUrl : "/explore"})
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -75,7 +80,7 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-primary">
+    <div className="flex items-center justify-center min-h-screen">
       <Card className="w-full max-w-lg">
         <CardHeader>
           <CardTitle>Sign Up</CardTitle>
@@ -137,7 +142,7 @@ export default function SignUpPage() {
                     type="password"
                     value={values.password}
                     onChange={handleChange}
-                    placeholder="******"
+                    placeholder="••••••••"
                     required
                   />
                 </div>

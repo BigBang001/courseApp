@@ -22,6 +22,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import Image from "next/image";
 
 const CourseCard = (course: Course) => {
   const offerPercentage =
@@ -34,10 +35,10 @@ const CourseCard = (course: Course) => {
     <div>
      <Card className="overflow-hidden flex flex-col h-full">
       <div className="aspect-video overflow-hidden">
-        <img
+        <Image
           className="h-full w-full object-cover transition-transform hover:scale-105"
-          src={course.thumbnail}
-          alt={course.title}
+          src={course.thumbnail!}
+          alt={course.title!}
         />
       </div>
       <CardHeader className="p-4">
@@ -46,10 +47,10 @@ const CourseCard = (course: Course) => {
           {course.shortDescription}
         </CardDescription>
       </CardHeader>
-      <CardContent className="p-4 pt-0 flex-grow">
+      <CardContent className="flex-grow">
         <div className="flex flex-wrap gap-2 mb-4">
           {course.tags.split(",").map((tag, index) => (
-            <Badge key={index} variant="secondary" className="capitalize">
+            <Badge key={index} variant="secondary" className=" select-none capitalize">
               {tag}
             </Badge>
           ))}

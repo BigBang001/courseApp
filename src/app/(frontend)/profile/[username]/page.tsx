@@ -31,8 +31,9 @@ import {
 } from "@/components/ui/alert-dialog";
 import { LogOut, UserMinus } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
-import { useEffect } from "react";
 import CreatedCourses from "@/components/CreatedCourses";
+import Link from "next/link";
+import Image from "next/image";
 
 export default function Profile() {
   const { data: session } = useSession();
@@ -49,7 +50,7 @@ export default function Profile() {
               {session?.user.fullName ? (
                 <h1>{session.user.fullName[0]}</h1>
               ) : (
-                <img src={session?.user.image} alt="User Logo" />
+                <Image src={session?.user.image!} alt="User Logo" />
               )}
             </div>
             <div className="md:block flex flex-col justify-start">
@@ -61,7 +62,7 @@ export default function Profile() {
                 </CardTitle>
                 <CardDescription>{session?.user.email}</CardDescription>
               </div>
-              <Badge className="ml-auto">Instructer</Badge>
+              <Badge className="ml-auto capitalize">{session?.user.role}</Badge>
             </div>
           </div>
         </CardHeader>
@@ -125,53 +126,33 @@ export default function Profile() {
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
+          <div>
+            <Link href={"/dashboard"}>
+            <Button className="font-semibold">Add Course</Button></Link>
+          </div>
           </div>
         </CardContent>
       </Card>
 
       <div>
-        <Drawer>
-          <DrawerTrigger asChild>
-            <Button variant="outline" className="w-full">
-              Created Courses
-            </Button>
-          </DrawerTrigger>
-          <DrawerContent>
-            <div className="mx-auto w-full ">
-              <DrawerHeader>
-                <DrawerTitle>Your Created Courses</DrawerTitle>
-              </DrawerHeader>
-              <div className="md:h-[50vh] h-[60vh] px-2 overflow-y-scroll">
-                <CreatedCourses />
-              </div>
-              <div className="w-full flex items-center justify-center">
-                <DrawerClose>
-                  <Button variant="outline" className="w-full my-2">
-                    Close
-                  </Button>
-                </DrawerClose>
-              </div>
-            </div>
-          </DrawerContent>
-        </Drawer>
-        <div className="grid grid-cols-2 gap-4">
+        {session?.user.role === "admin" ? (
           <Drawer>
             <DrawerTrigger asChild>
-              <Button variant="outline" className="w-full">
-                Saved Jobs
+              <Button variant="outline" className="w-full font-semibold text-neutral-300 hover:text-white transition-colors">
+                Created Courses
               </Button>
             </DrawerTrigger>
             <DrawerContent>
-              <div className="mx-auto w-full">
+              <div className="mx-auto w-full ">
                 <DrawerHeader>
-                  <DrawerTitle>Saved Jobs</DrawerTitle>
-                  <DrawerDescription>
-                    Here are the jobs you've saved for later.
-                  </DrawerDescription>
+                  <DrawerTitle>Your Created Courses</DrawerTitle>
                 </DrawerHeader>
+                <div className="md:h-[50vh] h-[60vh] px-2 overflow-y-scroll">
+                  <CreatedCourses />
+                </div>
                 <div className="w-full flex items-center justify-center">
                   <DrawerClose>
-                    <Button variant="outline" className="w-full mb-2">
+                    <Button variant="outline" className="w-full my-2">
                       Close
                     </Button>
                   </DrawerClose>
@@ -179,32 +160,59 @@ export default function Profile() {
               </div>
             </DrawerContent>
           </Drawer>
-          <Drawer>
-            <DrawerTrigger asChild>
-              <Button variant="outline" className="w-full">
-                Applied Jobs
-              </Button>
-            </DrawerTrigger>
-            <DrawerContent>
-              <div className="mx-auto w-full">
-                <DrawerHeader>
-                  <DrawerTitle>Applied Jobs</DrawerTitle>
-                  <DrawerDescription>
-                    Here are the job applications that you applied for.
-                  </DrawerDescription>
-                </DrawerHeader>
-                <div className="p-4 space-y-4 max-h-[60vh] my-2 overflow-y-auto custom-scrollbar"></div>
-                <div className="w-full flex items-center justify-center">
-                  <DrawerClose>
-                    <Button variant="outline" className="w-full mb-2">
-                      Close
-                    </Button>
-                  </DrawerClose>
+        ) : (
+          <div className="grid grid-cols-2 gap-4">
+            <Drawer>
+              <DrawerTrigger asChild>
+                <Button variant="outline" className="w-full">
+                  Saved Jobs
+                </Button>
+              </DrawerTrigger>
+              <DrawerContent>
+                <div className="mx-auto w-full">
+                  <DrawerHeader>
+                    <DrawerTitle>Saved Jobs</DrawerTitle>
+                    <DrawerDescription>
+                      Here are the jobs you saved for later.
+                    </DrawerDescription>
+                  </DrawerHeader>
+                  <div className="w-full flex items-center justify-center">
+                    <DrawerClose>
+                      <Button variant="outline" className="w-full mb-2">
+                        Close
+                      </Button>
+                    </DrawerClose>
+                  </div>
                 </div>
-              </div>
-            </DrawerContent>
-          </Drawer>
-        </div>
+              </DrawerContent>
+            </Drawer>
+            <Drawer>
+              <DrawerTrigger asChild>
+                <Button variant="outline" className="w-full">
+                  Applied Jobs
+                </Button>
+              </DrawerTrigger>
+              <DrawerContent>
+                <div className="mx-auto w-full">
+                  <DrawerHeader>
+                    <DrawerTitle>Applied Jobs</DrawerTitle>
+                    <DrawerDescription>
+                      Here are the job applications that you applied for.
+                    </DrawerDescription>
+                  </DrawerHeader>
+                  <div className="p-4 space-y-4 max-h-[60vh] my-2 overflow-y-auto custom-scrollbar"></div>
+                  <div className="w-full flex items-center justify-center">
+                    <DrawerClose>
+                      <Button variant="outline" className="w-full mb-2">
+                        Close
+                      </Button>
+                    </DrawerClose>
+                  </div>
+                </div>
+              </DrawerContent>
+            </Drawer>
+          </div>
+        )}
       </div>
     </div>
   );

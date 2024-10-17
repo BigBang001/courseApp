@@ -26,6 +26,7 @@ const CoursesPage = () => {
   }, [])
 
   const categories = [
+    "all",
     "web development",
     "Leadership",
     "data science",

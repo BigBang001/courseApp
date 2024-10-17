@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { authOptions } from "../auth/[...nextauth]/option";
 import prisma from "@/lib/prisma";
 
-export async function GET(request: Request) {
+export async function GET() {
     const session = await getServerSession(authOptions);
     if (!session?.user) {
         return NextResponse.json({
@@ -43,7 +43,8 @@ export async function GET(request: Request) {
     } catch (error) {
         return NextResponse.json({
             success: false,
-            message: "Error while Geting user Courses"
+            message: "Error while Geting user Courses",
+            error
         }, { status: 500 })
     }
 }

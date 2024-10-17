@@ -3,16 +3,16 @@
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { Skeleton } from "./ui/skeleton";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { User, Settings, LogOut, Moon, Sun } from "lucide-react";
+import { User, LogOut, Moon, Sun, LucideEdit } from "lucide-react";
 import { Switch } from "./ui/switch";
 import { useTheme } from "next-themes";
+import Image from "next/image";
 
 export default function Navbar() {
   const { data: session, status } = useSession();
@@ -23,14 +23,17 @@ export default function Navbar() {
   const { setTheme, theme } = useTheme();
 
   const toggleTheme = () => {
-    setTheme(theme === "light" ? "dark" : "light" )
+    setTheme(theme === "light" ? "dark" : "light");
   };
 
   return (
     <div className="fixed top-4 left-0 right-0 z-50 px-4">
       <header className="bg-secondary/15 shadow-lg shadow-neutral-600/5 backdrop-blur-lg border border-primary/10 md:p-6 py-4 rounded-2xl">
         <div className="px-5 flex items-center justify-between w-full">
-          <h1 className="text-xl font-bold">50xcourses</h1>
+          <Link href={"/explore"}>
+            <h1 className="text-xl font-bold">50xcourses</h1>
+          </Link>
+
           <div className="flex items-center justify-between gap-2">
             <Switch
               checked={theme === "dark"}
@@ -52,7 +55,7 @@ export default function Navbar() {
                       aria-label="User profile"
                     >
                       {session.user.image ? (
-                        <img
+                        <Image
                           className="h-full w-full object-cover"
                           src={session.user.image}
                           alt={`${"User"}'s profile picture`}
@@ -63,16 +66,20 @@ export default function Navbar() {
                     </div>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem>
-                      <User className="mr-2 h-4 w-4" />
-                      <Link href={`/profile/${session.user?.fullName}`}>
-                        Profile
+                    <Link href={`/profile/${session.user?.fullName}`}>
+                      <DropdownMenuItem>
+                        <User className="mr-2 h-4 w-4" />
+                        <span>Profile</span>
+                      </DropdownMenuItem>
+                    </Link>
+                    {session.user.role === "admin" && (
+                      <Link href={"/dashboard"}>
+                        <DropdownMenuItem>
+                          <LucideEdit className="mr-2 h-4 w-4" />
+                          <span>Add Course</span>
+                        </DropdownMenuItem>
                       </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Settings className="mr-2 h-4 w-4" />
-                      <span>Settings</span>
-                    </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem onClick={handleSignOut}>
                       <LogOut className="mr-2 h-4 w-4 text-red-600" />
                       <span className="text-red-600">Log out</span>

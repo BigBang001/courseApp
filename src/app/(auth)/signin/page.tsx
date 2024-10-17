@@ -54,9 +54,10 @@ export default function SignInPage() {
           })
         }
       } else if (response?.url) {
-        router.replace("/dashboard")
+        router.replace("/explore")
       }
     } catch (error) {
+      console.log(error);
       toast({
         title: "Error",
         description: "An unexpected error occurred. Please try again.",
@@ -68,7 +69,7 @@ export default function SignInPage() {
   }
 
   const handleGithubSignIn = () => {
-    signIn('github', { callbackUrl: '/dashboard' })
+    signIn('github', { callbackUrl: '/explore' })
   }
 
   return (
@@ -141,7 +142,7 @@ export default function SignInPage() {
         </CardContent>
         <CardFooter>
           <p className="text-center text-sm text-muted-foreground w-full">
-            Don't have an account?{" "}
+            Don't have an account?
             <Link
               href="/signup"
               className={cn(
