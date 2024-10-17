@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import axios, { AxiosError } from "axios";
 import Link from "next/link";
-import { Loader2 } from "lucide-react";
+import { Github, Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -26,6 +26,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { signIn } from "next-auth/react";
 
 interface FormValues {
   fullName: string;
@@ -35,7 +36,7 @@ interface FormValues {
 }
 
 export default function SignUpPage() {
-  const { toast } = useToast()
+  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [values, setValues] = useState<FormValues>({
     fullName: "",
@@ -64,6 +65,10 @@ export default function SignUpPage() {
       setLoading(false);
     }
   };
+
+  const handleGithubSignIn = () => {
+    signIn('github',{callbackUrl : "/dashboard"})
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValues({ ...values, [e.target.id]: e.target.value });
@@ -149,6 +154,25 @@ export default function SignUpPage() {
               )}
             </Button>
           </form>
+          <div className="relative my-4">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">
+                Or continue with
+              </span>
+            </div>
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            onClick={handleGithubSignIn}
+          >
+            <Github className="mr-2 h-4 w-4" />
+            Sign up with GitHub
+          </Button>
         </CardContent>
         <CardFooter className="flex justify-between">
           <p className="text-sm text-muted-foreground">

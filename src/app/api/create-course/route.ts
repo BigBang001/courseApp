@@ -5,50 +5,77 @@ import { NextResponse } from "next/server";
 import { authOptions } from "../auth/[...nextauth]/option";
 
 export async function POST(request: Request) {
-    const { title, description, thumbnail, price, duration } = await request.json();
-    const { success, error } = courseValidation.safeParse({ title, description, thumbnail, price, duration });
+    const { title, description, shortDescription, tags, thumbnail, price, duration, level } = await request.json();
+    const { success, error } = courseValidation.safeParse({
+        title,
+        tags,
+        level,
+        shortDescription,
+        description,
+        thumbnail,
+        price,
+        duration
+    });
     const session = await getServerSession(authOptions);
-
     if (!success) {
         return NextResponse.json({
             success: false,
             message: "Validation Error",
-            error: error.format()
-        }, { status: 401 })
+            error: error.errors
+        }, { status: 400 })
+    }
+
+    if (!session?.user) {
+        return NextResponse.json({
+            success: false,
+            message: "Unauthorized",
+        }, { status: 401 }) 
     }
 
     try {
+        console.log("hlo");
+        
         const user = await prisma.user.findFirst({
             where: {
-                email: session?.user?.email || ""
+                email: session.user.email
             }
-        })
+        });
 
         if (!user) {
             return NextResponse.json({
                 success: false,
-                message: "Unauthorized",
-            }, { status: 404 })
+                message: "User not found",
+            }, { status: 404 });
         }
 
         const course = await prisma.course.create({
             data: {
-                title, description, price, duration, thumbnail, userId: user.id
+                title,
+                description,
+                price,
+                duration,
+                level,
+                thumbnail,
+                userId: user.id,
+                shortDescription,
+                tags
             }
-        })
+        });
+
+        console.log(course);
+        
 
         return NextResponse.json({
-            success : true,
-            message : "Course created Succesfully",
+            success: true,
+            message: "Course created successfully",
             course
-        },{status : 201})
+        }, { status: 201 });
 
-
-    } catch (error) {
+    } catch (error: any) {
         return NextResponse.json({
             success: false,
             message: "Error while creating course",
-            error
-        }, { status: 500 })
+            error: error.message
+        }, { status: 500 });
     }
 }

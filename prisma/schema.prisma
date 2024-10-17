@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,29 +7,45 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  admin
-  user
-}
-
 model User {
   id        String   @id @unique @default(uuid())
   fullName  String
   email     String   @unique
   password  String
   role      Role
-  Courses   Course[]
   createdAt DateTime @default(now())
+  Courses   Course[]
+  Review    Review[]
 }
 
 model Course {
-  id          String   @unique @default(uuid())
-  title       String
-  description String
-  price       Int
-  thumbnail   String
-  createdAt   DateTime @default(now())
-  duration    String
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id               String   @unique @default(uuid())
+  title            String
+  shortDescription String
+  tags             String
+  description      String
+  price            Int
+  thumbnail        String
+  createdAt        DateTime @default(now())
+  duration         String
+  userId           String
+  level            String
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Review           Review[]
+}
+
+model Review {
+  id        String   @unique @default(uuid())
+  content   String
+  rating    Int      @default(0)
+  createdAt DateTime @default(now())
+  courseId  String
+  userId    String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+  admin
+  user
 }

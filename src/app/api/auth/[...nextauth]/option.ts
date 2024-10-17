@@ -3,6 +3,7 @@ import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from 'bcryptjs';
 import GitHubProvider from 'next-auth/providers/github';
+import { use } from "react";
 
 export const authOptions: NextAuthOptions = {
     providers: [
@@ -50,11 +51,17 @@ export const authOptions: NextAuthOptions = {
     callbacks: {
         async session({ session, token }: { session: any, token: any }) {
             session.user.email = token.email;
+            session.user.fullName = token.fullName; 
+            session.user.role = token.role
+            session.user.image = token.image
             return session;
         },
         async jwt({ token, user }) {
             if (user) {
                 token.email = user.email;
+                token.fullName = user.fullName
+                token.role = user.role
+                token.image = user.image
             }
             return token;
         }

@@ -10,17 +10,20 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { User, Settings, LogOut } from "lucide-react";
+import { User, Settings, LogOut, Moon, Sun } from "lucide-react";
+import { Switch } from "./ui/switch";
+import { useTheme } from "next-themes";
 
 export default function Navbar() {
   const { data: session, status } = useSession();
-
-  const logo = session?.user?.image;
-  const email = session?.user?.email;
-  const name = session?.user?.name;
-
   const handleSignOut = async () => {
     await signOut({ callbackUrl: "/signin" });
+  };
+
+  const { setTheme, theme } = useTheme();
+
+  const toggleTheme = () => {
+    setTheme(theme === "light" ? "dark" : "light" )
   };
 
   return (
@@ -29,45 +32,42 @@ export default function Navbar() {
         <div className="px-5 flex items-center justify-between w-full">
           <h1 className="text-xl font-bold">50xcourses</h1>
           <div className="flex items-center justify-between gap-2">
-            {/* {session?.user ? (
-              <div
-                className="profile h-10 w-10 bg-neutral-300 font-semibold flex items-center justify-center uppercase rounded-full"
-                aria-label="User profile"
-              >
-                {session.user.image ? (
-                  <img
-                    className="h-full w-full object-cover"
-                    src={session.user.image}
-                    alt={`${session.user.name || "User"}'s profile picture`}
-                  />
-                ) : (
-                  <span>{session.user.email?.[0].toUpperCase()}</span>
-                )}
-              </div>
-            ) : null} */}
+            <Switch
+              checked={theme === "dark"}
+              onCheckedChange={toggleTheme}
+              aria-label="Toggle dark mode"
+            >
+              <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+              <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+            </Switch>
             <div>
               {status === "authenticated" ? (
                 <DropdownMenu>
-                  <DropdownMenuTrigger className="cursor-pointer hover:scale-110 transition-transform duration-300 shadow-lg" asChild>
-                      <div
-                        className="profile overflow-hidden h-10 w-10 bg-neutral-300 font-semibold flex items-center justify-center uppercase rounded-full"
-                        aria-label="User profile"
-                      >
-                        {logo ? (
-                          <img
-                            className="h-full w-full object-cover"
-                            src={logo}
-                            alt={`${name || "User"}'s profile picture`}
-                          />
-                        ) : (
-                          <span>{email?.[0].toUpperCase()}</span>
-                        )}
-                      </div>
+                  <DropdownMenuTrigger
+                    className="cursor-pointer hover:scale-110 transition-transform duration-300 shadow-lg"
+                    asChild
+                  >
+                    <div
+                      className="profile overflow-hidden h-10 w-10 bg-neutral-300 font-semibold flex items-center justify-center uppercase rounded-full"
+                      aria-label="User profile"
+                    >
+                      {session.user.image ? (
+                        <img
+                          className="h-full w-full object-cover"
+                          src={session.user.image}
+                          alt={`${"User"}'s profile picture`}
+                        />
+                      ) : (
+                        <span>{session.user.fullName?.[0].toUpperCase()}</span>
+                      )}
+                    </div>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem>
                       <User className="mr-2 h-4 w-4" />
-                      <Link href={`/profile/${session.user?.name}`}>Profile</Link>
+                      <Link href={`/profile/${session.user?.fullName}`}>
+                        Profile
+                      </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
                       <Settings className="mr-2 h-4 w-4" />

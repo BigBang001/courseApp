@@ -1,4 +1,4 @@
-import { date, z } from 'zod';
+import { z } from 'zod';
 
 export const signupValidation = z.object({
   fullName: z
@@ -23,11 +23,35 @@ export const signupValidation = z.object({
     .enum(['admin', 'user'], { message: "Role must be either 'admin' or 'user'" }),
 });
 
-
 export const courseValidation = z.object({
-  title: z.string(),
-  description: z.string(),
-  price: z.number(),
-  thumbnail: z.string(),
-  duration: z.string(),
-})
+  title: z
+    .string()
+    .min(3, { message: "Title must be at least 3 characters long" })
+    .max(100, { message: "Title must be less than 100 characters" }),
+
+  description: z
+    .string()
+    .min(10, { message: "Description must be at least 10 characters long" })
+    .max(2000, { message: "Description must be less than 2000 characters" }),
+
+    shortDescription: z.string().min(5, { message: "Short Description must be at least 5 characters long" }).max(200, { message: "Short Description must be less than 200 characters" }),
+
+  price: z
+    .number()
+    .min(0, { message: "Price must be a positive number" }),
+
+  thumbnail: z
+    .string()
+    .url({ message: "Thumbnail must be a valid URL" }),
+
+  duration: z
+    .string()
+    .min(1, { message: "Duration must be specified" })
+    .regex(/^\d+ (month|year)s?$/, { message: "Duration must be in the format 'X months' or 'X years'" }),
+
+  level: z
+    .enum(['beginner', 'intermediate', 'advanced'], { message: "Level must be one of 'beginner', 'intermediate', or 'advanced'" }),
+
+  tags: z.string().min(2, { message: "Add Atleat 1 tag minimum of two charcter" }).max(100, { message: "All Tags should come under 100 characters" })
+});
+

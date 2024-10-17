@@ -72,7 +72,7 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-primary to-primary-foreground">
+    <div className="flex items-center justify-center min-h-screen bg-popover">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">Sign In</CardTitle>
@@ -145,7 +145,7 @@ export default function SignInPage() {
             <Link
               href="/signup"
               className={cn(
-                "font-medium text-primary underline underline-offset-4 hover:text-primary-foreground transition-colors"
+                "font-medium text-primary underline underline-offset-4 hover:text-neutral-400 transition-colors"
               )}
             >
               Sign up
