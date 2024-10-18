@@ -50,7 +50,7 @@ export default function Profile() {
               {session?.user.fullName ? (
                 <h1>{session.user.fullName[0]}</h1>
               ) : (
-                <Image src={session?.user.image!} alt="User Logo" />
+                <Image width={12} height={12} className="w-full h-full" src={session?.user.image!} alt="User Logo" />
               )}
             </div>
             <div className="md:block flex flex-col justify-start">

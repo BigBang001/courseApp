@@ -8,30 +8,47 @@ datasource db {
 }
 
 model User {
-  id        String   @id @unique @default(uuid())
-  fullName  String
-  email     String   @unique
-  password  String
-  role      Role
-  createdAt DateTime @default(now())
-  Courses   Course[]
-  Review    Review[]
+  id               String             @id @unique @default(uuid())
+  fullName         String
+  email            String             @unique
+  password         String
+  role             Role
+  balance          Int
+  createdAt        DateTime           @default(now())
+  Courses          Course[]
+  Review           Review[]
+  purchasedCourses purchasedCourses[]
+  CreditCard       CreditCard[]
 }
 
 model Course {
-  id               String   @unique @default(uuid())
+  id               String             @unique @default(uuid())
   title            String
   shortDescription String
   tags             String
   description      String
   price            Int
   thumbnail        String
-  createdAt        DateTime @default(now())
+  createdAt        DateTime           @default(now())
   duration         String
   userId           String
   level            String
-  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user             User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   Review           Review[]
+  purchasedCourses purchasedCourses[]
+}
+
+model CreditCard {
+  id             String   @unique @default(uuid())
+  bankName       String
+  cardHolderName String
+  accountNumber  String @unique
+  cvv            Int
+  balance        Int      @default(30000)
+  expiryDate     String
+  createdAt      DateTime @default(now())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Review {
@@ -43,6 +60,14 @@ model Review {
   userId    String
   course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model purchasedCourses {
+  id       String @unique @default(uuid())
+  userId   String
+  courseId String
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  User     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 enum Role {

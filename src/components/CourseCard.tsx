@@ -23,6 +23,8 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import Image from "next/image";
+import Purchasing from "./Purchasing";
+import Link from "next/link";
 
 const CourseCard = (course: Course) => {
   const offerPercentage =
@@ -33,43 +35,53 @@ const CourseCard = (course: Course) => {
     100;
   return (
     <div>
-     <Card className="overflow-hidden flex flex-col h-full">
-      <div className="aspect-video overflow-hidden">
-        <Image
-          className="h-full w-full object-cover transition-transform hover:scale-105"
-          src={course.thumbnail!}
-          alt={course.title!}
-        />
-      </div>
-      <CardHeader className="p-4">
-        <CardTitle className="capitalize text-xl line-clamp-1">{course.title}</CardTitle>
-        <CardDescription className="capitalize line-clamp-2">
-          {course.shortDescription}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="flex-grow">
-        <div className="flex flex-wrap gap-2 mb-4">
-          {course.tags.split(",").map((tag, index) => (
-            <Badge key={index} variant="secondary" className=" select-none capitalize">
-              {tag}
-            </Badge>
-          ))}
+      <Card className="overflow-hidden flex flex-col h-full">
+        <div className="aspect-video overflow-hidden">
+          <img
+            className="h-full w-full object-cover transition-transform hover:scale-105"
+            src={course.thumbnail!}
+            alt={course.title!}
+          />
         </div>
-        <div className="flex items-center gap-2 mb-2">
-          <span className="font-semibold">4.0</span>
-          <div className="flex">
-            {[1, 2, 3, 4, 5].map((_, index) => (
-              <Star key={index} className="fill-yellow-400 text-yellow-400" size={16} />
+        <CardHeader className="p-4">
+          <CardTitle className="capitalize text-xl line-clamp-1">
+            {course.title}
+          </CardTitle>
+          <CardDescription className="capitalize line-clamp-2">
+            {course.shortDescription}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex-grow">
+          <div className="flex flex-wrap gap-2 mb-4">
+            {course.tags.split(",").map((tag, index) => (
+              <Badge
+                key={index}
+                variant="secondary"
+                className=" select-none capitalize"
+              >
+                {tag}
+              </Badge>
             ))}
           </div>
-        </div>
-        <div className="text-lg font-semibold">
-          ₹{course.price}
-          <span className="ml-2 text-sm line-through text-muted-foreground">
-            ₹{course.price! + 2000}
-          </span>
-        </div>
-      </CardContent>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="font-semibold">4.0</span>
+            <div className="flex">
+              {[1, 2, 3, 4, 5].map((_, index) => (
+                <Star
+                  key={index}
+                  className="fill-yellow-400 text-yellow-400"
+                  size={16}
+                />
+              ))}
+            </div>
+          </div>
+          <div className="text-lg font-semibold">
+            ₹{course.price}
+            <span className="ml-2 text-sm line-through text-muted-foreground">
+              ₹{course.price! + 2000}
+            </span>
+          </div>
+        </CardContent>
         <CardFooter>
           <Drawer>
             <DrawerTrigger>
@@ -111,7 +123,9 @@ const CourseCard = (course: Course) => {
                 </div>
               </DrawerHeader>
               <DrawerFooter>
-                <Button className="font-semibold">Buy</Button>
+                <Link href={`/course/${course.id}`}>
+                  <Button className="font-semibold">Buy Course</Button>
+                </Link>
                 <DrawerClose>
                   <Button variant="outline">Cancel</Button>
                 </DrawerClose>
