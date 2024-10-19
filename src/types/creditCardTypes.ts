@@ -3,7 +3,7 @@ export interface creditCardTypes {
     cardHolderName: string
     bankName: string
     accountNumber: string
-    cvv: Number
+    cvv: string
     userId?: string
     balance?: Number
     expiryDate: string

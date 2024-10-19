@@ -13,27 +13,20 @@ import { useParams } from "next/navigation";
 const SingleCourse = () => {
   const [course, setCourse] = useState<Course | null>(null);
   const params = useParams();
-  const courseId = params.courseId;
+  const courseId = params.courseId;  
 
   useEffect(() => {
-    const storedCourse = localStorage.getItem(`course-${courseId}`);
-    
-    if (storedCourse) {
-      setCourse(JSON.parse(storedCourse));
-    } else {
       const fetchCourse = async () => {
         try {
           const response = await axios.get(`/api/course-by-id/${courseId}`);
           const fetchedCourse = response.data.course;
           setCourse(fetchedCourse);
-          // Store fetched course in localStorage
-          localStorage.setItem(`course-${courseId}`, JSON.stringify(fetchedCourse));
+          localStorage.setItem(`Singlecourse`, JSON.stringify(fetchedCourse));
         } catch (error) {
           console.log(error);
         }
       };
       fetchCourse();
-    }
   }, [courseId]);
 
   return (

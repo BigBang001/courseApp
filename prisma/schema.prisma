@@ -13,7 +13,7 @@ model User {
   email            String             @unique
   password         String
   role             Role
-  balance          Int
+  balance          Int                @default(0)
   createdAt        DateTime           @default(now())
   Courses          Course[]
   Review           Review[]
@@ -42,8 +42,8 @@ model CreditCard {
   id             String   @unique @default(uuid())
   bankName       String
   cardHolderName String
-  accountNumber  String @unique
-  cvv            Int
+  accountNumber  String   @unique
+  cvv            String
   balance        Int      @default(30000)
   expiryDate     String
   createdAt      DateTime @default(now())
@@ -68,6 +68,8 @@ model purchasedCourses {
   courseId String
   course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
   User     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  @@unique([userId, courseId])
 }
 
 enum Role {

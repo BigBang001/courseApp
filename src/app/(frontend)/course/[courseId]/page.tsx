@@ -1,6 +1,18 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import {
   Card,
   CardContent,
@@ -11,11 +23,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { CreditCard, Plus, Trash2 } from "lucide-react";
+import { CreditCard, Plus, Trash2, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SingleCourse from "@/components/SingleCourse";
 import { creditCardTypes } from "@/types/creditCardTypes";
 import { useToast } from "@/hooks/use-toast";
+import banks from "@/data/banks.json";
 import axios from "axios";
 import {
   Select,
@@ -26,22 +39,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useParams } from "next/navigation";
 
 export default function CoursePurchase() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [cvv, setCvv] = useState("");
+  const [isPurchasing, setIsPurchasing] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("existing-card");
   const { toast } = useToast();
   const [cards, setCards] = useState<creditCardTypes[]>([]);
   const [values, setValues] = useState<creditCardTypes>({
     accountNumber: "",
     bankName: "",
-    cvv: 0,
+    cvv: "",
     expiryDate: "",
     cardHolderName: "",
   });
+  const [purchaseSuccess, setPurchaseSuccess] = useState(false);
 
-  const handlePurchase = async (event: React.FormEvent) => {
+  const handleAddCard = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
+      setIsLoading(true);
       const response = await axios.post(`/api/credit-card`, values);
       if (response.status === 201) {
         toast({
@@ -57,6 +76,8 @@ export default function CoursePurchase() {
         description: errorMessage,
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -91,6 +112,43 @@ export default function CoursePurchase() {
       });
     }
   };
+
+  const param = useParams();
+  const handlePurchase = async (
+    event: React.FormEvent,
+    creditCardId: string
+  ) => {
+    event.preventDefault();
+    setIsPurchasing(true);
+
+    try {
+      const response = await axios.post(`/api/purchase/${creditCardId}`, {
+        courseId: param.courseId,
+        cvv,
+      });
+
+      toast({
+        title: "Purchased",
+        description: response.data.message,
+      });
+
+      fetchCards();
+      setPurchaseSuccess(true);
+      setTimeout(() => {
+        setPurchaseSuccess(false);
+      }, 3000);
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || "An error occurred";
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    } finally {
+      setIsPurchasing(false);
+    }
+  };
+
   return (
     <div className="md:w-[90%] w-[100%] gap-2 md:flex mx-auto p-4">
       <div className="mb-2 md:w-[40%]">
@@ -147,16 +205,112 @@ export default function CoursePurchase() {
         {paymentMethod === "existing-card" &&
           (cards.length > 0 ? (
             cards.map((e) => (
-              <Card className="mb-2">
+              <Card className="mb-2" key={e.id}>
                 <CardHeader className="flex justify-between flex-row">
                   <div>
                     <CardTitle>User Credit Cards</CardTitle>
                     <CardDescription>Account details:</CardDescription>
                   </div>
                   <div className="flex items-center justify-center gap-2">
-                    <Button size={"sm"} className="font-semibold">
-                      Select
-                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button>Complete Purchase</Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent className="sm:max-w-[425px]">
+                        <AnimatePresence>
+                          {!purchaseSuccess ? (
+                            <motion.div
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              exit={{ opacity: 0 }}
+                            >
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Confirm Payment</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Please confirm your payment to purchase the course.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <form
+                                onSubmit={(event) =>
+                                  handlePurchase(event, e.id as string)
+                                }
+                              >
+                                <div className="grid gap-4 py-4">
+                                  <div className="flex items-center gap-4">
+                                    <CreditCard className="h-6 w-6 text-muted-foreground" />
+                                    <div>
+                                      <p className="text-sm font-medium">
+                                        Card ending in {e.accountNumber.substring(12, 16)}
+                                      </p>
+                                      <p className="text-sm text-muted-foreground">
+                                        Expires {e.expiryDate}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label htmlFor="cvv" className="text-right">
+                                      CVV
+                                    </Label>
+                                    <Input
+                                      id="cvv"
+                                      type="password"
+                                      className="col-span-3"
+                                      placeholder="Enter CVV"
+                                      value={cvv}
+                                      onChange={(e) => setCvv(e.target.value)}
+                                      required
+                                      maxLength={4}
+                                    />
+                                  </div>
+                                </div>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    type="submit"
+                                    disabled={isPurchasing}
+                                  >
+                                    {isPurchasing
+                                      ? "Processing..."
+                                      : "Confirm Payment"}
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </form>
+                            </motion.div>
+                          ) : (
+                            <motion.div
+                              initial={{ scale: 0.8, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              exit={{ scale: 0.8, opacity: 0 }}
+                              className="flex flex-col items-center justify-center h-full py-6"
+                            >
+                              <motion.div
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                              >
+                                <Check className="w-16 h-16 text-green-500 mb-4" />
+                              </motion.div>
+                              <motion.h2
+                                initial={{ y: 20, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                transition={{ delay: 0.2 }}
+                                className="text-2xl font-bold mb-2"
+                              >
+                                Payment Successful!
+                              </motion.h2>
+                              <motion.p
+                                initial={{ y: 20, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                transition={{ delay: 0.3 }}
+                                className="text-center text-muted-foreground"
+                              >
+                                Your course purchase is complete. Enjoy learning!
+                              </motion.p>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </AlertDialogContent>
+                    </AlertDialog>
                     <Button
                       onClick={() => {
                         if (e.id) {
@@ -187,7 +341,7 @@ export default function CoursePurchase() {
                   <h1>
                     Account Number :{" "}
                     <span className="font-semibold">
-                      •••• •••• •••• {e.accountNumber.substring(12, 18)}
+                      {e.accountNumber.substring(0,4)} •••• •••• {e.accountNumber.substring(12, 16)}
                     </span>
                   </h1>
                   <h1>
@@ -215,7 +369,7 @@ export default function CoursePurchase() {
               <CardDescription>Fill all card details carefully</CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handlePurchase}>
+              <form onSubmit={handleAddCard}>
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
@@ -260,7 +414,7 @@ export default function CoursePurchase() {
                       />
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2  gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="bank">Bank Name</Label>
                       <Select
@@ -275,17 +429,13 @@ export default function CoursePurchase() {
                         <SelectContent>
                           <SelectGroup>
                             <SelectLabel>Select Role</SelectLabel>
-                            {[
-                              "HDFC Bank",
-                              "State bank of india",
-                              "Canara Bank",
-                              "Axis bank",
-                              "Punjab national bank",
-                              "induslnd bank",
-                              "HSBC bank",
-                            ].map((e) => (
-                              <SelectItem className="capitalize" value={e}>
-                                {e}
+                            {banks.map((e) => (
+                              <SelectItem
+                                key={e.name}
+                                className="capitalize"
+                                value={e.name}
+                              >
+                                {e.name}
                               </SelectItem>
                             ))}
                           </SelectGroup>
@@ -295,24 +445,24 @@ export default function CoursePurchase() {
                     <div className="space-y-2">
                       <Label htmlFor="cvv">CVV</Label>
                       <Input
-                        max={3}
-                        value={Number(values.cvv)}
+                        value={values.cvv}
                         onChange={(e) =>
                           setValues({
                             ...values,
-                            cvv: Number(e.target.value),
+                            cvv: e.target.value,
                           })
                         }
                         id="cvv"
                         placeholder="123"
+                        max={3}
                         maxLength={3}
                       />
                     </div>
                   </div>
                 </div>
                 <div className="pt-4 w-full">
-                  <Button type="submit" className="w-full">
-                    Add Card
+                  <Button disabled={isLoading} type="submit" className="w-full">
+                    {isLoading ? "Adding" : "Add Card"}
                   </Button>
                 </div>
               </form>

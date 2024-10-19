@@ -77,19 +77,18 @@ const CoursesPage = () => {
               .map((_, index) => <SkeletonCard key={index} />)
           : courses.map((course) => (
               <CourseCard
-                key={course.id}
-                createdAt={course.createdAt}
-                description={course.description}
-                duration={course.duration}
-                id={course.id}
-                level={course.level}
-                userId={course.userId}
-                title={course.title}
-                shortDescription={course.shortDescription}
-                thumbnail={course.thumbnail}
-                tags={course.tags}
-                price={course.price}
-              />
+              key={course.id}
+              createdAt={course.createdAt}
+              description={course.description}
+              duration={course.duration}
+              id={course.id}
+              level={course.level}
+              userId={course.userId}
+              title={course.title}
+              shortDescription={course.shortDescription}
+              thumbnail={course.thumbnail}
+              tags={course.tags}
+              price={course.price} course={undefined}              />
             ))}
       </div>
     </div>

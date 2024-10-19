@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import axios, { AxiosError } from "axios";
 import { Edit, Star, Trash2 } from "lucide-react";
@@ -13,8 +15,17 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { Course } from "@/types/courseType";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog";
-import Image from "next/image";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "./ui/alert-dialog";
 
 const CreatedCourses = () => {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -28,7 +39,7 @@ const CreatedCourses = () => {
         const response = await axios.get("/api/user-courses");
         setCourses(response.data.courses);
       } catch (error) {
-        const axiosError = error as AxiosError
+        const axiosError = error as AxiosError;
         toast({
           title: "Error",
           description: axiosError.message,
@@ -49,7 +60,7 @@ const CreatedCourses = () => {
             .fill(null)
             .map((_, index) => <SkeletonCard key={index} />)
         ) : courses.length > 0 ? (
-          courses.map((course) => <CourseCard key={course.id} {...course} />)
+          courses.map((course) => <CourseCard  key={course.id} {...course} />)
         ) : (
           <p className="font font-semibold italic">No course found...</p>
         )}
@@ -83,7 +94,7 @@ function CourseCard(course: Course) {
   return (
     <Card className="relative overflow-hidden flex flex-col h-full">
       <div className="aspect-video h-full w-full z-10 absolute overflow-hidden">
-        <Image
+        <img
           className="h-full w-full object-cover"
           src={course.thumbnail!}
           alt={course.title!}
@@ -110,7 +121,13 @@ function CourseCard(course: Course) {
             </div>
           </div>
           <div className="text-lg font-semibold">₹{course.price}</div>
-          <div className="createdAt">{course.createdAt?.toString()}</div>
+          <div className="createdAt">
+            {new Date(course.createdAt!).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </div>
         </CardContent>
         <CardFooter className="flex gap-1">
           <Button className="font-semibold" variant={"link"} size={"sm"}>
@@ -118,7 +135,11 @@ function CourseCard(course: Course) {
           </Button>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="destructive" size={"sm"} className="font-semibold">
+              <Button
+                variant="destructive"
+                size={"sm"}
+                className="font-semibold"
+              >
                 <Trash2 />
                 Delete Course
               </Button>
@@ -128,9 +149,7 @@ function CourseCard(course: Course) {
                 <AlertDialogTitle>
                   Are you sure you want to delete this Course?
                 </AlertDialogTitle>
-                <AlertDialogDescription>
-                  {course.title}
-                </AlertDialogDescription>
+                <AlertDialogDescription>{course.title}</AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>

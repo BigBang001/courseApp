@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { User, LogOut, Moon, Sun, LucideEdit } from "lucide-react";
+import { User, LogOut, Moon, Sun, LucideEdit, IndianRupee } from "lucide-react";
 import { Switch } from "./ui/switch";
 import { useTheme } from "next-themes";
 import Image from "next/image";
@@ -72,11 +72,18 @@ export default function Navbar() {
                         <span>Profile</span>
                       </DropdownMenuItem>
                     </Link>
-                    {session.user.role === "admin" && (
-                      <Link href={"/dashboard"}>
+                    {session.user.role === "admin" ? (
+                      <Link href={"/create/addcourse"}>
                         <DropdownMenuItem>
                           <LucideEdit className="mr-2 h-4 w-4" />
                           <span>Add Course</span>
+                        </DropdownMenuItem>
+                      </Link>
+                    ) : (
+                      <Link href={"/purchased"}>
+                        <DropdownMenuItem>
+                          <IndianRupee className="mr-2 h-4 w-4" />
+                          <span>Purchased Courses</span>
                         </DropdownMenuItem>
                       </Link>
                     )}

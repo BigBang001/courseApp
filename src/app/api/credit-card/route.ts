@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { authOptions } from "../auth/[...nextauth]/option";
+import bcrypt from "bcryptjs"
 import { creditCardSValidation } from "@/validations/validation";
 
 export async function POST(request: Request) {
@@ -38,10 +39,13 @@ export async function POST(request: Request) {
             }, { status: 404 })
         }
 
+        const hashedCVV = await bcrypt.hash(cvv,10);
+
         await prisma.creditCard.create({
             data: {
                 cardHolderName,
-                accountNumber, cvv, bankName, expiryDate, userId: user.id
+                accountNumber, bankName, expiryDate, userId: user.id,
+                cvv : hashedCVV
             }
         })
 

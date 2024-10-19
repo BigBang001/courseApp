@@ -32,7 +32,7 @@ export const courseValidation = z.object({
   description: z
     .string()
     .min(10, { message: "Description must be at least 10 characters long" })
-    .max(2000, { message: "Description must be less than 2000 characters" }),
+    .max(3000, { message: "Description must be less than 3000 characters" }),
 
   shortDescription: z.string().min(5, { message: "Short Description must be at least 5 characters long" }).max(200, { message: "Short Description must be less than 200 characters" }),
 
@@ -59,7 +59,7 @@ export const creditCardSValidation = z.object({
   cardHolderName: z.string().min(2, { message: "Card Holder name have atleast 2 charcter" }),
   bankName: z.string().min(1, { message: "Bank name is required" }),
   accountNumber: z.string().min(8, { message: "Account number must be at least 8 characters" }),
-  cvv: z.number().int().min(100, { message: "CVV must be a 3-digit number" }).max(999, { message: "CVV must be a 3-digit number" }),
+  cvv: z.string().length(3, { message: "CVV must be a 3-digit number" }),
   // expiryDate: z.string().regex(/^(0[1-9]|3[0-9])\/?([0-9]{4}|[0-9]{2})$/, {
   //   message: "Expiry date must be in MM/YY or MM/YYYY format"
   // }),

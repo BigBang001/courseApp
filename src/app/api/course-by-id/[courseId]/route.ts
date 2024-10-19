@@ -12,12 +12,13 @@ export async function GET(request: Request, { params }: { params: { courseId: st
         }, { status: 401 })
     }
     try {
-
+                
         const course = await prisma.course.findUnique({
             where: {
                 id: params.courseId
             }
         })
+        
 
         return NextResponse.json({
             success: true,

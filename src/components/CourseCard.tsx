@@ -22,11 +22,10 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import Image from "next/image";
-import Purchasing from "./Purchasing";
 import Link from "next/link";
 
-const CourseCard = (course: Course) => {
+
+const CourseCard = (course : Course) => {
   const offerPercentage =
     ((course.price! -
       course.price! +
