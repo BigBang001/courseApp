@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { authOptions } from "../auth/[...nextauth]/option";
+import { authOptions } from "../auth/[...nextauth]/options";
 import bcrypt from "bcryptjs"
 import { creditCardSValidation } from "@/validations/validation";
 

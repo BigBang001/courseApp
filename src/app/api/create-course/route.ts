@@ -2,7 +2,7 @@ import prisma from "@/lib/prisma";
 import { courseValidation } from "@/validations/validation";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import { authOptions } from "../auth/[...nextauth]/option";
+import { authOptions } from "../auth/[...nextauth]/options";
 
 export async function POST(request: Request) {
     const { title, description, shortDescription, tags, thumbnail, price, duration, level } = await request.json();
