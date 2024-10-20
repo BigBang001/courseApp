@@ -6,9 +6,19 @@ export interface Course {
     price?: number
     thumbnail?: string
     createdAt?: Date
-    shortDescription? : string
+    shortDescription?: string
     duration?: string
     userId?: string
-    tags :string
+    tags: string
     level?: string
+    Review : ReviewTypes[]
+}
+
+interface ReviewTypes {
+    id: string,
+    content: string,
+    userId: string,
+    courseId: string,
+    rating: number,
+    createdAt: string
 }

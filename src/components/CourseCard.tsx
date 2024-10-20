@@ -1,3 +1,4 @@
+
 import React from "react";
 import {
   Card,
@@ -7,11 +8,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import { Course } from "@/types/courseType";
-import { Badge } from "./ui/badge";
+import { Badge } from "@/components/ui/badge";
 import { Star } from "lucide-react";
-
 import {
   Drawer,
   DrawerClose,
@@ -33,7 +33,12 @@ const CourseCard = (course: Course) => {
       course.price!) *
     100;
 
+  const rating = course.Review.reduce((acc, cv) => acc + cv.rating, 0);
+  const avgRating = rating > 0 ? rating / course.Review.length : 0;
+  const roundedRating = Math.round(avgRating * 2) / 2;
+
   const { data: session } = useSession();
+
   return (
     <div>
       <Card className="overflow-hidden flex flex-col h-full">
@@ -58,23 +63,32 @@ const CourseCard = (course: Course) => {
               <Badge
                 key={index}
                 variant="secondary"
-                className=" select-none capitalize"
+                className="select-none capitalize"
               >
                 {tag}
               </Badge>
             ))}
           </div>
           <div className="flex items-center gap-2 mb-2">
-            <span className="font-semibold">4.0</span>
+            <span className="font-semibold">{avgRating.toFixed(1)}</span>
             <div className="flex">
               {[1, 2, 3, 4, 5].map((_, index) => (
                 <Star
                   key={index}
-                  className="fill-yellow-400 text-yellow-400"
+                  className={`${
+                    index < Math.floor(roundedRating)
+                      ? "fill-yellow-400 text-yellow-400"
+                      : index < roundedRating
+                      ? "fill-yellow-400 text-yellow-400"
+                      : "fill-gray-200 text-gray-200"
+                  }`}
                   size={16}
                 />
               ))}
             </div>
+            <span className="text-sm text-muted-foreground">
+              ({course.Review.length})
+            </span>
           </div>
           <div className="text-lg font-semibold">
             ₹{course.price}
@@ -103,6 +117,27 @@ const CourseCard = (course: Course) => {
                   <h1 className="font-semibold text-xl dark:text-white pb-2">
                     Course Details:
                   </h1>
+                  <h1>
+                    Duration:{" "}
+                    <span className="font-semibold">{course.duration}</span>
+                  </h1>
+                  <h1>
+                    Course Created:
+                    <span className="font-semibold">
+                      {new Date(course.createdAt!).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </span>
+                  </h1>
+                  <h1 className="mb-4">
+                    Course Level:{" "}
+                    <span className="font-semibold capitalize">
+                      {course.level}
+                    </span>
+                  </h1>
+                  <h1 className="font-semibold text-2xl text-blue-500 mb-2">Course description:</h1>
                   <p
                     dangerouslySetInnerHTML={{
                       __html: course.description as string,

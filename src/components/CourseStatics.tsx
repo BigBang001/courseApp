@@ -8,7 +8,7 @@ const CourseStatics = () => {
   const [totalCourses, setTotalCourses] = useState(0);
   const [totalStudents, setTotalStudents] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const averageRating = 4.7;
+  const [averageRating, setAverageRating] = useState(0);
 
   useEffect(() => {
     const fetchCourseData = async () => {
@@ -23,7 +23,7 @@ const CourseStatics = () => {
             },
             0
           );
-
+          setAverageRating(data.courseDetails[0].avgRating)
           setTotalStudents(uniqueStudentsCount);
         }
       } catch (error) {
@@ -35,6 +35,7 @@ const CourseStatics = () => {
 
     fetchCourseData();
   }, []);
+
 
   return (
     <div>
@@ -70,7 +71,7 @@ const CourseStatics = () => {
               <Loader2 className="animate-spin text-neutral-700" />
             </div>
           ) : (
-            `${averageRating.toFixed(1)}`
+            `${averageRating}`
           )}
         </span>
       </p>

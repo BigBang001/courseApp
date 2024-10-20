@@ -26,6 +26,8 @@ export async function GET() {
                 message: "User not found",
             }, { status: 404 });
         }
+
+        // Group purchase counts by courseId
         const coursePurchaseCounts = await prisma.purchasedCourses.groupBy({
             by: ['courseId'],
             _count: {
@@ -33,17 +35,28 @@ export async function GET() {
             },
         });
 
+        // Fetch all the reviews
+        const reviews = await prisma.review.findMany({
+            select: {
+                rating: true
+            }
+        });
+
+        const totalRating = reviews.reduce((acc, review) => acc + review.rating, 0);
+        const avgRating = reviews.length > 0 ? totalRating / reviews.length : 0;
+
         const courseDetails = await Promise.all(
             coursePurchaseCounts.map(async (purchase) => {
                 const course = await prisma.course.findUnique({
                     where: { id: purchase.courseId },
-                    select: { title: true }
+                    select: { title: true, Review: true }
                 });
 
                 return {
                     courseId: purchase.courseId,
                     courseTitle: course?.title,
-                    purchaseCount: purchase._count.userId
+                    purchaseCount: purchase._count.userId,
+                    avgRating: avgRating,
                 };
             })
         );

@@ -12,8 +12,10 @@ import { Course } from "@/types/courseType";
 import { Badge } from "./ui/badge";
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import ReviewCourse from "./ReviewCourse";
 
 const PurchasedCourseCard = ({ course }: { course: Course }) => {
+
   return (
     <Card className="overflow-hidden flex flex-col h-full max-w-[300px]">
       <div className="aspect-video overflow-hidden">
@@ -43,20 +45,15 @@ const PurchasedCourseCard = ({ course }: { course: Course }) => {
         <div className="flex items-center gap-1 mb-1">
           <span className="font-semibold text-sm">4.0</span>
           <div className="flex">
-            {[1, 2, 3, 4, 5].map((_, index) => (
-              <Star
-                key={index}
-                className="fill-yellow-400 text-yellow-400"
-                size={12}
-              />
-            ))}
+            
           </div>
         </div>
       </CardContent>
-      <CardFooter className="p-3 pt-0">
+      <CardFooter className="p-3 flex gap-1">
         <Button className="w-full" size="sm">
           Open Classes
         </Button>
+        <ReviewCourse courseId={course.course.id}/>
       </CardFooter>
     </Card>
   );

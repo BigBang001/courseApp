@@ -2,17 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import {
   Card,
   CardContent,
   CardDescription,
@@ -22,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { CreditCard, Plus, Trash2, Check } from "lucide-react";
+import { CreditCard, Loader2, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SingleCourse from "@/components/SingleCourse";
 import { creditCardTypes } from "@/types/creditCardTypes";
@@ -39,6 +28,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useParams } from "next/navigation";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export default function CoursePurchase() {
   const [isLoading, setIsLoading] = useState(false);
@@ -54,6 +52,7 @@ export default function CoursePurchase() {
     expiryDate: "",
     cardHolderName: "",
   });
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleAddCard = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -67,6 +66,7 @@ export default function CoursePurchase() {
         });
       }
       fetchCards();
+      setIsDialogOpen(false);
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || "An error occurred";
       toast({
@@ -118,6 +118,7 @@ export default function CoursePurchase() {
   ) => {
     event.preventDefault();
     try {
+      setIsPurchasing(true);
       const response = await axios.post(`/api/purchase/${creditCardId}`, {
         courseId: param.courseId,
         cvv,
@@ -204,68 +205,66 @@ export default function CoursePurchase() {
                     <CardDescription>Account details:</CardDescription>
                   </div>
                   <div className="flex items-center justify-center gap-2">
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
+                    <Dialog>
+                      <DialogTrigger asChild>
                         <Button>Complete Purchase</Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent className="sm:max-w-[425px]">
-                        <div>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Confirm Payment</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Please confirm your payment to purchase the
-                              course.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <form
-                            onSubmit={(event) =>
-                              handlePurchase(event, e.id as string)
-                            }
-                          >
-                            <div className="grid gap-4 py-4">
-                              <div className="flex items-center gap-4">
-                                <CreditCard className="h-6 w-6 text-muted-foreground" />
-                                <div>
-                                  <p className="text-sm font-medium">
-                                    Card ending in{" "}
-                                    {e.accountNumber.substring(12, 16)}
-                                  </p>
-                                  <p className="text-sm text-muted-foreground">
-                                    Expires {e.expiryDate}
-                                  </p>
-                                </div>
-                              </div>
-                              <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="cvv" className="text-right">
-                                  CVV
-                                </Label>
-                                <Input
-                                  id="cvv"
-                                  type="password"
-                                  className="col-span-3"
-                                  placeholder="Enter CVV"
-                                  value={cvv}
-                                  onChange={(e) => setCvv(e.target.value)}
-                                  required
-                                  maxLength={4}
-                                />
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                          <DialogTitle>Confirm Payment</DialogTitle>
+                          <DialogDescription>
+                            Please confirm your payment to purchase the course.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <form
+                          onSubmit={(event) =>
+                            handlePurchase(event, e.id as string)
+                          }
+                        >
+                          <div className="grid gap-4 py-4">
+                            <div className="flex items-center gap-4">
+                              <CreditCard className="h-6 w-6 text-muted-foreground" />
+                              <div>
+                                <p className="text-sm font-medium">
+                                  Card ending in{" "}
+                                  {e.accountNumber.substring(12, 16)}
+                                </p>
+                                <p className="text-sm text-muted-foreground">
+                                  Expires {e.expiryDate}
+                                </p>
                               </div>
                             </div>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction
-                                type="submit"
-                                disabled={isPurchasing}
-                              >
-                                {isPurchasing
-                                  ? "Processing..."
-                                  : "Confirm Payment"}
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </form>
-                        </div>
-                      </AlertDialogContent>
-                    </AlertDialog>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="cvv" className="text-right">
+                                CVV
+                              </Label>
+                              <Input
+                                id="cvv"
+                                type="password"
+                                className="col-span-3"
+                                placeholder="Enter CVV"
+                                value={cvv}
+                                onChange={(e) => setCvv(e.target.value)}
+                                required
+                                maxLength={4}
+                              />
+                            </div>
+                          </div>
+                          <DialogFooter>
+                            <Button type="submit" disabled={isPurchasing}>
+                              {isPurchasing ? (
+                                <div className="flex items-center gap-1">
+                                  <Loader2 className="animate-spin" />
+                                  Purchasing...
+                                </div>
+                              ) : (
+                                "Confirm Payment"
+                              )}
+                            </Button>
+                          </DialogFooter>
+                        </form>
+                      </DialogContent>
+                    </Dialog>
                     <Button
                       onClick={() => {
                         if (e.id) {
@@ -317,14 +316,17 @@ export default function CoursePurchase() {
           ))}
 
         {paymentMethod === "new-card" && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-2xl font-bold">
-                Add Credit Card
-              </CardTitle>
-              <CardDescription>Fill all card details carefully</CardDescription>
-            </CardHeader>
-            <CardContent>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button className="w-full">Add New Card</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Add Credit Card</DialogTitle>
+                <DialogDescription>
+                  Fill all card details carefully
+                </DialogDescription>
+              </DialogHeader>
               <form onSubmit={handleAddCard}>
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
@@ -416,14 +418,21 @@ export default function CoursePurchase() {
                     </div>
                   </div>
                 </div>
-                <div className="pt-4 w-full">
-                  <Button disabled={isLoading} type="submit" className="w-full">
-                    {isLoading ? "Adding" : "Add Card"}
+                <DialogFooter className="mt-4">
+                  <Button disabled={isLoading} type="submit">
+                    {isLoading ? (
+                      <div className="flex gap-1 items-center">
+                        <Loader2 className="animate-spin" />
+                        Adding...
+                      </div>
+                    ) : (
+                      "Add Card"
+                    )}
                   </Button>
-                </div>
+                </DialogFooter>
               </form>
-            </CardContent>
-          </Card>
+            </DialogContent>
+          </Dialog>
         )}
       </div>
     </div>

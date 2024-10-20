@@ -51,95 +51,92 @@ export default function Profile() {
 
   return (
     <div className="container mx-auto gap-4 md:grid grid-cols-3 p-4">
-      <Card className="dark:bg-neutral-900 bg-blue-50 bg-opacity-75 mb-8 shadow-lg">
-        <CardHeader className="flex flex-row items-center space-y-0">
-          <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-2xl overflow-hidden font-bold uppercase shadow-md">
-              {session?.user.fullName ? (
-                <h1>{session.user.fullName[0]}</h1>
-              ) : (
-                <img
-                  width={64}
-                  height={64}
-                  className="w-full h-full object-cover"
-                  src={session?.user.image!}
-                  alt="User Avatar"
-                />
-              )}
-            </div>
-            <div className="flex flex-col justify-start">
-              <CardTitle className="capitalize text-2xl">
-                {session?.user.fullName || session?.user.name}
-              </CardTitle>
-              <CardDescription className="text-sm">
-                {session?.user.email}
-              </CardDescription>
-              <Badge className="mt-2 capitalize self-start">
-                {session?.user.role}
-              </Badge>
-            </div>
+      <Card className="w-full max-w-3xl mb-4 md:mb-0 mx-auto bg-neutral-100 dark:bg-neutral-900">
+        <CardHeader className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
+          <div className="w-20 h-20 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-3xl overflow-hidden font-bold uppercase shadow-md">
+            {session?.user.fullName ? (
+              <span>{session.user.fullName[0]}</span>
+            ) : (
+              <img
+                className="w-full h-full object-cover"
+                src={session?.user.image!}
+                alt="User Avatar"
+              />
+            )}
+          </div>
+          <div className="flex flex-col items-center sm:items-start">
+            <CardTitle className="capitalize text-2xl sm:text-3xl text-center sm:text-left">
+              {session?.user.fullName || session?.user.name}
+            </CardTitle>
+            <CardDescription className="text-sm sm:text-base text-center sm:text-left">
+              {session?.user.email}
+            </CardDescription>
+            <Badge className="mt-2 capitalize text-xs sm:text-sm">
+              {session?.user.role}
+            </Badge>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-wrap gap-4 justify-between items-center">
-            <div className="flex space-x-4">
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="destructive" className="flex items-center">
-                    <UserMinus className="mr-2 h-4 w-4" />
-                    Deactivate
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      Are you sure you want to deactivate your account?
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This action cannot be undone. This will permanently
-                      deactivate your account and remove your data from our
-                      servers.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <Button variant="destructive">Deactivate</Button>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+          <div className="flex flex-col sm:flex-row justify-center sm:justify-start gap-4 mt-4">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="destructive"
+                  className="w-full sm:w-auto flex items-center justify-center"
+                >
+                  <UserMinus className="mr-2 h-4 w-4" />
+                  Deactivate
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    Are you sure you want to deactivate your account?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently
+                    deactivate your account and remove your data from our
+                    servers.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <Button variant="destructive">Deactivate</Button>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
 
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="secondary" className="flex items-center">
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Logout
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      Are you sure you want to log out?
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>
-                      You will be signed out of your account.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleLogout}>
-                      Log Out
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </div>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button className="w-full sm:w-auto flex items-center justify-center">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Logout
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    Are you sure you want to log out?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    You will be signed out of your account.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleLogout}>
+                    Log Out
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </CardContent>
       </Card>
 
       <div className="col-span-2 space-y-4">
         {session?.user.role === "admin" && (
-          <Card>
+          <Card className="bg-neutral-100 dark:bg-neutral-900">
             <CardHeader>
               <CardTitle>User Menu</CardTitle>
               <CardDescription>
@@ -211,7 +208,7 @@ export default function Profile() {
           </Card>
         )}
 
-        <Card>
+        <Card className="bg-neutral-100 dark:bg-neutral-900">
           <div>
             <CardHeader>
               <CardTitle>

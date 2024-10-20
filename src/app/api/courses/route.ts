@@ -16,7 +16,9 @@ export async function GET() {
         const courses = await prisma.course.findMany({
             orderBy: {
                 createdAt: "desc",
-            }, take: 10
+            },include:{
+                Review: true
+            }
         })
         return NextResponse.json({
             success: true,

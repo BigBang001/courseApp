@@ -87,19 +87,7 @@ function CourseCard(course: Course) {
           </CardTitle>
         </CardHeader>
         <CardContent className="flex-grow">
-          <div className="flex items-center gap-2">
-            <span className="font-semibold">4.0</span>
-            <div className="flex">
-              {[1, 2, 3, 4, 5].map((_, index) => (
-                <Star
-                  key={index}
-                  className="fill-yellow-400 text-yellow-400"
-                  size={16}
-                />
-              ))}
-            </div>
-          </div>
-          <div className="text-lg font-semibold">₹{course.price}</div>
+          <div className="text-lg font-semibold">Price : ₹{course.price}</div>
           <div className="createdAt">
             {new Date(course.createdAt!).toLocaleDateString("en-US", {
               year: "numeric",

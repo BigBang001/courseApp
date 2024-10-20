@@ -12,7 +12,6 @@ const AdminEarnings = () => {
       try {
         const response = await axios.get("/api/dashboard/balance");
         setBalance(response.data.balance.balance);
-        console.log(response.data);
       } catch (error) {
         console.log(error);
       } finally {

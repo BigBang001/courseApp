@@ -65,3 +65,10 @@ export const creditCardSValidation = z.object({
   // }),
   expiryDate: z.string()
 });
+
+export const reviewValidation = z.object({
+  content: z.string().min(10, { message: "Description must have atleast 10 Charcters" }),
+  userId: z.string(),
+  courseId: z.string(),
+  rating: z.number()
+})
