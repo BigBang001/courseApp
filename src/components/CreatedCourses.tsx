@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import axios, { AxiosError } from "axios";
 import { Edit, Star, Trash2 } from "lucide-react";
 
@@ -26,31 +26,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "./ui/alert-dialog";
+import EditCourse from "./EditCourse";
+import { useCourses } from "@/hooks/useCreateCourse";
 
 const CreatedCourses = () => {
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
-
-  useEffect(() => {
-    const fetchCourses = async () => {
-      setIsLoading(true);
-      try {
-        const response = await axios.get("/api/user-courses");
-        setCourses(response.data.courses);
-      } catch (error) {
-        const axiosError = error as AxiosError;
-        toast({
-          title: "Error",
-          description: axiosError.message,
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchCourses();
-  }, [toast]);
+  const { courses, isLoading} = useCourses();
 
   return (
     <div className="container mx-auto py-8">
@@ -60,7 +40,7 @@ const CreatedCourses = () => {
             .fill(null)
             .map((_, index) => <SkeletonCard key={index} />)
         ) : courses.length > 0 ? (
-          courses.map((course) => <CourseCard  key={course.id} {...course} />)
+          courses.map((course) => <CourseCard key={course.id} {...course} />)
         ) : (
           <p className="font font-semibold italic">No course found...</p>
         )}
@@ -71,7 +51,6 @@ const CreatedCourses = () => {
 
 function CourseCard(course: Course) {
   const { toast } = useToast();
-
   const handleDeleteCourse = async () => {
     try {
       const response = await axios.post(`/api/delete-course/${course.id}`);
@@ -131,7 +110,13 @@ function CourseCard(course: Course) {
         </CardContent>
         <CardFooter className="flex gap-1">
           <Button className="font-semibold" variant={"link"} size={"sm"}>
-            <Edit /> Edit Course
+            {/* editCourse component */}
+            <EditCourse
+              duration={course.duration!}
+              id={course.id!}
+              price={course.price!}
+              title={course.title!}
+            />
           </Button>
           <AlertDialog>
             <AlertDialogTrigger asChild>

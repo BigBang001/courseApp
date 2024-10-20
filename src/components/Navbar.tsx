@@ -31,7 +31,7 @@ export default function Navbar() {
       <header className="bg-secondary/15 shadow-lg shadow-neutral-600/5 backdrop-blur-lg border border-primary/10 md:p-6 py-4 rounded-2xl">
         <div className="px-5 flex items-center justify-between w-full">
           <Link href={"/explore"}>
-            <h1 className="text-xl font-bold">50xcourses</h1>
+            <h1 className="text-xl font-bold">50xCourses</h1>
           </Link>
 
           <div className="flex items-center justify-between gap-2">
@@ -55,7 +55,7 @@ export default function Navbar() {
                       aria-label="User profile"
                     >
                       {session.user.image ? (
-                        <Image
+                        <img
                           className="h-full w-full object-cover"
                           src={session.user.image}
                           alt={`${"User"}'s profile picture`}

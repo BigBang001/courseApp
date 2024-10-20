@@ -25,6 +25,7 @@ export async function POST(request: Request) {
     }
     try {
 
+
         const user = await prisma.user.findFirst({
             where: {
                 email: session.user.email,
@@ -39,13 +40,24 @@ export async function POST(request: Request) {
             }, { status: 404 })
         }
 
-        const hashedCVV = await bcrypt.hash(cvv,10);
+        const account = await prisma.creditCard.findFirst({
+            where: { accountNumber: accountNumber }
+        })
+
+        if (account?.accountNumber === accountNumber) {
+            return NextResponse.json({
+                success: false,
+                message: "Account number is Invalid or Not Unique",
+            }, { status: 404 })
+        }
+
+        const hashedCVV = await bcrypt.hash(cvv, 10);
 
         await prisma.creditCard.create({
             data: {
                 cardHolderName,
                 accountNumber, bankName, expiryDate, userId: user.id,
-                cvv : hashedCVV
+                cvv: hashedCVV
             }
         })
 
@@ -54,11 +66,13 @@ export async function POST(request: Request) {
             message: "Credit Card Added Succesfully",
         }, { status: 201 })
 
-    } catch (error) {
+    } catch (error: any) {
+        console.log(error.meta.target[0]);
+
         return NextResponse.json({
             success: false,
             message: "Error while adding card",
-            error
+            error: error.message
         }, { status: 500 })
     }
 }

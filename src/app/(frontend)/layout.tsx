@@ -10,7 +10,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Navbar />
-        <div className="pt-24 md:pt-28">{children}</div>
+        <div className="py-24 md:py-28">{children}</div>
       </body>
     </html>
   );

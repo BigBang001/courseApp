@@ -39,7 +39,6 @@ import {
 import { signOut, useSession } from "next-auth/react";
 import CreatedCourses from "@/components/CreatedCourses";
 import Link from "next/link";
-import Image from "next/image";
 import CourseStatics from "@/components/CourseStatics";
 import AdminEarnings from "@/components/AdminEarnings";
 
@@ -59,7 +58,7 @@ export default function Profile() {
               {session?.user.fullName ? (
                 <h1>{session.user.fullName[0]}</h1>
               ) : (
-                <Image
+                <img
                   width={64}
                   height={64}
                   className="w-full h-full object-cover"

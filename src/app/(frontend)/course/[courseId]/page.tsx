@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -55,7 +54,6 @@ export default function CoursePurchase() {
     expiryDate: "",
     cardHolderName: "",
   });
-  const [purchaseSuccess, setPurchaseSuccess] = useState(false);
 
   const handleAddCard = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -119,8 +117,6 @@ export default function CoursePurchase() {
     creditCardId: string
   ) => {
     event.preventDefault();
-    setIsPurchasing(true);
-
     try {
       const response = await axios.post(`/api/purchase/${creditCardId}`, {
         courseId: param.courseId,
@@ -133,10 +129,6 @@ export default function CoursePurchase() {
       });
 
       fetchCards();
-      setPurchaseSuccess(true);
-      setTimeout(() => {
-        setPurchaseSuccess(false);
-      }, 3000);
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || "An error occurred";
       toast({
@@ -217,98 +209,61 @@ export default function CoursePurchase() {
                         <Button>Complete Purchase</Button>
                       </AlertDialogTrigger>
                       <AlertDialogContent className="sm:max-w-[425px]">
-                        <AnimatePresence>
-                          {!purchaseSuccess ? (
-                            <motion.div
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              exit={{ opacity: 0 }}
-                            >
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Confirm Payment</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Please confirm your payment to purchase the course.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <form
-                                onSubmit={(event) =>
-                                  handlePurchase(event, e.id as string)
-                                }
-                              >
-                                <div className="grid gap-4 py-4">
-                                  <div className="flex items-center gap-4">
-                                    <CreditCard className="h-6 w-6 text-muted-foreground" />
-                                    <div>
-                                      <p className="text-sm font-medium">
-                                        Card ending in {e.accountNumber.substring(12, 16)}
-                                      </p>
-                                      <p className="text-sm text-muted-foreground">
-                                        Expires {e.expiryDate}
-                                      </p>
-                                    </div>
-                                  </div>
-                                  <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label htmlFor="cvv" className="text-right">
-                                      CVV
-                                    </Label>
-                                    <Input
-                                      id="cvv"
-                                      type="password"
-                                      className="col-span-3"
-                                      placeholder="Enter CVV"
-                                      value={cvv}
-                                      onChange={(e) => setCvv(e.target.value)}
-                                      required
-                                      maxLength={4}
-                                    />
-                                  </div>
+                        <div>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Confirm Payment</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Please confirm your payment to purchase the
+                              course.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <form
+                            onSubmit={(event) =>
+                              handlePurchase(event, e.id as string)
+                            }
+                          >
+                            <div className="grid gap-4 py-4">
+                              <div className="flex items-center gap-4">
+                                <CreditCard className="h-6 w-6 text-muted-foreground" />
+                                <div>
+                                  <p className="text-sm font-medium">
+                                    Card ending in{" "}
+                                    {e.accountNumber.substring(12, 16)}
+                                  </p>
+                                  <p className="text-sm text-muted-foreground">
+                                    Expires {e.expiryDate}
+                                  </p>
                                 </div>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                  <AlertDialogAction
-                                    type="submit"
-                                    disabled={isPurchasing}
-                                  >
-                                    {isPurchasing
-                                      ? "Processing..."
-                                      : "Confirm Payment"}
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </form>
-                            </motion.div>
-                          ) : (
-                            <motion.div
-                              initial={{ scale: 0.8, opacity: 0 }}
-                              animate={{ scale: 1, opacity: 1 }}
-                              exit={{ scale: 0.8, opacity: 0 }}
-                              className="flex flex-col items-center justify-center h-full py-6"
-                            >
-                              <motion.div
-                                initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
-                                transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                              </div>
+                              <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="cvv" className="text-right">
+                                  CVV
+                                </Label>
+                                <Input
+                                  id="cvv"
+                                  type="password"
+                                  className="col-span-3"
+                                  placeholder="Enter CVV"
+                                  value={cvv}
+                                  onChange={(e) => setCvv(e.target.value)}
+                                  required
+                                  maxLength={4}
+                                />
+                              </div>
+                            </div>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                type="submit"
+                                disabled={isPurchasing}
                               >
-                                <Check className="w-16 h-16 text-green-500 mb-4" />
-                              </motion.div>
-                              <motion.h2
-                                initial={{ y: 20, opacity: 0 }}
-                                animate={{ y: 0, opacity: 1 }}
-                                transition={{ delay: 0.2 }}
-                                className="text-2xl font-bold mb-2"
-                              >
-                                Payment Successful!
-                              </motion.h2>
-                              <motion.p
-                                initial={{ y: 20, opacity: 0 }}
-                                animate={{ y: 0, opacity: 1 }}
-                                transition={{ delay: 0.3 }}
-                                className="text-center text-muted-foreground"
-                              >
-                                Your course purchase is complete. Enjoy learning!
-                              </motion.p>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
+                                {isPurchasing
+                                  ? "Processing..."
+                                  : "Confirm Payment"}
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </form>
+                        </div>
                       </AlertDialogContent>
                     </AlertDialog>
                     <Button
@@ -341,7 +296,8 @@ export default function CoursePurchase() {
                   <h1>
                     Account Number :{" "}
                     <span className="font-semibold">
-                      {e.accountNumber.substring(0,4)} •••• •••• {e.accountNumber.substring(12, 16)}
+                      {e.accountNumber.substring(0, 4)} •••• ••••{" "}
+                      {e.accountNumber.substring(12, 16)}
                     </span>
                   </h1>
                   <h1>

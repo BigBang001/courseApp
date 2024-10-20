@@ -23,15 +23,17 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
-
-const CourseCard = (course : Course) => {
+const CourseCard = (course: Course) => {
   const offerPercentage =
     ((course.price! -
       course.price! +
       parseInt((Math.random() * 2000).toFixed())) /
       course.price!) *
     100;
+
+  const { data: session } = useSession();
   return (
     <div>
       <Card className="overflow-hidden flex flex-col h-full">
@@ -121,12 +123,21 @@ const CourseCard = (course : Course) => {
                   </h2>
                 </div>
               </DrawerHeader>
-              <DrawerFooter>
-                <Link href={`/course/${course.id}`}>
-                  <Button className="font-semibold">Buy Course</Button>
-                </Link>
+              <DrawerFooter className="flex items-center justify-center flex-row">
+                {session?.user.role === "user" && (
+                  <Link href={`/course/${course.id}`}>
+                    <Button
+                      size={"default"}
+                      className="font-semibold bg-green-500 text-green-900 hover:bg-green-600"
+                    >
+                      Buy Course
+                    </Button>
+                  </Link>
+                )}
                 <DrawerClose>
-                  <Button variant="outline">Cancel</Button>
+                  <Button variant="outline" size={"lg"}>
+                    Close
+                  </Button>
                 </DrawerClose>
               </DrawerFooter>
             </DrawerContent>

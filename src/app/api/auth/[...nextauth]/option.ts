@@ -19,8 +19,11 @@ export const authOptions: NextAuthOptions = {
                     throw new Error("Email and password are required");
                 }
 
-                const user = await prisma.user.findFirst({ where: { email } });
-
+                const user = await prisma.user.findFirst({
+                    where: { email },
+                    select: { id: true, email: true, fullName: true, role:true,createdAt: true, password : true }
+                });
+                
                 if (!user) {
                     throw new Error("User not found with this email");
                 }
@@ -46,7 +49,8 @@ export const authOptions: NextAuthOptions = {
     session: {
         strategy: "jwt"
     },
-    secret: process.env.NEXT_AUTH_SECRET,
+    secret: process.env.NEXT_AUTH_SECRET || "next_auth_secret",
+    
     callbacks: {
         async session({ session, token }: { session: any, token: any }) {
             session.user.id = token.id

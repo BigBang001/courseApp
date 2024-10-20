@@ -3,13 +3,15 @@ import { authOptions } from "../auth/[...nextauth]/option";
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
-export async function PUT(request: Request, courseId: string) {
+export async function PUT(request: Request) {
     const session = await getServerSession(authOptions);
-    const { duration, price } = await request.json()
+    const { title, duration, price ,courseId } = await request.json()
+    console.log(title, duration, price ,courseId);
+    
     try {
         const user = await prisma.user.findFirst({
             where: {
-                email: session?.user?.email || ""
+                email: session?.user.email || ""
             }
         })
 
@@ -25,7 +27,7 @@ export async function PUT(request: Request, courseId: string) {
                 id: courseId
             },
             data: {
-                duration, price
+                duration, price, title
             }
         })
 
