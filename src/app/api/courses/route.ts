@@ -5,6 +5,7 @@ import { authOptions } from "../auth/[...nextauth]/options";
 
 export async function GET() {
     const session = await getServerSession(authOptions);
+    
     if (!session?.user || !session) {
         return NextResponse.json({
             success: false,
