@@ -35,7 +35,7 @@ const SingleCourse = () => {
         <CardHeader>
           <CardTitle>{course?.title}</CardTitle>
           <CardDescription>{course?.shortDescription}</CardDescription>
-          <h1 className="font-semibold text-green-200">
+          <h1 className="font-semibold text-green-800">
             Price: ₹{course?.price}
           </h1>
         </CardHeader>

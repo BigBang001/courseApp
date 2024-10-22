@@ -63,6 +63,7 @@ export default function CoursePurchase() {
         toast({
           title: "Added",
           description: response.data.message,
+          variant: "success",
         });
       }
       fetchCards();
@@ -98,6 +99,7 @@ export default function CoursePurchase() {
         toast({
           title: "Deleted",
           description: response.data.message,
+          variant: "success",
         });
         fetchCards();
       }
@@ -127,8 +129,9 @@ export default function CoursePurchase() {
       toast({
         title: "Purchased",
         description: response.data.message,
+        variant: "success",
       });
-
+      setIsDialogOpen(false);
       fetchCards();
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || "An error occurred";
@@ -205,7 +208,7 @@ export default function CoursePurchase() {
                     <CardDescription>Account details:</CardDescription>
                   </div>
                   <div className="flex items-center justify-center gap-2">
-                    <Dialog>
+                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                       <DialogTrigger asChild>
                         <Button>Complete Purchase</Button>
                       </DialogTrigger>

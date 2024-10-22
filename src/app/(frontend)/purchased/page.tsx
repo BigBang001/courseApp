@@ -1,8 +1,8 @@
-'use client'
+"use client";
 
-import PurchasedCourseCard from "@/components/PurchasedCourseCard"
-import { Course } from "@/types/courseType"
-import { Skeleton } from "@/components/ui/skeleton"
+import PurchasedCourseCard from "@/components/PurchasedCourseCard";
+import { Course } from "@/types/courseType";
+import { Skeleton } from "@/components/ui/skeleton";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 
@@ -32,19 +32,25 @@ const Page = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container px-4 w-full mx-auto py-8">
       <h1 className="text-2xl font-bold mb-6">My Purchased Courses</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {isLoading
-          ? Array(8)
-              .fill(null)
-              .map((_, index) => <SkeletonCard key={index} />)
-          : purchasedCourses.map((course) => (
-              <PurchasedCourseCard
-                key={course.id}
-                course={course}
-              />
-            ))}
+        {isLoading ? (
+          Array(8)
+            .fill(null)
+            .map((_, index) => <SkeletonCard key={index} />)
+        ) : purchasedCourses.length > 0 ? (
+          purchasedCourses.map((course) => (
+            <PurchasedCourseCard key={course.id} course={course} />
+          ))
+        ) : (
+          <div className="font-semibold">
+            <h1>No Course Found</h1>
+            <h1 className="text-sm text-neutral-400 italic">
+              First Purchase the course...
+            </h1>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -52,7 +58,7 @@ const Page = () => {
 
 const SkeletonCard = () => (
   <div className="space-y-3 max-w-[300px]">
-    <Skeleton className="h-[168px] w-full" /> 
+    <Skeleton className="h-[168px] w-full" />
     <Skeleton className="h-5 w-3/4" />
     <div className="flex gap-1">
       <Skeleton className="h-4 w-16" />
@@ -66,8 +72,8 @@ const SkeletonCard = () => (
         ))}
       </div>
     </div>
-    <Skeleton className="h-8 w-full" /> 
+    <Skeleton className="h-8 w-full" />
   </div>
-)
+);
 
 export default Page;

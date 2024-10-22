@@ -114,7 +114,7 @@ const CourseCard = (course: Course) => {
                 </p>
 
                 <DrawerDescription className="dark:bg-neutral-900 bg-neutral-100 dark:text-white text-black h-[50vh] md:h-[55vh] text-left overflow-y-scroll rounded-xl p-5">
-                  <h1 className="font-semibold text-xl dark:text-white pb-2">
+                  <h1 className="font-semibold text-xl text-blue-500 pb-2">
                     Course Details:
                   </h1>
                   <h1>
@@ -145,8 +145,8 @@ const CourseCard = (course: Course) => {
                   ></p>
                 </DrawerDescription>
                 <div className="dark:bg-neutral-900 bg-neutral-100 dark:text-white text-black flex items-center justify-between rounded-xl p-5">
-                  <h1>
-                    Price: <span>₹{course.price}</span>{" "}
+                  <h1 className="text-blue-500">
+                    Price: <span className="font-semibold dark:text-white text-black">₹{course.price}</span>{" "}
                     <span className="text-neutral-500 line-through">
                       ₹
                       {course.price! +

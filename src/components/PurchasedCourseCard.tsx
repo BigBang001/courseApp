@@ -17,7 +17,7 @@ import ReviewCourse from "./ReviewCourse";
 const PurchasedCourseCard = ({ course }: { course: Course }) => {
 
   return (
-    <Card className="overflow-hidden flex flex-col h-full max-w-[300px]">
+    <Card className="overflow-hidden flex flex-col h-full">
       <div className="aspect-video overflow-hidden">
         <img
           className="h-full w-full object-cover transition-transform hover:scale-105"

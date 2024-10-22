@@ -12,7 +12,6 @@ import {
 import { User, LogOut, Moon, Sun, LucideEdit, IndianRupee } from "lucide-react";
 import { Switch } from "./ui/switch";
 import { useTheme } from "next-themes";
-import Image from "next/image";
 
 export default function Navbar() {
   const { data: session, status } = useSession();
@@ -27,22 +26,23 @@ export default function Navbar() {
   };
 
   return (
-    <div className="fixed top-4 left-0 right-0 z-50 px-4">
+    <div className="fixed top-2 left-0 right-0 z-50 px-2">
       <header className="bg-secondary/15 shadow-lg shadow-neutral-600/5 backdrop-blur-lg border border-primary/10 md:p-6 py-4 rounded-2xl">
         <div className="px-5 flex items-center justify-between w-full">
           <Link href={"/explore"}>
-            <h1 className="text-xl font-bold">50xCourses</h1>
+            <h1 className="text-xl font-bold">
+              50<span className="text-blue-500">x</span>Courses
+            </h1>
           </Link>
 
           <div className="flex items-center justify-between gap-2">
+            <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
             <Switch
               checked={theme === "dark"}
               onCheckedChange={toggleTheme}
               aria-label="Toggle dark mode"
-            >
-              <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-              <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-            </Switch>
+            ></Switch>
+            <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
             <div>
               {status === "authenticated" ? (
                 <DropdownMenu>
@@ -51,7 +51,7 @@ export default function Navbar() {
                     asChild
                   >
                     <div
-                      className="profile overflow-hidden h-10 w-10 bg-neutral-300 font-semibold flex items-center justify-center uppercase rounded-full"
+                      className="profile overflow-hidden h-10 w-10 bg-blue-500 text-blue-950 font-semibold flex items-center justify-center uppercase rounded-full"
                       aria-label="User profile"
                     >
                       {session.user.image ? (
@@ -61,7 +61,9 @@ export default function Navbar() {
                           alt={`${"User"}'s profile picture`}
                         />
                       ) : (
-                        <span>{session.user.fullName?.[0].toUpperCase()}</span>
+                        <span>
+                          {session.user.fullName.split(" ").map((e) => e[0])}
+                        </span>
                       )}
                     </div>
                   </DropdownMenuTrigger>

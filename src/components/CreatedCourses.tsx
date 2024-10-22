@@ -7,6 +7,7 @@ import { Edit, Star, Trash2 } from "lucide-react";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -30,7 +31,7 @@ import EditCourse from "./EditCourse";
 import { useCourses } from "@/hooks/useCreateCourse";
 
 const CreatedCourses = () => {
-  const { courses, isLoading} = useCourses();
+  const { courses, isLoading } = useCourses();
 
   return (
     <div className="container mx-auto py-8">
@@ -79,16 +80,22 @@ function CourseCard(course: Course) {
           alt={course.title!}
         />
       </div>
-      <div className="z-50 flex flex-col bg-black/90">
+      <div className="z-50 flex flex-col h-full bg-black/90">
         {" "}
         <CardHeader>
-          <CardTitle className="capitalize text-xl line-clamp-1">
+          <CardTitle className="capitalize text-blue-400 text-xl line-clamp-1">
             {course.title}
           </CardTitle>
+          <CardDescription className="line-clamp-2">
+            {course.shortDescription}
+          </CardDescription>
         </CardHeader>
         <CardContent className="flex-grow">
-          <div className="text-lg font-semibold">Price : ₹{course.price}</div>
-          <div className="createdAt">
+          <div className="text-lg text-white">
+            <span className="text-blue-100">Price :</span> ₹{course.price}
+          </div>
+          <div className="createdAt text-sm text-neutral-400">
+          <span className="text-blue-100">Created : </span>
             {new Date(course.createdAt!).toLocaleDateString("en-US", {
               year: "numeric",
               month: "long",
@@ -97,7 +104,11 @@ function CourseCard(course: Course) {
           </div>
         </CardContent>
         <CardFooter className="flex gap-1">
-          <Button className="font-semibold" variant={"link"} size={"sm"}>
+          <Button
+            className="text-white font-semibold"
+            variant={"link"}
+            size={"sm"}
+          >
             {/* editCourse component */}
             <EditCourse
               duration={course.duration!}

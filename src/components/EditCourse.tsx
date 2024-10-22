@@ -65,8 +65,8 @@ const EditCourse = ({ id, title, duration, price }: UpdateCourse) => {
     <div>
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogTrigger asChild>
-          <Button variant="link" size="sm" className="flex gap-1 items-center">
-            <Edit className="w-4 h-4" />
+          <Button variant="link" size="sm" className="flex text-white gap-1 items-center">
+            <Edit  />
             Edit Course Details
           </Button>
         </DialogTrigger>
