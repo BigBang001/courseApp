@@ -26,6 +26,7 @@ import {
   Loader2,
   X,
 } from "lucide-react";
+import PurchasedCoursesPage from '@/components/PurchasedCoursesPage'
 import { useSession } from "next-auth/react";
 import CreatedCourses from "@/components/CreatedCourses";
 import Link from "next/link";
@@ -40,9 +41,11 @@ import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { Input } from "@/components/ui/input";
 import { useMe } from "@/hooks/userMe";
+import { usePurchasedCourses } from "@/hooks/usePurchasedCourse";
 
 export default function Profile() {
   const { data: session } = useSession();
+  const { isLoading, purchasedCourses } = usePurchasedCourses();
   const [isUploading, setIsUploading] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const { toast } = useToast();
@@ -272,7 +275,7 @@ export default function Profile() {
             </CardHeader>
             <CardContent>
               {session?.user.role !== "admin" ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid w-full grid-cols-1 md:grid-cols-2 gap-4">
                   <Drawer>
                     <DrawerTrigger asChild>
                       <Button variant="outline" className="w-full">
@@ -280,7 +283,7 @@ export default function Profile() {
                       </Button>
                     </DrawerTrigger>
                     <DrawerContent>
-                      <div className="mx-auto w-full max-w-4xl">
+                      <div className="mx-auto w-full">
                         <DrawerHeader>
                           <DrawerTitle className="text-2xl">
                             {" "}
@@ -291,7 +294,7 @@ export default function Profile() {
                           </DrawerDescription>
                         </DrawerHeader>
                         <div className="p-4 space-y-4 max-h-[60vh] overflow-y-auto custom-scrollbar">
-                          {/* Add saved jobs content here */}
+                        <PurchasedCoursesPage/>
                         </div>
                         <div className="w-full flex items-center justify-center p-4">
                           <DrawerClose>

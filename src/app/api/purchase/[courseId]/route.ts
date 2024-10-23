@@ -5,7 +5,7 @@ import bcrypt from 'bcryptjs';
 import prisma from "@/lib/prisma";
 
 export async function POST(request: Request, { params }: { params: { courseId: string } }) {
-    const { courseId, cvv } = await request.json(); // Assuming creditCardId is passed
+    const { courseId, cvv } = await request.json(); 
 
     const session = await getServerSession(authOptions);
 
@@ -31,7 +31,6 @@ export async function POST(request: Request, { params }: { params: { courseId: s
             }, { status: 404 });
         }
 
-        // Check if user already purchased this course
         const findAlreadyPurchasedCourse = await prisma.purchasedCourses.findFirst({
             where: {
                 courseId: courseId,
@@ -46,10 +45,9 @@ export async function POST(request: Request, { params }: { params: { courseId: s
             }, { status: 400 });
         }
 
-        // Check credit card belonging to the user
         const creditCard = await prisma.creditCard.findFirst({
             where: {
-                id: params.courseId, // Should refer to credit card, not course ID
+                id: params.courseId, 
                 userId: user.id,
             },
         });
@@ -70,7 +68,6 @@ export async function POST(request: Request, { params }: { params: { courseId: s
             }, { status: 402 });
         }
 
-        // Fetch the course to be purchased
         const course = await prisma.course.findFirst({
             where: {
                 id: courseId,
@@ -84,7 +81,6 @@ export async function POST(request: Request, { params }: { params: { courseId: s
             }, { status: 404 });
         }
 
-        // Check if the credit card has enough balance
         if (creditCard.balance < course.price) {
             return NextResponse.json({
                 success: false,
@@ -92,9 +88,7 @@ export async function POST(request: Request, { params }: { params: { courseId: s
             }, { status: 400 });
         }
 
-        // Execute the purchase transaction
         const purchase = await prisma.$transaction(async (prisma) => {
-            // Decrement balance from user's credit card
             await prisma.creditCard.update({
                 where: {
                     id: creditCard.id,
@@ -106,7 +100,6 @@ export async function POST(request: Request, { params }: { params: { courseId: s
                 },
             });
 
-            // Create purchase record
             const newPurchase = await prisma.purchasedCourses.create({
                 data: {
                     courseId: course.id,
@@ -117,7 +110,6 @@ export async function POST(request: Request, { params }: { params: { courseId: s
                 },
             });
 
-            // Increment the course owner's balance (admin or creator)
             await prisma.user.update({
                 where: {
                     id: course.userId,

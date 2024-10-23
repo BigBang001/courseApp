@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/card";
 import { Course } from "@/types/courseType";
 import { Badge } from "./ui/badge";
-import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ReviewCourse from "./ReviewCourse";
 import Link from "next/link";

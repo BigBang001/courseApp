@@ -51,7 +51,7 @@ export default function VideoPlayer({ videoUrl }: VideoPlayerProps) {
       clearTimeout(controlsTimeoutRef.current)
     }
     setShowControls(true)
-    controlsTimeoutRef.current = setTimeout(() => setShowControls(true), 3000)
+    controlsTimeoutRef.current = setTimeout(() => setShowControls(false), 3000)
   }
 
   const togglePlay = () => {
