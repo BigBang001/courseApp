@@ -7,9 +7,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  admin
+  user
+}
+
 model User {
   id               String             @id @unique @default(uuid())
   fullName         String
+  bio              String?
+  image            String?
   email            String             @unique
   password         String
   role             Role
@@ -19,6 +26,7 @@ model User {
   Review           Review[]
   purchasedCourses purchasedCourses[]
   CreditCard       CreditCard[]
+  recordedClass    recordedClass[]
 }
 
 model Course {
@@ -36,6 +44,18 @@ model Course {
   user             User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   Review           Review[]
   purchasedCourses purchasedCourses[]
+  recordedClass    recordedClass[]
+}
+
+model recordedClass {
+  id        String   @unique @default(uuid())
+  title     String
+  videoUrl String
+  createdAt DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
 }
 
 model CreditCard {
@@ -63,16 +83,12 @@ model Review {
 }
 
 model purchasedCourses {
-  id       String @unique @default(uuid())
-  userId   String
-  courseId String
-  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  User     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @unique @default(uuid())
+  userId    String
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
-  @@unique([userId, courseId])
-}
 
-enum Role {
-  admin
-  user
+  @@unique([userId, courseId])
 }

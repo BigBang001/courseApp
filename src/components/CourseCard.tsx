@@ -41,7 +41,7 @@ const CourseCard = (course: Course) => {
 
   return (
     <div>
-      <Card className="overflow-hidden flex flex-col h-full">
+      <Card className="overflow-hidden flex flex-col h-full bg-stone-50 dark:bg-stone-950/50">
         <div className="aspect-video overflow-hidden">
           <img
             className="h-full w-full object-cover transition-transform hover:scale-105"

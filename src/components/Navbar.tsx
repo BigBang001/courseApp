@@ -12,22 +12,23 @@ import {
 import { User, LogOut, Moon, Sun, LucideEdit, IndianRupee } from "lucide-react";
 import { Switch } from "./ui/switch";
 import { useTheme } from "next-themes";
+import { useMe } from "@/hooks/userMe";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 export default function Navbar() {
   const { data: session, status } = useSession();
   const handleSignOut = async () => {
     await signOut({ callbackUrl: "/signin" });
   };
-
+  const { user } = useMe();
   const { setTheme, theme } = useTheme();
-
   const toggleTheme = () => {
     setTheme(theme === "light" ? "dark" : "light");
   };
 
   return (
     <div className="fixed top-2 left-0 right-0 z-50 px-2">
-      <header className="bg-secondary/15 shadow-lg shadow-neutral-600/5 backdrop-blur-lg border border-primary/10 md:p-6 py-4 rounded-2xl">
+      <header className="bg-secondary/15 shadow-lg shadow-neutral-600/5 backdrop-blur-lg border border-primary/10 md:p-4 py-4 rounded-2xl">
         <div className="px-5 flex items-center justify-between w-full">
           <Link href={"/explore"}>
             <h1 className="text-xl font-bold">
@@ -50,22 +51,19 @@ export default function Navbar() {
                     className="cursor-pointer hover:scale-110 transition-transform duration-300 shadow-lg"
                     asChild
                   >
-                    <div
-                      className="profile overflow-hidden h-10 w-10 bg-blue-500 text-blue-950 font-semibold flex items-center justify-center uppercase rounded-full"
-                      aria-label="User profile"
-                    >
-                      {session.user.image ? (
-                        <img
-                          className="h-full w-full object-cover"
-                          src={session.user.image}
-                          alt={`${"User"}'s profile picture`}
-                        />
-                      ) : (
-                        <span>
-                          {session.user.fullName.split(" ").map((e) => e[0])}
-                        </span>
-                      )}
-                    </div>
+                    <Avatar className="w-12 h-12">
+                      {
+                        <>
+                          <AvatarImage
+                            src={user?.image || undefined}
+                            alt="User Avatar"
+                          />
+                          <AvatarFallback className="bg-primary text-primary-foreground text-3xl font-bold uppercase">
+                            {session?.user.fullName?.[0] || "?"}
+                          </AvatarFallback>
+                        </>
+                      }
+                    </Avatar>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <Link href={`/profile/${session.user?.fullName}`}>

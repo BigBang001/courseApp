@@ -26,9 +26,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "./ui/alert-dialog";
-import EditCourse from "./EditCourse";
+} from "@/components/ui/alert-dialog";
+import EditCourse from "@/components/EditCourse";
 import { useCourses } from "@/hooks/useCreateCourse";
+import AddClass from "@/components/AddClass";
 
 const CreatedCourses = () => {
   const { courses, isLoading } = useCourses();
@@ -43,7 +44,7 @@ const CreatedCourses = () => {
         ) : courses.length > 0 ? (
           courses.map((course) => <CourseCard key={course.id} {...course} />)
         ) : (
-          <p className="font font-semibold italic">No course found...</p>
+          <p className="font-semibold italic">No course found...</p>
         )}
       </div>
     </div>
@@ -52,13 +53,14 @@ const CreatedCourses = () => {
 
 function CourseCard(course: Course) {
   const { toast } = useToast();
+
   const handleDeleteCourse = async () => {
     try {
       const response = await axios.post(`/api/delete-course/${course.id}`);
       if (response.status === 200) {
         toast({
           title: "Deleted",
-          description: "Course Deleted succesfully",
+          description: "Course Deleted successfully",
         });
       }
     } catch (error) {
@@ -81,7 +83,6 @@ function CourseCard(course: Course) {
         />
       </div>
       <div className="z-50 flex flex-col h-full bg-black/90">
-        {" "}
         <CardHeader>
           <CardTitle className="capitalize text-blue-400 text-xl line-clamp-1">
             {course.title}
@@ -92,10 +93,10 @@ function CourseCard(course: Course) {
         </CardHeader>
         <CardContent className="flex-grow">
           <div className="text-lg text-white">
-            <span className="text-blue-100">Price :</span> ₹{course.price}
+            <span className="text-blue-100">Price:</span> ₹{course.price}
           </div>
           <div className="createdAt text-sm text-neutral-400">
-          <span className="text-blue-100">Created : </span>
+            <span className="text-blue-100">Created:</span>{" "}
             {new Date(course.createdAt!).toLocaleDateString("en-US", {
               year: "numeric",
               month: "long",
@@ -103,13 +104,8 @@ function CourseCard(course: Course) {
             })}
           </div>
         </CardContent>
-        <CardFooter className="flex gap-1">
-          <Button
-            className="text-white font-semibold"
-            variant={"link"}
-            size={"sm"}
-          >
-            {/* editCourse component */}
+        <CardFooter className="flex gap-1 flex-col">
+          <Button className="text-white font-semibold" variant="link" size="sm">
             <EditCourse
               duration={course.duration!}
               id={course.id!}
@@ -117,13 +113,12 @@ function CourseCard(course: Course) {
               title={course.title!}
             />
           </Button>
+          <div>
+            <AddClass courseId={course.id!} />
+          </div>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button
-                variant="destructive"
-                size={"sm"}
-                className="font-semibold"
-              >
+              <Button variant="destructive" size="sm" className="font-semibold">
                 <Trash2 />
                 Delete Course
               </Button>

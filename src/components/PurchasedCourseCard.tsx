@@ -13,11 +13,12 @@ import { Badge } from "./ui/badge";
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ReviewCourse from "./ReviewCourse";
+import Link from "next/link";
 
 const PurchasedCourseCard = ({ course }: { course: Course }) => {
 
   return (
-    <Card className="overflow-hidden flex flex-col h-full">
+    <Card className="overflow-hidden flex flex-col h-full bg-stone-100 dark:bg-stone-950/50">
       <div className="aspect-video overflow-hidden">
         <img
           className="h-full w-full object-cover transition-transform hover:scale-105"
@@ -50,9 +51,11 @@ const PurchasedCourseCard = ({ course }: { course: Course }) => {
         </div>
       </CardContent>
       <CardFooter className="p-3 flex gap-1">
+        <Link href={`/classes/${course.course.id}`}>
         <Button className="w-full" size="sm">
           Open Classes
         </Button>
+        </Link>
         <ReviewCourse courseId={course.course.id}/>
       </CardFooter>
     </Card>

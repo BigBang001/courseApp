@@ -57,7 +57,7 @@ const Page = () => {
 };
 
 const SkeletonCard = () => (
-  <div className="space-y-3 max-w-[300px]">
+  <div className="space-y-3 w-full">
     <Skeleton className="h-[168px] w-full" />
     <Skeleton className="h-5 w-3/4" />
     <div className="flex gap-1">
