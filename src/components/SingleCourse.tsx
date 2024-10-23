@@ -13,21 +13,22 @@ import { useParams } from "next/navigation";
 const SingleCourse = () => {
   const [course, setCourse] = useState<Course | null>(null);
   const params = useParams();
-  const courseId = params.courseId;  
+  const courseId  = params.courseId;
+  
 
   useEffect(() => {
-      const fetchCourse = async () => {
-        try {
-          const response = await axios.get(`/api/course-by-id/${courseId}`);
-          const fetchedCourse = response.data.course;
-          setCourse(fetchedCourse);
-          localStorage.setItem(`Singlecourse`, JSON.stringify(fetchedCourse));
-        } catch (error) {
-          console.log(error);
-        }
-      };
-      fetchCourse();
-  }, [courseId]);
+    const fetchCourse = async () => {
+      try {
+        const response = await axios.get(`/api/course-by-id/${courseId}`);
+        const fetchedCourse = response.data.course;
+        setCourse(fetchedCourse);
+        localStorage.setItem(`Singlecourse`, JSON.stringify(fetchedCourse));
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchCourse();
+  }, []);
 
   return (
     <div>

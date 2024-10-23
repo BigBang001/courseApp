@@ -9,7 +9,7 @@ interface classes {
   title: string;
 }
 
-const page = () => {
+const Page = () => {
   const [classes, setClasses] = useState<classes[]>([]);
   const params = useParams();
 
@@ -28,7 +28,7 @@ const page = () => {
     } catch (error) {
       console.log(error);
     }
-  }, []);
+  }, [params.courseId]);
 
   return (
     <div className=" mx-2 md:mx-10">
@@ -37,17 +37,13 @@ const page = () => {
       </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
         {classes.length > 0 ? (
-          classes.map((e , idx) => <ClassCard index={idx+1} classURL={e.videoUrl} title={e.title} />)
+          classes.map((e , idx) => <ClassCard key={idx} index={idx+1} classURL={e.videoUrl} title={e.title} />)
         ) : (
           <div>No claases added yet</div>
         )}
-        {/* <ClassCard />
-        <ClassCard />
-        <ClassCard />
-        <ClassCard /> */}
       </div>
     </div>
   );
 };
 
-export default page;
+export default Page;
