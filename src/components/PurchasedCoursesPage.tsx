@@ -3,9 +3,9 @@
 import PurchasedCourseCard from "@/components/PurchasedCourseCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import React from "react";
-import { usePurchasedCourses } from "@/hooks/usePurchasedCourse";
+import { usePurchasedCourses } from "@/hooks/usePurchasedCourses";
 
-const purchasedCoursesPage = () => {
+const PurchasedCoursesPage = () => {
  
   const  { purchasedCourses, isLoading } = usePurchasedCourses();
 
@@ -53,4 +53,4 @@ const SkeletonCard = () => (
   </div>
 );
 
-export default purchasedCoursesPage;
+export default PurchasedCoursesPage;

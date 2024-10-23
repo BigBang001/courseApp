@@ -41,7 +41,7 @@ import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { Input } from "@/components/ui/input";
 import { useMe } from "@/hooks/userMe";
-import { usePurchasedCourses } from "@/hooks/usePurchasedCourse";
+import { usePurchasedCourses } from "@/hooks/usePurchasedCourses";
 
 export default function Profile() {
   const { data: session } = useSession();
