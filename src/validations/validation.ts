@@ -14,10 +14,10 @@ export const signupValidation = z.object({
     .string()
     .min(6, { message: "Password must be at least 6 characters long" })
     .max(100, { message: "Password cannot exceed 100 characters" })
-  // .regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter" })
-  // .regex(/[a-z]/, { message: "Password must contain at least one lowercase letter" })
-  // .regex(/[0-9]/, { message: "Password must contain at least one number" })
-  // .regex(/[^a-zA-Z0-9]/, { message: "Password must contain at least one special character" })
+  .regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter" })
+  .regex(/[a-z]/, { message: "Password must contain at least one lowercase letter" })
+  .regex(/[0-9]/, { message: "Password must contain at least one number" })
+  .regex(/[^a-zA-Z0-9]/, { message: "Password must contain at least one special character" })
   ,
   role: z
     .enum(['admin', 'user'], { message: "Role must be either 'admin' or 'user'" }),
@@ -56,15 +56,15 @@ export const courseValidation = z.object({
 });
 
 export const creditCardSValidation = z.object({
-  cardHolderName: z.string().min(2, { message: "Card Holder name have atleast 2 charcter" }),
+  cardHolderName: z.string().min(2, { message: "Card Holder name must have at least 2 characters" }),
   bankName: z.string().min(1, { message: "Bank name is required" }),
-  accountNumber: z.string().min(8, { message: "Account number must be at least 8 characters" }),
+  accountNumber: z.string().length(16, { message: "Account number must have exactly 12 characters" }),
   cvv: z.string().length(3, { message: "CVV must be a 3-digit number" }),
-  // expiryDate: z.string().regex(/^(0[1-9]|3[0-9])\/?([0-9]{4}|[0-9]{2})$/, {
-  //   message: "Expiry date must be in MM/YY or MM/YYYY format"
-  // }),
-  expiryDate: z.string()
+  expiryDate: z.string().regex(/^(0[1-9]|1[0-2])\/([0-9]{2})$/, {
+    message: "Expiry date must be in MM/YY format with a valid month (01-12)"
+  }),
 });
+
 
 export const reviewValidation = z.object({
   content: z.string().min(10, { message: "Description must have atleast 10 Charcters" }),

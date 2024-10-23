@@ -19,6 +19,8 @@ export async function GET(request: Request, { params }: { params: { courseId: st
             },select : {
                 title : true,
                 videoUrl :  true
+            },orderBy:{
+                createdAt: "desc"
             }
         })
         

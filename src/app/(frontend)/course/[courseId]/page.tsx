@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { CreditCard, Loader2, Plus, Trash2 } from "lucide-react";
+import { CreditCard, Loader2, Plus, Trash2, TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SingleCourse from "@/components/SingleCourse";
 import { creditCardTypes } from "@/types/creditCardTypes";
@@ -62,7 +62,7 @@ export default function CoursePurchase() {
       if (response.status === 201) {
         toast({
           title: "Added",
-          description: response.data.message,
+          description: "Card Added Successfully",
           variant: "success",
         });
       }
@@ -94,11 +94,12 @@ export default function CoursePurchase() {
 
   const handleDeleteCreditCard = async (id: string) => {
     try {
+      setIsLoading(true);
       const response = await axios.delete(`/api/credit-card/${id}`);
       if (response.status === 200) {
         toast({
           title: "Deleted",
-          description: response.data.message,
+          description: response.data.message || "Course Deleted Succesfully",
           variant: "success",
         });
         fetchCards();
@@ -110,6 +111,8 @@ export default function CoursePurchase() {
         description: errorMessage,
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -128,7 +131,7 @@ export default function CoursePurchase() {
 
       toast({
         title: "Purchased",
-        description: response.data.message,
+        description: response.data.message || "Course Purchased Successfully",
         variant: "success",
       });
       setIsDialogOpen(false);
@@ -283,7 +286,11 @@ export default function CoursePurchase() {
                       size={"sm"}
                       variant={"destructive"}
                     >
-                      <Trash2 className="text-red-100" />
+                      {isLoading ? (
+                        <Loader2 className="animate-spin" />
+                      ) : (
+                        <Trash2 className="text-red-100" />
+                      )}
                     </Button>
                   </div>
                 </CardHeader>
@@ -326,8 +333,11 @@ export default function CoursePurchase() {
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
                 <DialogTitle>Add Credit Card</DialogTitle>
-                <DialogDescription>
-                  Fill all card details carefully
+                <DialogDescription >
+                  <h1 className="flex bg-red-400/5 p-1 text-sm gap-1 rounded-lg text-red-950 font-semibold">
+                    <TriangleAlert /> Don't use your Real Credit Card
+                    details this is just Prototype
+                  </h1>
                 </DialogDescription>
               </DialogHeader>
               <form onSubmit={handleAddCard}>

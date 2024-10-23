@@ -16,10 +16,11 @@ export async function POST(request: Request) {
 
     const { bankName, accountNumber, cvv, expiryDate, cardHolderName } = await request.json();
     const { success, error } = creditCardSValidation.safeParse({ cardHolderName, bankName, accountNumber, cvv, expiryDate })
+    
     if (!success) {
         return NextResponse.json({
             success: false,
-            message: "Validation error",
+            message: error.errors[0].message,
             error
         }, { status: 400 })
     }
@@ -47,7 +48,7 @@ export async function POST(request: Request) {
         if (account?.accountNumber === accountNumber) {
             return NextResponse.json({
                 success: false,
-                message: "Account number is Invalid or Not Unique",
+                message: "Account number is Not Unique",
             }, { status: 404 })
         }
 

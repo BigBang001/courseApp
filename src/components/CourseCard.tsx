@@ -33,6 +33,7 @@ const CourseCard = (course: Course) => {
       course.price!) *
     100;
 
+
   const rating = course.Review.reduce((acc, cv) => acc + cv.rating, 0);
   const avgRating = rating > 0 ? rating / course.Review.length : 0;
   const roundedRating = Math.round(avgRating * 2) / 2;
