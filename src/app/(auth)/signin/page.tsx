@@ -68,16 +68,13 @@ export default function SignInPage() {
     }
   }
 
-  const handleGithubSignIn = () => {
-    signIn('github', { callbackUrl: '/explore' })
-  }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-popover">
+    <div className="flex items-center px-2 justify-center min-h-screen bg-popover">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Sign In</CardTitle>
-          <CardDescription className="text-center">
+          <CardTitle className="py-1">Sign In</CardTitle>
+          <CardDescription >
             Enter your credentials to access your account
           </CardDescription>
         </CardHeader>
@@ -120,25 +117,6 @@ export default function SignInPage() {
               )}
             </Button>
           </form>
-          <div className="relative my-4">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">
-                Or continue with
-              </span>
-            </div>
-          </div>
-          <Button
-            type="button"
-            variant="outline"
-            className="w-full"
-            onClick={handleGithubSignIn}
-          >
-            <Github className="mr-2 h-4 w-4" />
-            Sign in with GitHub
-          </Button>
         </CardContent>
         <CardFooter>
           <p className="text-center text-sm text-muted-foreground w-full">

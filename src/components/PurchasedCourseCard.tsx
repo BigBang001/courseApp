@@ -16,7 +16,8 @@ import ReviewCourse from "./ReviewCourse";
 import Link from "next/link";
 
 const PurchasedCourseCard = ({ course }: { course: Course }) => {
-
+  const courseTitle = course.course.title
+  
   return (
     <Card className="overflow-hidden flex flex-col h-full bg-stone-100 dark:bg-stone-950/50">
       <div className="aspect-video overflow-hidden">
@@ -45,18 +46,21 @@ const PurchasedCourseCard = ({ course }: { course: Course }) => {
         </div>
         <div className="flex items-center gap-1 mb-1">
           <span className="font-semibold text-sm">4.0</span>
-          <div className="flex">
-            
-          </div>
+          <div className="flex"></div>
         </div>
       </CardContent>
       <CardFooter className="p-3 flex gap-1">
-        <Link href={`/classes/${course.course.id}`}>
-        <Button className="w-full" size="sm">
-          Open Classes
-        </Button>
+        <Link
+          href={{
+            pathname: `/classes/${course.course.id}`,
+            query: { courseTitle },
+          }}
+        >
+          <Button className="w-full" size="sm">
+            Open Classes
+          </Button>
         </Link>
-        <ReviewCourse courseId={course.course.id}/>
+        <ReviewCourse courseId={course.course.id} />
       </CardFooter>
     </Card>
   );

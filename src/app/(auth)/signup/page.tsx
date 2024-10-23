@@ -38,7 +38,7 @@ interface FormValues {
 
 export default function SignUpPage() {
   const { toast } = useToast();
-  const  router = useRouter();
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [values, setValues] = useState<FormValues>({
     fullName: "",
@@ -58,12 +58,21 @@ export default function SignUpPage() {
         variant: "default",
       });
 
-      router.replace("/signin")
-    } catch (error) {
-      console.log(error);
+      const result = await signIn("credentials", {
+        redirect: false,
+        email: values.email,
+        password: values.password,
+      });
+
+      if (result?.ok) {
+        router.replace("/explore");
+      }
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || "An error occurred";
+
       toast({
         title: "Error",
-        description: "Error while Registering User.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -71,16 +80,12 @@ export default function SignUpPage() {
     }
   };
 
-  const handleGithubSignIn = () => {
-    signIn('github',{callbackUrl : "/explore"})
-  }
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValues({ ...values, [e.target.id]: e.target.value });
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
+    <div className="flex px-2 items-center justify-center min-h-screen">
       <Card className="w-full max-w-lg">
         <CardHeader>
           <CardTitle>Sign Up</CardTitle>
@@ -159,25 +164,6 @@ export default function SignUpPage() {
               )}
             </Button>
           </form>
-          <div className="relative my-4">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">
-                Or continue with
-              </span>
-            </div>
-          </div>
-          <Button
-            type="button"
-            variant="outline"
-            className="w-full"
-            onClick={handleGithubSignIn}
-          >
-            <Github className="mr-2 h-4 w-4" />
-            Sign up with GitHub
-          </Button>
         </CardContent>
         <CardFooter className="flex justify-between">
           <p className="text-sm text-muted-foreground">

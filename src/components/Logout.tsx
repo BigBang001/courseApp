@@ -15,15 +15,15 @@ import { signOut } from "next-auth/react";
 
 const Logout = () => {
   const handleLogout = () => {
-    signOut({ callbackUrl: "/signin" });
+    signOut({ callbackUrl: "/signin" ,redirect : true});
   };
 
   return (
     <div className="flex gap-2">
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <Button className="w-full sm:w-auto flex items-center justify-center">
-            <LogOut className="mr-2 h-4 w-4" />
+          <Button size={"sm"} className="w-full flex">
+            <LogOut/>
             Logout
           </Button>
         </AlertDialogTrigger>
@@ -48,6 +48,7 @@ const Logout = () => {
       <AlertDialog>
         <AlertDialogTrigger asChild>
           <Button
+          size={"sm"}
             variant="destructive"
             className="w-full sm:w-auto flex items-center justify-center"
           >

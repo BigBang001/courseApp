@@ -56,7 +56,7 @@ export default function EditUserDetails() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button  variant="default"><Edit/>Edit User Details</Button>
+        <Button className="w-full"  variant="default" size={"sm"}><Edit/>Edit User Details</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

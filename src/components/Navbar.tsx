@@ -18,7 +18,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 export default function Navbar() {
   const { data: session, status } = useSession();
   const handleSignOut = async () => {
-    await signOut({ callbackUrl: "/signin" });
+    await signOut({ callbackUrl: "/signin", redirect: true });
   };
   const { user } = useMe();
   const { setTheme, theme } = useTheme();

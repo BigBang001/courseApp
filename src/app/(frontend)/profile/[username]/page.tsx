@@ -42,7 +42,7 @@ import { Input } from "@/components/ui/input";
 import { useMe } from "@/hooks/userMe";
 
 export default function Profile() {
-  const { data: session} = useSession();
+  const { data: session } = useSession();
   const [isUploading, setIsUploading] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const { toast } = useToast();
@@ -68,7 +68,7 @@ export default function Profile() {
     formData.append("avatar", blob, "avatar.jpg");
 
     try {
-      const response = await axios.post("/api/upload-avatar", formData, {
+      await axios.post("/api/upload-avatar", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       toast({
@@ -76,7 +76,6 @@ export default function Profile() {
         description: "Avatar updated successfully",
         variant: "success",
       });
-
     } catch (error) {
       toast({
         title: "Error",
@@ -99,7 +98,7 @@ export default function Profile() {
     }
   };
 
- const { user } = useMe();
+  const { user } = useMe();
 
   return (
     <div className="container mx-auto gap-4 md:grid grid-cols-3 p-4">
@@ -150,28 +149,34 @@ export default function Profile() {
           </div>
         </CardHeader>
         {previewImage && (
-            <div className="flex justify-center space-x-2 mb-4">
-              <Button variant={"default"} onClick={handleAvatarUpload} disabled={isUploading}>
-                {isUploading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Uploading...
-                  </>
-                ) : (
-                  "Save New Avatar"
-                )}
-              </Button>
-              <Button variant="outline" onClick={cancelPreview}>
-                <X className="mr-2 h-4 w-4" />
-                Cancel
-              </Button>
-            </div>
-          )}
+          <div className="flex justify-center space-x-2 mb-4">
+            <Button
+              variant={"default"}
+              onClick={handleAvatarUpload}
+              disabled={isUploading}
+            >
+              {isUploading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Uploading...
+                </>
+              ) : (
+                "Save New Avatar"
+              )}
+            </Button>
+            <Button variant="outline" onClick={cancelPreview}>
+              <X className="mr-2 h-4 w-4" />
+              Cancel
+            </Button>
+          </div>
+        )}
         <CardContent>
           <CardDescription className="mb-4">{user?.bio}</CardDescription>
           <div className="space-y-4">
-            <div className="flex items-center gap-2"><EditUserDetails />
-            <ChangePassword /></div>
+            <div className="flex items-center gap-2">
+              <EditUserDetails />
+              <ChangePassword />
+            </div>
             <Logout />
           </div>
         </CardContent>

@@ -16,8 +16,10 @@ export default function VideoPlayer({ videoUrl }: VideoPlayerProps) {
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
   const [isFullscreen, setIsFullscreen] = useState(false)
+  const [showControls, setShowControls] = useState(true)
   const videoRef = useRef<HTMLVideoElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+  const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     const videoElement = videoRef.current
@@ -35,6 +37,23 @@ export default function VideoPlayer({ videoUrl }: VideoPlayerProps) {
     }
   }, [])
 
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement)
+    }
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange)
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange)
+  }, [])
+
+  const resetControlsTimeout = () => {
+    if (controlsTimeoutRef.current) {
+      clearTimeout(controlsTimeoutRef.current)
+    }
+    setShowControls(true)
+    controlsTimeoutRef.current = setTimeout(() => setShowControls(true), 3000)
+  }
+
   const togglePlay = () => {
     if (videoRef.current) {
       if (isPlaying) {
@@ -44,6 +63,7 @@ export default function VideoPlayer({ videoUrl }: VideoPlayerProps) {
       }
       setIsPlaying(!isPlaying)
     }
+    resetControlsTimeout()
   }
 
   const toggleMute = () => {
@@ -51,6 +71,7 @@ export default function VideoPlayer({ videoUrl }: VideoPlayerProps) {
       videoRef.current.muted = !isMuted
       setIsMuted(!isMuted)
     }
+    resetControlsTimeout()
   }
 
   const handleVolumeChange = (newVolume: number[]) => {
@@ -60,6 +81,7 @@ export default function VideoPlayer({ videoUrl }: VideoPlayerProps) {
       setVolume(volumeValue)
       setIsMuted(volumeValue === 0)
     }
+    resetControlsTimeout()
   }
 
   const handleSeek = (newTime: number[]) => {
@@ -68,6 +90,7 @@ export default function VideoPlayer({ videoUrl }: VideoPlayerProps) {
       videoRef.current.currentTime = timeValue
       setCurrentTime(timeValue)
     }
+    resetControlsTimeout()
   }
 
   const toggleFullscreen = () => {
@@ -82,7 +105,7 @@ export default function VideoPlayer({ videoUrl }: VideoPlayerProps) {
         document.exitFullscreen()
       }
     }
-    setIsFullscreen(!isFullscreen)
+    resetControlsTimeout()
   }
 
   const formatTime = (time: number) => {
@@ -92,14 +115,24 @@ export default function VideoPlayer({ videoUrl }: VideoPlayerProps) {
   }
 
   return (
-    <div ref={containerRef} className="max-w-full w-full mx-auto relative">
-      <div className="relative pt-[56.25%]"> {/* 16:9 aspect ratio */}
+    <div 
+      ref={containerRef} 
+      className="max-w-full w-full mx-auto relative group"
+      onMouseMove={resetControlsTimeout}
+      onTouchStart={resetControlsTimeout}
+    >
+      <div className="relative pt-[56.25%]">
         <video
           ref={videoRef}
           src={videoUrl}
-          className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
+          className="absolute top-10 left-0 w-full h-full rounded-lg shadow-lg cursor-pointer"
+          onClick={togglePlay}
         />
-        <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-4">
+        <div 
+          className={`absolute w-[80%] items-center flex md:block mx-auto rounded-xl backdrop-blur-xl md:bottom-0 -bottom-8 left-0 right-0 bg-black bg-opacity-30 border border-primary/10 text-white p-2 md:p-4 transition-opacity duration-300 ${
+            showControls ? 'opacity-100' : 'opacity-0'
+          } ${isFullscreen ? 'pb-8' : ''}`}
+        >
           <Slider
             className="w-full mb-2 cursor-grab"
             value={[currentTime]}
@@ -110,16 +143,16 @@ export default function VideoPlayer({ videoUrl }: VideoPlayerProps) {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Button variant="ghost" size="icon" onClick={togglePlay}>
-                {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
+                {isPlaying ? <Pause className="md:h-6 md:w-6" /> : <Play className="md:h-6 md:w-6" />}
               </Button>
-              <span className="text-sm">{formatTime(currentTime)} / {formatTime(duration)}</span>
+              <span className="text-sm hidden sm:inline">{formatTime(currentTime)} / {formatTime(duration)}</span>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-0 md:space-x-2">
               <Button variant="ghost" size="icon" onClick={toggleMute}>
                 {isMuted ? <VolumeX className="h-6 w-6" /> : <Volume2 className="h-6 w-6" />}
               </Button>
               <Slider
-                className="w-24 cursor-pointer"
+                className="md:w-24 w-14 cursor-pointer"
                 value={[isMuted ? 0 : volume]}
                 max={1}
                 step={0.01}

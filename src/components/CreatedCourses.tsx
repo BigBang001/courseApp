@@ -1,8 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import axios, { AxiosError } from "axios";
-import { Edit, Star, Trash2 } from "lucide-react";
+import { Edit, Loader2, Star, Trash2 } from "lucide-react";
 
 import {
   Card,
@@ -53,14 +53,16 @@ const CreatedCourses = () => {
 
 function CourseCard(course: Course) {
   const { toast } = useToast();
-
+  const [isLoading, setIsLoading] = useState(false);
   const handleDeleteCourse = async () => {
+    setIsLoading(true);
     try {
       const response = await axios.post(`/api/delete-course/${course.id}`);
       if (response.status === 200) {
         toast({
           title: "Deleted",
           description: "Course Deleted successfully",
+          variant: "success",
         });
       }
     } catch (error) {
@@ -70,6 +72,8 @@ function CourseCard(course: Course) {
         description: axiosError.message,
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -104,8 +108,12 @@ function CourseCard(course: Course) {
             })}
           </div>
         </CardContent>
-        <CardFooter className="flex gap-1 flex-col">
-          <Button className="text-white font-semibold" variant="link" size="sm">
+        <CardFooter className="grid grid-cols-5 gap-2">
+          <Button
+            className="text-white font-semibold col-span-2"
+            variant="link"
+            size="sm"
+          >
             <EditCourse
               duration={course.duration!}
               id={course.id!}
@@ -116,28 +124,41 @@ function CourseCard(course: Course) {
           <div>
             <AddClass courseId={course.id!} />
           </div>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="destructive" size="sm" className="font-semibold">
-                <Trash2 />
-                Delete Course
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>
-                  Are you sure you want to delete this Course?
-                </AlertDialogTitle>
-                <AlertDialogDescription>{course.title}</AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDeleteCourse}>
-                  Confirm
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <div className="absolute bottom-0 right-0">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="destructive"
+                  size="icon"
+                  className="font-semibold rounded-tl-3xl col-span-1"
+                >
+                  {isLoading ? (
+                    <div>
+                      <Loader2 className="animate-spin font-semibold text-red-950" />
+                    </div>
+                  ) : (
+                    <Trash2 />
+                  )}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    Are you sure you want to delete this Course?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    {course.title}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleDeleteCourse}>
+                    Confirm
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
         </CardFooter>
       </div>
     </Card>

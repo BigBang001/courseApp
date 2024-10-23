@@ -14,7 +14,6 @@ const ClassCard = ({
   index: number
 }) => {
   const params = useParams();
-  
   return (
     <div>
       <Card className="bg-stone-100 dark:bg-stone-950/50 md:h-80 ">
