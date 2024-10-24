@@ -1,4 +1,3 @@
-
 import React from "react";
 import {
   Card,
@@ -24,6 +23,7 @@ import {
 } from "@/components/ui/drawer";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import CourseReviews from "./CourseReviews";
 
 const CourseCard = (course: Course) => {
   const offerPercentage =
@@ -32,7 +32,6 @@ const CourseCard = (course: Course) => {
       parseInt((Math.random() * 2000).toFixed())) /
       course.price!) *
     100;
-
 
   const rating = course.Review.reduce((acc, cv) => acc + cv.rating, 0);
   const avgRating = rating > 0 ? rating / course.Review.length : 0;
@@ -114,7 +113,7 @@ const CourseCard = (course: Course) => {
                   {course.shortDescription}
                 </p>
 
-                <DrawerDescription className="dark:bg-neutral-900 bg-neutral-100 dark:text-white text-black h-[50vh] md:h-[55vh] text-left overflow-y-scroll rounded-xl p-5">
+                <DrawerDescription className="dark:bg-neutral-900 bg-neutral-100 dark:text-white text-black h-[50vh] md:h-[55vh] text-left overflow-y-scroll rounded-xl p-2 md:p-5">
                   <h1 className="font-semibold text-xl text-blue-500 pb-2">
                     Course Details:
                   </h1>
@@ -138,7 +137,17 @@ const CourseCard = (course: Course) => {
                       {course.level}
                     </span>
                   </h1>
-                  <h1 className="font-semibold text-2xl text-blue-500 mb-2">Course description:</h1>
+                  <div className="py-4">
+                    <h1 className="text-blue-500 font-semibold text-lg">
+                      Reviews :
+                    </h1>
+                    <div className="dark:bg-neutral-800 bg-neutral-200 rounded-2xl p-2">
+                      <CourseReviews reviews={course.Review} />
+                    </div>
+                  </div>
+                  <h1 className="font-semibold text-2xl text-blue-500 mb-2">
+                    Course description:
+                  </h1>
                   <p
                     dangerouslySetInnerHTML={{
                       __html: course.description as string,
@@ -147,7 +156,10 @@ const CourseCard = (course: Course) => {
                 </DrawerDescription>
                 <div className="dark:bg-neutral-900 bg-neutral-100 dark:text-white text-black flex items-center justify-between rounded-xl p-5">
                   <h1 className="text-blue-500">
-                    Price: <span className="font-semibold dark:text-white text-black">₹{course.price}</span>{" "}
+                    Price:{" "}
+                    <span className="font-semibold dark:text-white text-black">
+                      ₹{course.price}
+                    </span>{" "}
                     <span className="text-neutral-500 line-through">
                       ₹
                       {course.price! +

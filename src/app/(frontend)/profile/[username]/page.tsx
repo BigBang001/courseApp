@@ -26,26 +26,25 @@ import {
   Loader2,
   X,
 } from "lucide-react";
-import PurchasedCoursesPage from '@/components/PurchasedCoursesPage'
+import PurchasedCoursesPage from "@/components/PurchasedCoursesPage";
 import { useSession } from "next-auth/react";
 import CreatedCourses from "@/components/CreatedCourses";
 import Link from "next/link";
 import CourseStatics from "@/components/CourseStatics";
 import AdminEarnings from "@/components/AdminEarnings";
-import Logout from "@/components/Logout";
 import EditUserDetails from "@/components/EditUserDetails";
 import ChangePassword from "@/components/ChangePassword";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
-import { useEffect, useRef, useState } from "react";
+import {  useRef, useState } from "react";
 import axios from "axios";
 import { Input } from "@/components/ui/input";
 import { useMe } from "@/hooks/userMe";
-import { usePurchasedCourses } from "@/hooks/usePurchasedCourses";
+import AccountManage from "@/components/AccountManage";
+
 
 export default function Profile() {
   const { data: session } = useSession();
-  const { isLoading, purchasedCourses } = usePurchasedCourses();
   const [isUploading, setIsUploading] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const { toast } = useToast();
@@ -79,10 +78,12 @@ export default function Profile() {
         description: "Avatar updated successfully",
         variant: "success",
       });
-    } catch (error) {
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || "An error occurred";
+
       toast({
         title: "Error",
-        description: "Failed to update avatar",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -180,7 +181,7 @@ export default function Profile() {
               <EditUserDetails />
               <ChangePassword />
             </div>
-            <Logout />
+            <AccountManage />
           </div>
         </CardContent>
       </Card>
@@ -294,7 +295,7 @@ export default function Profile() {
                           </DrawerDescription>
                         </DrawerHeader>
                         <div className="p-4 space-y-4 max-h-[60vh] overflow-y-auto custom-scrollbar">
-                        <PurchasedCoursesPage/>
+                          <PurchasedCoursesPage />
                         </div>
                         <div className="w-full flex items-center justify-center p-4">
                           <DrawerClose>

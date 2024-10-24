@@ -42,18 +42,17 @@ const EditCourse = ({ id, title, duration, price }: UpdateCourse) => {
         courseId: id,
         ...values,
       })
-      console.log(response.data)
       toast({
         title: "Updated!",
-        description: response.data.message,
+        description: response.data.message || "Course Details Updated Successfully",
+        variant: "success"
       })
       setDialogOpen(false)
     } catch (error: any) {
+      const errorMessage = error.response?.data?.message || "An error occurred";
       toast({
         title: "Error",
-        description:
-          error.response?.data?.error?.[0]?.message ||
-          "Error while updating course details",
+        description: errorMessage,
         variant: "destructive",
       })
     } finally {

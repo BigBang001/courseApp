@@ -51,6 +51,7 @@ model recordedClass {
   id        String   @unique @default(uuid())
   title     String
   videoUrl String
+  markAsComplete Boolean @default(false)
   createdAt DateTime @default(now())
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -79,7 +80,7 @@ model Review {
   courseId  String
   userId    String
   course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model purchasedCourses {

@@ -20,6 +20,7 @@ import { useSession } from "next-auth/react";
 export default function ReviewCourse({ courseId }: { courseId: string }) {
   const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(false);
+  const [close, setClose] = useState(false);
   const [values, setValues] = useState({
     content: "",
     rating: 0,
@@ -31,24 +32,25 @@ export default function ReviewCourse({ courseId }: { courseId: string }) {
     setIsLoading(true);
 
     try {
-      const response = await axios.post("/api/review-course", {
+      await axios.post("/api/review-course", {
         ...values,
         userId: session?.user.id,
         courseId,
       });
       
       await new Promise((resolve) => setTimeout(resolve, 1000));
-
       toast({
         title: "Review submitted",
         description: "Thank you for your feedback!",
+        variant: "success"
       });
+      setClose(false)
     } catch (error: any) {
       const errorMessage =
         error.response?.data?.message ||
         error.response?.data?.error?.[0]?.message ||
         "Error while reviewing course";
-
+      setClose(true);
       toast({
         title: "Review failed!",
         description: errorMessage,
@@ -60,7 +62,7 @@ export default function ReviewCourse({ courseId }: { courseId: string }) {
   };
 
   return (
-    <Dialog>
+    <Dialog open={close} onOpenChange={setClose}  >
       <DialogTrigger asChild>
         <Button variant="outline" size="sm" className="gap-2">
           <Star className="w-4 h-4" />

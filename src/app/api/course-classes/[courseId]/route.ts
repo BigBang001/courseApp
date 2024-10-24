@@ -17,10 +17,12 @@ export async function GET(request: Request, { params }: { params: { courseId: st
             where: {
                 courseId : params.courseId
             },select : {
+                id: true,
                 title : true,
-                videoUrl :  true
+                videoUrl :  true,
+                markAsComplete: true
             },orderBy:{
-                createdAt: "desc"
+                createdAt: "asc"
             }
         })
         

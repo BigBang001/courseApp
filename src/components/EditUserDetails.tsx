@@ -36,7 +36,7 @@ export default function EditUserDetails() {
       });
       toast({
         title: "Updated",
-        description: response.data.message,
+        description: response.data.message || "User details updated Successfully", 
         variant: "success",
       });
     } catch (error: any) {

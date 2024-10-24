@@ -17,7 +17,19 @@ export async function GET() {
             orderBy: {
                 createdAt: "desc",
             },include:{
-                Review: true
+                Review: {
+                    select : {
+                        content : true,
+                        id:true,
+                        rating : true,
+                        user : {
+                            select : {
+                                fullName : true,
+                                image : true
+                            }
+                        }
+                    }
+                }
             }
         })
         return NextResponse.json({

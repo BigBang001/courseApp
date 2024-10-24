@@ -16,12 +16,11 @@ export async function POST(request: Request) {
 
     const { bankName, accountNumber, cvv, expiryDate, cardHolderName } = await request.json();
     const { success, error } = creditCardSValidation.safeParse({ cardHolderName, bankName, accountNumber, cvv, expiryDate })
-    
+
     if (!success) {
         return NextResponse.json({
             success: false,
             message: error.errors[0].message,
-            error
         }, { status: 400 })
     }
     try {
@@ -51,13 +50,13 @@ export async function POST(request: Request) {
                 message: "Account number is Not Unique",
             }, { status: 404 })
         }
-
+        const hashedCCNumber = await bcrypt.hash(accountNumber, 10)
         const hashedCVV = await bcrypt.hash(cvv, 10);
 
         await prisma.creditCard.create({
             data: {
                 cardHolderName,
-                accountNumber, bankName, expiryDate, userId: user.id,
+                accountNumber: hashedCCNumber, bankName, expiryDate, userId: user.id,
                 cvv: hashedCVV
             }
         })

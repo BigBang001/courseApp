@@ -43,10 +43,6 @@ const PurchasedCourseCard = ({ course }: { course: Course }) => {
             </Badge>
           ))}
         </div>
-        <div className="flex items-center gap-1 mb-1">
-          <span className="font-semibold text-sm">4.0</span>
-          <div className="flex"></div>
-        </div>
       </CardContent>
       <CardFooter className="p-3 flex gap-1">
         <Link

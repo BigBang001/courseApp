@@ -82,15 +82,14 @@ export default function AddCourse() {
       toast({
         title: "Created!",
         description: `${response.data.course.title} course Created Successfully`,
-        variant: "default",
+        variant: "success",
       });
       router.push("/explore");
     } catch (error: any) {
-      console.log(error);
+      const errorMessage = error.response?.data?.message || "An error occurred";
       toast({
         title: "Error",
-        description:
-          error.response.data.error[0].message || "Error while creating Course",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {

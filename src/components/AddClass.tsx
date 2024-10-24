@@ -67,7 +67,7 @@ export default function AddClass({ courseId }: { courseId: string }) {
       formData.append("courseId", values.courseId)
       formData.append("recordedClass", file)
 
-      const response = await axios.post('/api/add-class', formData, {
+      await axios.post('/api/add-class', formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -75,17 +75,18 @@ export default function AddClass({ courseId }: { courseId: string }) {
 
       toast({
         title: "Created!",
-        description: `Class "${response.data.data.title}" added successfully!`,
+        description: `Class added successfully!`,
         variant: "default",
       })
 
       setIsOpen(false)
       router.refresh() // Refresh the page to show the new class
     } catch (error: any) {
-      console.error("Error adding class:", error)
+      const errorMessage = error.response?.data?.message || "An error occurred";
+
       toast({
         title: "Error",
-        description: error.response?.data?.message || "Error while adding class.",
+        description: errorMessage,
         variant: "destructive",
       })
     } finally {

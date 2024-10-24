@@ -9,6 +9,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 interface Class {
   videoUrl: string;
   title: string;
+  id: string;
+  markAsComplete: boolean;
 }
 
 export default function Page() {
@@ -58,7 +60,9 @@ export default function Page() {
         ) : classes.length > 0 ? (
           classes.map((classItem, idx) => (
             <ClassCard
-              key={idx}
+              classId={classItem.id}
+              markAsComplete={classItem.markAsComplete}
+              key={classItem.id}
               index={idx + 1}
               classURL={classItem.videoUrl}
               title={classItem.title}
