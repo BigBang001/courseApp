@@ -83,7 +83,7 @@ export default function LandingPage() {
             </div>
           </div>
         </main>
-        <footer className="py-4 mx-2 flec items-center w-full justify-center">
+        <footer className="py-4 mx-auto flex items-center w-full justify-center">
           <div className="container dark:bg-neutral-900 dark:bg-opacity-70 bg-neutral-200 p-4 border dark:border-neutral-800 bg-opacity-35 rounded-lg w-full ">
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
               <div>
