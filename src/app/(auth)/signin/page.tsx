@@ -1,10 +1,14 @@
 'use client'
 
-import React, { useState } from "react"
+import React from "react"
 import { signIn } from "next-auth/react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Loader2, Github } from "lucide-react"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import * as z from "zod"
+
 import '@/app/globals.css'
 import { Button } from "@/components/ui/button"
 import {
@@ -15,23 +19,33 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useToast } from "@/hooks/use-toast"
 import { cn } from "@/lib/utils"
+import ForgotPassword from "@/components/ForgotPassword"
+import { signinValidation } from "@/validations/validation"
+import { useToast } from "@/hooks/use-toast"
 
 export default function SignInPage() {
   const { toast } = useToast()
   const router = useRouter()
-  const [isLoading, setIsLoading] = useState(false)
-  const [values, setValues] = useState({
-    email: "",
-    password: "",
+
+  const form = useForm<z.infer<typeof signinValidation>>({
+    resolver: zodResolver(signinValidation),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   })
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+  async function onSubmit(values: z.infer<typeof signinValidation>) {
     try {
       const response = await signIn("credentials", {
         redirect: false,
@@ -57,70 +71,75 @@ export default function SignInPage() {
         router.replace("/explore")
       }
     } catch (error) {
-      console.log(error);
       toast({
         title: "Error",
         description: "An unexpected error occurred. Please try again.",
         variant: "destructive",
       })
-    } finally {
-      setIsLoading(false)
     }
   }
 
-
   return (
     <div className="flex items-center px-2 justify-center min-h-screen bg-popover">
-      <Card className=" w-full max-w-md">
+      <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="py-1">Sign In</CardTitle>
-          <CardDescription >
+          <CardDescription>
             Enter your credentials to access your account
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="m@example.com"
-                value={values.email}
-                onChange={(e) => setValues({ ...values, email: e.target.value })}
-                required
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input placeholder="m@example.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={values.password}
-                onChange={(e) => setValues({ ...values, password: e.target.value })}
-                required
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="••••••••" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <span className="flex items-center justify-center">
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Signing in...
-                </span>
-              ) : (
-                "Sign In"
-              )}
-            </Button>
-          </form>
+              <div className="flex justify-end">
+                <ForgotPassword />
+              </div>
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={form.formState.isSubmitting}
+              >
+                {form.formState.isSubmitting ? (
+                  <span className="flex items-center justify-center">
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Signing in...
+                  </span>
+                ) : (
+                  "Sign In"
+                )}
+              </Button>
+            </form>
+          </Form>
         </CardContent>
         <CardFooter>
           <p className="text-center text-sm text-muted-foreground w-full">
-            Don't have an account?
+            Don't have an account?{" "}
             <Link
               href="/signup"
               className={cn(

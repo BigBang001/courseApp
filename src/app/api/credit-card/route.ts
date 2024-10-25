@@ -50,13 +50,12 @@ export async function POST(request: Request) {
                 message: "Account number is Not Unique",
             }, { status: 404 })
         }
-        const hashedCCNumber = await bcrypt.hash(accountNumber, 10)
         const hashedCVV = await bcrypt.hash(cvv, 10);
 
         await prisma.creditCard.create({
             data: {
                 cardHolderName,
-                accountNumber: hashedCCNumber, bankName, expiryDate, userId: user.id,
+                accountNumber, bankName, expiryDate, userId: user.id,
                 cvv: hashedCVV
             }
         })

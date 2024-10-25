@@ -13,7 +13,6 @@ export async function PUT(request: Request) {
                 id: session?.user.id
             }
         })
-        console.log("user : ",user?.bio);
 
         if (!user) {
             return NextResponse.json({

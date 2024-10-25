@@ -1,9 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import axios from "axios";
 import Link from "next/link";
 import { Github, Loader2 } from "lucide-react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -14,47 +19,46 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
-
-interface FormValues {
-  fullName: string;
-  email: string;
-  password: string;
-  role: string;
-}
+import { signupValidation } from "@/validations/validation";
 
 export default function SignUpPage() {
   const { toast } = useToast();
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [values, setValues] = useState<FormValues>({
-    fullName: "",
-    email: "",
-    password: "",
-    role: "user",
+
+  const form = useForm<z.infer<typeof signupValidation>>({
+    resolver: zodResolver(signupValidation),
+    defaultValues: {
+      fullName: "",
+      email: "",
+      password: "",
+      role: "user",
+    },
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  async function onSubmit(values: z.infer<typeof signupValidation>) {
     try {
-      setLoading(true);
       const response = await axios.post(`/api/signup`, values);
       toast({
         title: "Registered",
-        description: response.data.message,
+        description: response.data.message || "User Registered successfully",
         variant: "default",
       });
 
@@ -69,20 +73,13 @@ export default function SignUpPage() {
       }
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || "An error occurred";
-
       toast({
         title: "Error",
         description: errorMessage,
         variant: "destructive",
       });
-    } finally {
-      setLoading(false);
     }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValues({ ...values, [e.target.id]: e.target.value });
-  };
+  }
 
   return (
     <div className="flex px-2 items-center justify-center min-h-screen">
@@ -94,76 +91,97 @@ export default function SignUpPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit}>
-            <div className="grid w-full items-center gap-4">
-              <div className="flex flex-col space-y-1.5">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="fullName">Full Name</Label>
-                    <Input
-                      id="fullName"
-                      value={values.fullName}
-                      onChange={handleChange}
-                      placeholder="Kush Chaudhary"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="role">Role</Label>
-                    <Select
-                      value={values.role}
-                      onValueChange={(value) =>
-                        setValues({ ...values, role: value })
-                      }
-                    >
-                      <SelectTrigger id="role">
-                        <SelectValue placeholder="Select Role" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>Select Role</SelectLabel>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="fullName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Full Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Kush Chaudhary" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Role</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Role" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
                           <SelectItem value="admin">Admin</SelectItem>
                           <SelectItem value="user">User</SelectItem>
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={values.email}
-                    onChange={handleChange}
-                    placeholder="kushchaudhary@gmail.com"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={values.password}
-                    onChange={handleChange}
-                    placeholder="••••••••"
-                    required
-                  />
-                </div>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
-            </div>
-            <Button type="submit" className="w-full mt-4" disabled={loading}>
-              {loading ? (
-                <span className="flex items-center justify-center gap-2">
-                  <Loader2 className="animate-spin" />
-                  Registering...
-                </span>
-              ) : (
-                "Register"
-              )}
-            </Button>
-          </form>
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="email"
+                        placeholder="kushchaudhary@gmail.com"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="••••••••"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={form.formState.isSubmitting}
+              >
+                {form.formState.isSubmitting ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <Loader2 className="animate-spin" />
+                    Registering...
+                  </span>
+                ) : (
+                  "Register"
+                )}
+              </Button>
+            </form>
+          </Form>
         </CardContent>
         <CardFooter className="flex justify-between">
           <p className="text-sm text-muted-foreground">
