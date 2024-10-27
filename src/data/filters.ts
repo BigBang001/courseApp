@@ -1,4 +1,4 @@
-{
+export const data = {
     "filters": {
       "technology": [
         "JavaScript", "Python", "Java", "C++", "Ruby",

@@ -106,8 +106,9 @@ export default function Profile() {
 
   return (
     <div className="container mx-auto gap-4 md:grid grid-cols-3 p-4">
-      <Card className="w-full max-w-3xl mb-4 md:mb-0 mx-auto bg-stone-100 dark:bg-stone-950/50">
-        <CardHeader className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
+      <Card className="w-full flex justify-between flex-col max-w-3xl mb-4 md:mb-0 mx-auto bg-stone-100 dark:bg-stone-950/50">
+       <div>
+       <CardHeader className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
           <div className="relative">
             <Avatar className="w-20 h-20">
               {previewImage ? (
@@ -153,7 +154,7 @@ export default function Profile() {
           </div>
         </CardHeader>
         {previewImage && (
-          <div className="flex justify-center space-x-2 mb-4">
+          <div className="flex justify-center space-x-2 my-4">
             <Button
               variant={"default"}
               onClick={handleAvatarUpload}
@@ -174,6 +175,7 @@ export default function Profile() {
             </Button>
           </div>
         )}
+       </div>
         <CardContent>
           <CardDescription className="mb-4">{user?.bio}</CardDescription>
           <div className="space-y-4">

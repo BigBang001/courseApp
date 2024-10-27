@@ -28,10 +28,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <title>50xCourses - Find Opportunities</title>
+      </head>
       <AuthProvider>
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="dark"
           enableSystem
         >
           <body

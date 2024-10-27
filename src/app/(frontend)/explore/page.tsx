@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { filters } from "@/data/filters.json";
+import {data}  from "@/data/filters";
 import { BarLoader } from "react-spinners";
 
 const CoursesPage = () => {
@@ -23,7 +23,6 @@ const CoursesPage = () => {
   const [framework, setFramework] = useState("");
   const [area, setArea] = useState("");
   const { courses, isLoading, setFilter, isSearching } = useFetchCourses();
-
   useEffect(() => {
     const timer = setTimeout(() => {
       const filterString = [technology, database, framework, area, searchTerm]
@@ -80,37 +79,25 @@ const CoursesPage = () => {
             </div>
           )}
         </div>
-        <div className="flex flex-wrap gap-4 pb-2">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 lg:gap-4 pb-2">
           <Select onValueChange={setTechnology}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-full">
               <SelectValue placeholder="Select Technology" />
             </SelectTrigger>
             <SelectContent>
-              {filters.technology.map((tech) => (
+              {data.filters.technology.map((tech) => (
                 <SelectItem key={tech} value={tech}>
                   {tech}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
-          <Select onValueChange={setDatabase}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select Database" />
-            </SelectTrigger>
-            <SelectContent>
-              {filters.database.map((db) => (
-                <SelectItem key={db} value={db}>
-                  {db}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
           <Select onValueChange={setFramework}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-full">
               <SelectValue placeholder="Select Framework" />
             </SelectTrigger>
             <SelectContent>
-              {filters.framework.map((fw) => (
+              {data.filters.framework.map((fw) => (
                 <SelectItem key={fw} value={fw}>
                   {fw}
                 </SelectItem>
@@ -118,11 +105,11 @@ const CoursesPage = () => {
             </SelectContent>
           </Select>
           <Select onValueChange={setArea}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-full">
               <SelectValue placeholder="Select Area" />
             </SelectTrigger>
             <SelectContent>
-              {filters.area.map((area) => (
+              {data.filters.area.map((area) => (
                 <SelectItem key={area} value={area}>
                   {area}
                 </SelectItem>

@@ -1,23 +1,14 @@
-"use client";
 import "@/app/globals.css";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
-import { Apple, ArrowRight, Building2, UserCircle } from "lucide-react";
 import { GitHubLogoIcon, InstagramLogoIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+
 import { motion } from "framer-motion";
 export default function LandingPage() {
   return (
     <div className={`min-h-screen flex flex-col`}>
       <Navbar />
-
       <div className="dark:bg-background w-full bg-primary-foreground overflow-x-hidden">
         <main className="relative z-10 md:mt-32 mt-40 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 text-center">
           <h1 className="text-3xl md:text-5xl font-bold mb-4">

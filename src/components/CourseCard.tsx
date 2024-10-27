@@ -49,7 +49,7 @@ const CourseCard = (course: Course) => {
             alt={course.title!}
           />
         </div>
-        <CardHeader className="p-4">
+        <CardHeader className="p-2 md:p-3">
           <CardTitle className="capitalize text-xl line-clamp-1">
             {course.title}
           </CardTitle>
@@ -57,8 +57,8 @@ const CourseCard = (course: Course) => {
             {course.shortDescription}
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex-grow">
-          <div className="flex flex-wrap gap-2 mb-4">
+        <CardContent className="p-2 md:p-3 flex-grow">
+          <div className="flex flex-wrap gap-2 mb-2 md:mb-4">
             {course.tags.split(",").map((tag, index) => (
               <Badge
                 key={index}

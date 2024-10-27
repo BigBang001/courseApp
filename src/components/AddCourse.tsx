@@ -104,7 +104,7 @@ export default function AddCourse() {
 
   return (
     <div className="container mx-auto pt-4">
-      <Card className="max-w-4xl bg-secondary/30 mx-auto">
+      <Card className="max-w-4xl dark:bg-neutral-900 bg-neutral-50 shadow-md mx-auto">
         <CardHeader className="space-y-1">
           <CardTitle className="text-3xl font-bold text-center">
             Add Course
@@ -136,7 +136,7 @@ export default function AddCourse() {
                   <FormItem>
                     <FormLabel>Short Description</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Brief course overview" />
+                      <Textarea {...field} className="min-h-20" placeholder="Brief course overview" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -156,7 +156,7 @@ export default function AddCourse() {
                           formats={formats}
                           theme="snow"
                           placeholder="Detailed course description"
-                          className="h-full dark:text-white"
+                          className="h-48 mb-14 dark:text-white"
                         />
                       </FormControl>
                       <FormMessage />
@@ -208,9 +208,9 @@ export default function AddCourse() {
                     <FormItem className="col-span-2">
                       <FormLabel>Tags</FormLabel>
                       <FormControl>
-                        <Input
+                        <Textarea
                           {...field}
-                          placeholder="Comma-separated tags, e.g., Web Dev, Node.js"
+                          placeholder="Tags for searches and filters Comma-separated tags, e.g., Web Dev, Node.js"
                         />
                       </FormControl>
                       <FormMessage />

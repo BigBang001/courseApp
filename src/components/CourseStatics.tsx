@@ -71,7 +71,7 @@ const CourseStatics = () => {
               <Loader2 className="animate-spin text-neutral-700" />
             </div>
           ) : (
-            `${averageRating}`
+            `${averageRating.toFixed(2)}`
           )}
         </span>
       </p>
