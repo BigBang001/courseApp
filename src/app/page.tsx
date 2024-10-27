@@ -1,10 +1,11 @@
+"use client"
 import "@/app/globals.css";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import { GitHubLogoIcon, InstagramLogoIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button";
-
 import { motion } from "framer-motion";
+
 export default function LandingPage() {
   return (
     <div className={`min-h-screen flex flex-col`}>
