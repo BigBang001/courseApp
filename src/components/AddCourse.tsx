@@ -13,6 +13,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -26,6 +35,10 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "./ui/textarea";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { courseValidation } from "@/validations/validation";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -62,26 +75,18 @@ export default function AddCourse() {
   const { toast } = useToast();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [values, setValues] = useState({
-    title: "",
-    description: "",
-    thumbnail: "",
-    price: 0,
-    duration: "",
-    level: "",
-    tags: "",
-    shortDescription: "",
+
+  const form = useForm<z.infer<typeof courseValidation>>({
+    resolver: zodResolver(courseValidation),
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (values: z.infer<typeof courseValidation>) => {
     setIsLoading(true);
     try {
       const response = await axios.post(`/api/create-course`, values);
-      console.log(response);
       toast({
         title: "Created!",
-        description: `${response.data.course.title} course Created Successfully`,
+        description: `${response.data.course.title} course created successfully.`,
         variant: "success",
       });
       router.push("/explore");
@@ -109,129 +114,164 @@ export default function AddCourse() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
-              <Input
-                id="title"
-                type="text"
-                placeholder="Enter the title of the course"
-                value={values.title}
-                onChange={(e) =>
-                  setValues({ ...values, title: e.target.value })
-                }
-                required
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Course Title</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter the course title" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="shortDescription">Short Description </Label>
-              <Textarea
-                value={values.shortDescription}
-                onChange={(e) =>
-                  setValues({ ...values, shortDescription: e.target.value })
-                }
-                placeholder="Short Description for course that shown in card"
+              <FormField
+                control={form.control}
+                name="shortDescription"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Short Description</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Brief course overview" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <div className="h-64">
-                <ReactQuill
-                  value={values.description}
-                  onChange={(content: string) =>
-                    setValues({ ...values, description: content })
-                  }
-                  modules={modules}
-                  formats={formats}
-                  theme="snow"
-                  placeholder="Enter a detailed description of the course"
-                  className="h-full dark:text-white"
+              <FormItem>
+                <Label htmlFor="description">Description</Label>
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <ReactQuill
+                          {...field}
+                          modules={modules}
+                          formats={formats}
+                          theme="snow"
+                          placeholder="Detailed course description"
+                          className="h-full dark:text-white"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </FormItem>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <FormField
+                  control={form.control}
+                  name="duration"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Duration</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="e.g., 3 months" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="price"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Price</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          {...field}
+                          placeholder="Enter the price of the course"
+                          onChange={(e) => {
+                            const value = parseFloat(e.target.value);
+                            field.onChange(isNaN(value) ? "" : value);
+                          }}
+                        />
+                      </FormControl>
+                      <FormDescription />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="tags"
+                  render={({ field }) => (
+                    <FormItem className="col-span-2">
+                      <FormLabel>Tags</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="Comma-separated tags, e.g., Web Dev, Node.js"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               </div>
-            </div>
-            <div className="grid grid-cols-1 md:pt-8 pt-12 md:grid-cols-4 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="duration">Duration</Label>
-                <Input
-                  id="duration"
-                  type="text"
-                  placeholder="e.g., 1 Hour"
-                  value={values.duration}
-                  onChange={(e) =>
-                    setValues({ ...values, duration: e.target.value })
-                  }
-                  required
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="thumbnail"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Thumbnail URL</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="Thumbnail image URL" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="level"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Difficulty Level</FormLabel>
+                      <FormControl>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
+                          <SelectTrigger id="level">
+                            <SelectValue placeholder="Select level" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="beginner">Beginner</SelectItem>
+                            <SelectItem value="intermediate">
+                              Intermediate
+                            </SelectItem>
+                            <SelectItem value="advanced">Advanced</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="price">Price</Label>
-                <Input
-                  id="price"
-                  type="number"
-                  step="0.01"
-                  placeholder="99.99"
-                  value={values.price}
-                  onChange={(e) =>
-                    setValues({ ...values, price: Number(e.target.value) })
-                  }
-                  required
-                />
-              </div>{" "}
-              <div className="col-span-2 space-y-2">
-                <Label htmlFor="tags">Tags</Label>
-                <Textarea
-                  value={values.tags}
-                  onChange={(e) =>
-                    setValues({ ...values, tags: e.target.value })
-                  }
-                  placeholder="Tags comma seperated (eg., Web dev, Node.js...)"
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="thumbnail">Thumbnail</Label>
-                <Input
-                  id="thumbnail"
-                  type="url"
-                  placeholder="Enter the thumbnail image URL"
-                  value={values.thumbnail}
-                  onChange={(e) =>
-                    setValues({ ...values, thumbnail: e.target.value })
-                  }
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="level">Difficulty Level</Label>
-                <Select
-                  value={values.level}
-                  onValueChange={(value) =>
-                    setValues({ ...values, level: value })
-                  }
-                >
-                  <SelectTrigger id="level">
-                    <SelectValue placeholder="Select the difficulty level" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="beginner">Beginner</SelectItem>
-                    <SelectItem value="intermediate">Intermediate</SelectItem>
-                    <SelectItem value="advanced">Advanced</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? (
-                <span className="flex items-center justify-center">
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Creating...
-                </span>
-              ) : (
-                "Create Course"
-              )}
-            </Button>
-          </form>
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? (
+                  <span className="flex items-center justify-center">
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Creating...
+                  </span>
+                ) : (
+                  "Create Course"
+                )}
+              </Button>
+            </form>
+          </Form>
         </CardContent>
       </Card>
     </div>

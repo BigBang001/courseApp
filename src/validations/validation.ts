@@ -55,7 +55,7 @@ export const courseValidation = z.object({
 
   price: z
     .number()
-    .min(0, { message: "Price must be a positive number" }),
+    .min(1, { message: "Price must be a positive number" }),
 
   thumbnail: z
     .string()

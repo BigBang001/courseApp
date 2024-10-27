@@ -3,45 +3,57 @@ import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { authOptions } from "../auth/[...nextauth]/options";
 
-export async function GET() {
+export async function GET(request: Request) {
     const session = await getServerSession(authOptions);
-    
-    if (!session?.user || !session) {
-        return NextResponse.json({
-            success: false,
-            message: "UnAuthorized",
-        }, { status: 401 })
+
+    if (!session?.user) {
+        return NextResponse.json(
+            { success: false, message: "Unauthorized" },
+            { status: 401 }
+        );
     }
+
     try {
+        const url = new URL(request.url);
+        const filter = url.searchParams.get("filter") || "";
         const courses = await prisma.course.findMany({
-            orderBy: {
-                createdAt: "desc",
-            },include:{
+            where: {
+                OR: [
+                    { tags: { contains: filter, mode: "insensitive" } },
+                    { title: { contains: filter, mode: "insensitive" } },
+                ],
+            },
+            orderBy: { createdAt: "desc" },
+            include: {
                 Review: {
-                    select : {
-                        content : true,
-                        id:true,
-                        rating : true,
-                        user : {
-                            select : {
-                                fullName : true,
-                                image : true
-                            }
-                        }
-                    }
-                }
-            }
-        })
+                    select: {
+                        content: true,
+                        id: true,
+                        rating: true,
+                        user: {
+                            select: {
+                                fullName: true,
+                                image: true,
+                            },
+                        },
+                    },
+                },
+            },
+        });
+
         return NextResponse.json({
             success: true,
-            message: "Courses Fetched Succesfully",
-            courses
-        })
-    } catch (error) {
-        return NextResponse.json({
-            success: false,
-            message: "Error while fetching courses",
-            error
-        })
+            message: "Courses fetched successfully",
+            courses,
+        });
+    } catch (error: any) {
+        return NextResponse.json(
+            {
+                success: false,
+                message: "Error while fetching courses",
+                error: error.message,
+            },
+            { status: 500 }
+        );
     }
 }
