@@ -76,7 +76,7 @@ export default function EditUserDetails() {
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="bio" className="text-right">
-              Bio
+              Add Bio
             </Label>
             <Textarea
               id="bio"

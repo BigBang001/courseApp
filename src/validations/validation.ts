@@ -69,7 +69,7 @@ export const courseValidation = z.object({
   level: z
     .enum(['beginner', 'intermediate', 'advanced'], { message: "Level must be one of 'beginner', 'intermediate', or 'advanced'" }),
 
-  tags: z.string().min(2, { message: "Add Atleat 1 tag minimum of two charcter" }).max(100, { message: "All Tags should come under 100 characters" })
+  tags: z.string().min(2, { message: "Add Atleat 1 tag minimum of two charcter" }).max(150, { message: "All Tags should come under 100 characters" })
 });
 
 export const creditCardSValidation = z.object({
@@ -89,3 +89,11 @@ export const reviewValidation = z.object({
   courseId: z.string(),
   rating: z.number()
 })
+
+export const classValidation = z.object({
+  title: z.string().min(1, { message: "Title is required" }).max(30, { message: "Title is of maximum 30 characters" }),
+  classURL: z.string().url({ message: "Video Url must be Valid" }).optional(),
+  courseId: z.string().min(1, { message: "UserId is required" }),
+  description: z.string().min(1, { message: "Description is required" }).optional(),
+});
+

@@ -9,19 +9,23 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { User, LogOut, Moon, Sun, LucideEdit, IndianRupee } from "lucide-react";
+import { User, LogOut, Moon, Sun, LucideEdit, IndianRupee, Bookmark } from "lucide-react";
 import { Switch } from "./ui/switch";
 import { useTheme } from "next-themes";
 import { useMe } from "@/hooks/userMe";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
   const { data: session, status } = useSession();
+  const pathname = usePathname();
   const handleSignOut = async () => {
     await signOut({ callbackUrl: "/signin", redirect: true });
   };
   const { user } = useMe();
   const { setTheme, theme } = useTheme();
+
   const toggleTheme = () => {
     setTheme(theme === "light" ? "dark" : "light");
   };
@@ -80,12 +84,20 @@ export default function Navbar() {
                         </DropdownMenuItem>
                       </Link>
                     ) : (
-                      <Link href={"/purchased"}>
+                      <div>
+                        <Link href={"/purchased"}>
                         <DropdownMenuItem>
                           <IndianRupee className="mr-2 h-4 w-4" />
                           <span>Purchased Courses</span>
                         </DropdownMenuItem>
                       </Link>
+                      <Link href={"/saved"}>
+                        <DropdownMenuItem>
+                          <Bookmark className="mr-2 h-4 w-4" />
+                          <span>Saved Courses</span>
+                        </DropdownMenuItem>
+                      </Link>
+                      </div>
                     )}
                     <DropdownMenuItem onClick={handleSignOut}>
                       <LogOut className="mr-2 h-4 w-4 text-red-600" />

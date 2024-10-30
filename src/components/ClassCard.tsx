@@ -22,13 +22,13 @@ const ClassCard = ({
   const params = useParams();
   return (
     <div>
-      <Card className="bg-stone-100 dark:bg-stone-950/50 md:h-80 relative">
+      <Card className="bg-stone-100 overflow-hidden dark:bg-stone-950/50 md:h-80 relative">
         {markAsComplete ? (
-          <div className="bg-green-500 rounded-bl-full pb-1 pl-1 lg:pl-3 lg:pb-3 text-green-950 absolute top-0 right-0">
+          <div className="bg-green-500 rounded-bl-full  pb-2 pl-2 p-1 lg:pt-1 lg:pr-1 lg:p-2 text-green-950 absolute top-0 right-0">
             <Check className="h-4 w-4" fontWeight={800} />
           </div>
         ) : (
-          <div className="bg-yellow-500 rounded-bl-full pb-1 pl-1 lg:pl-3 lg:pb-3 text-yellow-950 absolute top-0 right-0">
+          <div className="bg-yellow-500 rounded-bl-full pb-2 pl-2 p-1 lg:pt-1 lg:pr-1 lg:p-2 text-yellow-950 absolute top-0 right-0">
             <X className="h-4 w-4 " fontWeight={800} />
           </div>
         )}

@@ -37,6 +37,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function CoursePurchase() {
   const [isLoading, setIsLoading] = useState(false);
@@ -53,6 +54,7 @@ export default function CoursePurchase() {
     cardHolderName: "",
   });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isLoadingCards, setIsLoadingCards] = useState(true);
 
   const handleAddCard = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -82,12 +84,16 @@ export default function CoursePurchase() {
 
   const fetchCards = async () => {
     try {
+      setIsLoadingCards(true);
       const response = await axios.get(`/api/credit-card`);
       setCards(response.data.cards);
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoadingCards(false);
     }
   };
+
   useEffect(() => {
     fetchCards();
   }, [setCards]);
@@ -201,8 +207,12 @@ export default function CoursePurchase() {
           </CardContent>
         </Card>
 
-        {paymentMethod === "existing-card" &&
-          (cards.length > 0 ? (
+        {paymentMethod === "existing-card" && isLoadingCards ? (
+          // Skeleton loading state
+          <div className="space-y-3">
+            <Skeleton className="h-[200px] w-full rounded-lg" />
+          </div>
+        ) : paymentMethod === "existing-card" && cards.length > 0 ? (
             cards.map((e) => (
               <Card className="mb-2" key={e.id}>
                 <CardHeader className="flex justify-between flex-row">
@@ -323,7 +333,7 @@ export default function CoursePurchase() {
                 Add Credit Card to purchase Course.
               </h1>
             </div>
-          ))}
+          )}
 
         {paymentMethod === "new-card" && (
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

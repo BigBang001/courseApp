@@ -5,6 +5,10 @@ import axios from "axios";
 import { Loader2 } from "lucide-react";
 import dynamic from "next/dynamic";
 import "react-quill/dist/quill.snow.css";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 
 import {
   Card,
@@ -32,13 +36,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "./ui/textarea";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { useToast } from "@/hooks/use-toast";
 import { courseValidation } from "@/validations/validation";
-import { zodResolver } from "@hookform/resolvers/zod";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -61,7 +61,7 @@ const formats = [
   "header",
   "bold",
   "italic",
-  "underline",
+  "underline", 
   "strike",
   "blockquote",
   "list",
@@ -85,15 +85,15 @@ export default function AddCourse() {
     try {
       const response = await axios.post(`/api/create-course`, values);
       toast({
-        title: "Created!",
-        description: `${response.data.course.title} course created successfully.`,
+        title: "Course Created Successfully! 🎉",
+        description: `Your course "${response.data.course.title}" is now live and ready for students.`,
         variant: "success",
       });
       router.push("/explore");
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || "An error occurred";
       toast({
-        title: "Error",
+        title: "Oops! Something went wrong",
         description: errorMessage,
         variant: "destructive",
       });
@@ -103,19 +103,20 @@ export default function AddCourse() {
   };
 
   return (
-    <div className="container mx-auto pt-4">
-      <Card className="max-w-4xl dark:bg-neutral-900 bg-neutral-50 shadow-md mx-auto">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-3xl font-bold text-center">
-            Add Course
+    <div className="container mx-auto py-8">
+      <Card className="max-w-4xl mx-auto shadow-lg bg-gradient-to-b from-neutral-50 to-neutral-100 dark:from-neutral-900 dark:to-neutral-950">
+        <CardHeader className="text-center space-y-2">
+          <CardTitle className="text-4xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+            Create Your Course
           </CardTitle>
-          <CardDescription className="text-center text-muted-foreground">
-            Enter the details of your new course
+          <CardDescription className="text-lg">
+            Share your knowledge with the world! 🌟
           </CardDescription>
         </CardHeader>
+
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <FormField
                 control={form.control}
                 name="title"
@@ -123,27 +124,29 @@ export default function AddCourse() {
                   <FormItem>
                     <FormLabel>Course Title</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Enter the course title" />
+                      <Input {...field} placeholder="What will you teach?" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="shortDescription"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Short Description</FormLabel>
+                    <FormLabel>Quick Overview</FormLabel>
                     <FormControl>
-                      <Textarea {...field} className="min-h-20" placeholder="Brief course overview" />
+                      <Textarea {...field} placeholder="Hook your students with a compelling summary..." />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
               <FormItem>
-                <Label htmlFor="description">Description</Label>
+                <Label htmlFor="description">Full Course Description</Label>
                 <FormField
                   control={form.control}
                   name="description"
@@ -155,8 +158,8 @@ export default function AddCourse() {
                           modules={modules}
                           formats={formats}
                           theme="snow"
-                          placeholder="Detailed course description"
-                          className="h-48 mb-14 dark:text-white"
+                          placeholder="Paint a picture of your course content..."
+                          className="h-48 md:mb-12 mb-20"
                         />
                       </FormControl>
                       <FormMessage />
@@ -164,6 +167,7 @@ export default function AddCourse() {
                   )}
                 />
               </FormItem>
+
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <FormField
                   control={form.control}
@@ -172,30 +176,30 @@ export default function AddCourse() {
                     <FormItem>
                       <FormLabel>Duration</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="e.g., 3 months" />
+                        <Input {...field} placeholder="e.g., 8 weeks" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="price"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Price</FormLabel>
+                      <FormLabel>Value</FormLabel>
                       <FormControl>
                         <Input
                           type="number"
                           {...field}
-                          placeholder="Enter the price of the course"
+                          placeholder="Set your price"
                           onChange={(e) => {
                             const value = parseFloat(e.target.value);
                             field.onChange(isNaN(value) ? "" : value);
                           }}
                         />
                       </FormControl>
-                      <FormDescription />
                       <FormMessage />
                     </FormItem>
                   )}
@@ -206,11 +210,11 @@ export default function AddCourse() {
                   name="tags"
                   render={({ field }) => (
                     <FormItem className="col-span-2">
-                      <FormLabel>Tags</FormLabel>
+                      <FormLabel>Course Tags</FormLabel>
                       <FormControl>
                         <Textarea
                           {...field}
-                          placeholder="Tags for searches and filters Comma-separated tags, e.g., Web Dev, Node.js"
+                          placeholder="Add relevant tags (e.g., Programming, Design, Business)"
                         />
                       </FormControl>
                       <FormMessage />
@@ -218,56 +222,61 @@ export default function AddCourse() {
                   )}
                 />
               </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
                   name="thumbnail"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Thumbnail URL</FormLabel>
+                      <FormLabel>Course Thumbnail</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="Thumbnail image URL" />
+                        <Input {...field} placeholder="Add an eye-catching thumbnail URL" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="level"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Difficulty Level</FormLabel>
-                      <FormControl>
-                        <Select
-                          onValueChange={field.onChange}
-                          value={field.value}
-                        >
-                          <SelectTrigger id="level">
-                            <SelectValue placeholder="Select level" />
+                      <FormLabel>Experience Level</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Choose course level" />
                           </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="beginner">Beginner</SelectItem>
-                            <SelectItem value="intermediate">
-                              Intermediate
-                            </SelectItem>
-                            <SelectItem value="advanced">Advanced</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="beginner">Perfect for Beginners</SelectItem>
+                          <SelectItem value="intermediate">Intermediate Challengers</SelectItem>
+                          <SelectItem value="advanced">Advanced Masters</SelectItem>
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
-              <Button type="submit" className="w-full" disabled={isLoading}>
+
+              <Button 
+                type="submit" 
+                className="w-full font-semibold" 
+                disabled={isLoading}
+              >
                 {isLoading ? (
                   <span className="flex items-center justify-center">
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating...
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    Creating Your Masterpiece...
                   </span>
                 ) : (
-                  "Create Course"
+                  "Launch Your Course 🚀"
                 )}
               </Button>
             </form>

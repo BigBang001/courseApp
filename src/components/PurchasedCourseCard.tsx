@@ -16,6 +16,7 @@ import Link from "next/link";
 
 const PurchasedCourseCard = ({ course }: { course: Course }) => {
   const courseTitle = course.course.title
+  console.log(course.course.id);
   
   return (
     <Card className="overflow-hidden flex flex-col h-full bg-stone-100 dark:bg-stone-950/50">
@@ -33,7 +34,7 @@ const PurchasedCourseCard = ({ course }: { course: Course }) => {
       </CardHeader>
       <CardContent className="p-3 pt-0 flex-grow">
         <div className="flex flex-wrap gap-1 mb-2">
-          {course.course.tags.split(",").map((tag: string, index: string) => (
+          {course.course.tags.split(",").map((tag, index) => (
             <Badge
               key={index}
               variant="secondary"
@@ -44,7 +45,7 @@ const PurchasedCourseCard = ({ course }: { course: Course }) => {
           ))}
         </div>
       </CardContent>
-      <CardFooter className="p-3 flex gap-1">
+      <CardFooter className="lg:p-3 p-2 grid grid-cols-1 md:grid-cols-2 gap-1">
         <Link
           href={{
             pathname: `/classes/${course.course.id}`,
@@ -55,7 +56,7 @@ const PurchasedCourseCard = ({ course }: { course: Course }) => {
             Open Classes
           </Button>
         </Link>
-        <ReviewCourse courseId={course.course.id} />
+        <ReviewCourse courseId={course.course.id as string} />
       </CardFooter>
     </Card>
   );

@@ -1,5 +1,5 @@
 export interface Course {
-    course: any
+    course: Course
     id?: string
     title?: string
     description?: string

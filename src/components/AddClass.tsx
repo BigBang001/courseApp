@@ -33,14 +33,13 @@ export default function AddClass({ courseId }: { courseId: string }) {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0]
     if (selectedFile) {
-      // Check for video file type
+
       if (!selectedFile.type.startsWith('video/')) {
         setError('Please upload a valid video file.')
         setFile(null)
         return
       }
 
-      // Check for file size (e.g., limit of 100 MB)
       const maxSize = 100 * 1024 * 1024 // 100 MB
       if (selectedFile.size > maxSize) {
         setError('File size must be less than 100MB.')
@@ -76,7 +75,7 @@ export default function AddClass({ courseId }: { courseId: string }) {
       toast({
         title: "Created!",
         description: `Class added successfully!`,
-        variant: "default",
+        variant: "success",
       })
 
       setIsOpen(false)

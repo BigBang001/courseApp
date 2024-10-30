@@ -25,6 +25,7 @@ export default function ForgotPassword() {
 
   const handleVerifyEmail = async (e: React.FormEvent) => {
     e.preventDefault()
+    e.stopPropagation() // Prevent event bubbling
     setIsLoading(true)
     try {
       const result = await axios.post("/api/forgot-password",{email});
@@ -49,6 +50,7 @@ export default function ForgotPassword() {
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault()
+    e.stopPropagation() // Prevent event bubbling
     setIsLoading(true)
     try {
       const result = await axios.put("/api/forgot-password",{email,password})
@@ -74,14 +76,30 @@ export default function ForgotPassword() {
     }
   }
 
+  const handleDialogClose = () => {
+    setOpen(false)
+    setEmail("")
+    setPassword("")
+    setIsEmailVerified(false)
+  }
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleDialogClose}>
       <DialogTrigger asChild>
-        <Button variant="link" className="text-blue-500" size="sm">
+        <Button 
+          variant="link" 
+          className="text-blue-500" 
+          size="sm"
+          onClick={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            setOpen(true)
+          }}
+        >
           Forgot Password?
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px]" onClick={(e) => e.stopPropagation()}>
         <DialogHeader>
           <DialogTitle>Reset Password</DialogTitle>
         </DialogHeader>

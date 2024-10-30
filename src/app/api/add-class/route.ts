@@ -15,7 +15,7 @@ cloudinary.config({
 // Input validation schema
 const inputSchema = z.object({
   courseId: z.string().uuid(),
-  title: z.string().min(1).max(100)
+  title: z.string().min(1, { message: "Title is required" }).max(30, { message: "Title is of maximum 30 characters" }),
 })
 
 export async function POST(request: NextRequest) {

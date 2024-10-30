@@ -5,8 +5,30 @@ import Navbar from "@/components/Navbar";
 import { GitHubLogoIcon, InstagramLogoIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { Card } from "@/components/ui/card";
 
 export default function LandingPage() {
+  const featuredCourses = [
+    {
+      title: "Complete Web Development Bootcamp",
+      description: "Learn full-stack web development from scratch",
+      price: "₹1199",
+      image: "https://imgs.search.brave.com/bCpPEOntXSbX81704d8RG--GaJPpMiEYaNwk0pu9_OU/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93YWxs/cGFwZXJzLmNvbS9p/bWFnZXMvZmVhdHVy/ZWQvYW5pbWUtbGFu/ZHNjYXBlLWNrbDl2/cTlldG9wdGhxNmUu/anBn"
+    },
+    {
+      title: "Advanced React & Next.js",
+      description: "Master modern React patterns and Next.js features",
+      price: "₹1179",
+      image: "https://imgs.search.brave.com/bCpPEOntXSbX81704d8RG--GaJPpMiEYaNwk0pu9_OU/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93YWxs/cGFwZXJzLmNvbS9p/bWFnZXMvZmVhdHVy/ZWQvYW5pbWUtbGFu/ZHNjYXBlLWNrbDl2/cTlldG9wdGhxNmUu/anBn"
+    },
+    {
+      title: "Python for Data Science",
+      description: "Comprehensive data science with Python",
+      price: "₹1189",
+      image: "https://imgs.search.brave.com/dxstLZnjRmQgqaAug1GNBGDlDWT7q0zPjV0Y47lxPVA/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/d2FsbHBhcGVyc2Fm/YXJpLmNvbS82Mi81/Ny9VRFd2cGouanBn"
+    }
+  ];
+
   return (
     <div className={`min-h-screen flex flex-col`}>
       <Navbar />
@@ -20,9 +42,7 @@ export default function LandingPage() {
             </span>
           </h1>
           <p className="mt-6 text-sm md:text-xl dark:text-neutral-400 max-w-3xl mx-auto">
-            "Unlock your potential with expert-led courses—where knowledge meets
-            opportunity, empowering you to multiply your skills for growth,
-            success, and fulfillment in your career."
+            "Transform your career with our expert-led courses. Join thousands of successful learners who have accelerated their careers through our comprehensive learning platform."
           </p>
           <div className="mt-10">
             <motion.div whileTap={{ scale: 0.95 }} whileHover={{ scale: 1.05 }}>
@@ -31,15 +51,37 @@ export default function LandingPage() {
                   size="lg"
                   className="text-lg px-8 py-4 bg-white text-black hover:bg-neutral-200"
                 >
-                  Get Started
+                  Start Learning Now
                 </Button>
               </Link>
             </motion.div>
           </div>
 
+          {/* Featured Courses Section */}
+          <div className="mt-20">
+            <h2 className="text-2xl md:text-4xl font-bold mb-12">Featured Courses</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {featuredCourses.map((course, index) => (
+                <Card key={index} className="overflow-hidden flex flex-col justify-between hover:shadow-lg transition-shadow duration-300">
+                  <img src={course.image} alt={course.title} className="w-full h-48 object-cover" />
+                  <div className="p-6">
+                    <h3 className="text-xl font-semibold mb-2">{course.title}</h3>
+                    <p className="text-neutral-400 mb-4">{course.description}</p>
+                    <div className="flex justify-between items-center">
+                      <span className="text-2xl font-bold">{course.price}</span>
+                      <Link href="/signin">
+                        <Button variant="outline">Enroll Now</Button>
+                      </Link>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+
           <div className="mt-20">
             <h2 className="md:text-2xl text-lg font-semibold text-center dark:text-white mb-8">
-              Trusted by leading companies
+              Trusted by Industry Leaders
             </h2>
             <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">
               <img
@@ -75,34 +117,34 @@ export default function LandingPage() {
             </div>
           </div>
         </main>
-        <footer className="py-4 mx-auto flex items-center w-full justify-center">
+        <footer className="py-4 px-2 flex items-center w-full justify-center">
           <div className="container dark:bg-neutral-900 dark:bg-opacity-70 bg-neutral-200 p-4 border dark:border-neutral-800 bg-opacity-35 rounded-lg w-full ">
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
               <div>
                 <h2 className="text-2xl font-bold">50xOpportunities</h2>
                 <p className="text-neutral-400 mt-2">
-                  Where Opportunities Multiply
+                  Where Learning Leads to Success
                 </p>
               </div>
 
               <div>
-                <h3 className="text-xl font-semibold">50x Links</h3>
+                <h3 className="text-xl font-semibold">Quick Links</h3>
                 <ul className="mt-2 space-y-1">
                   <li>
-                    <a href="#" className="text-neutral-400 hover:text-white">
-                      App
-                    </a>
+                    <Link href="/explore" className="text-neutral-400 hover:text-white">
+                      Browse Courses
+                    </Link>
                   </li>
                   <li>
-                    <a href="#" className="text-neutral-400 hover:text-white">
-                      Report
-                    </a>
+                    <Link href="/about" className="text-neutral-400 hover:text-white">
+                      About Us
+                    </Link>
                   </li>
                 </ul>
               </div>
 
               <div>
-                <h3 className="text-xl font-semibold">50x Legal</h3>
+                <h3 className="text-xl font-semibold">Legal</h3>
                 <ul className="mt-2 space-y-1">
                   <li>
                     <a href="#" className="text-neutral-400 hover:text-white">
@@ -116,7 +158,7 @@ export default function LandingPage() {
                   </li>
                   <li>
                     <a href="#" className="text-neutral-400 hover:text-white">
-                      Refund & Cancellation
+                      Refund Policy
                     </a>
                   </li>
                 </ul>

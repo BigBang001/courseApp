@@ -44,7 +44,7 @@ import AccountManage from "@/components/AccountManage";
 
 
 export default function Profile() {
-  const { data: session } = useSession();
+  const { data: session, status: sessionStatus } = useSession();
   const [isUploading, setIsUploading] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const { toast } = useToast();
@@ -102,7 +102,15 @@ export default function Profile() {
     }
   };
 
-  const { user } = useMe();
+  const { user, isLoading: isUserLoading } = useMe();
+
+  if (sessionStatus === "loading" || isUserLoading) {
+    return (
+      <div className="h-screen w-full flex items-center justify-center">
+        <Loader2 color="gray" className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto gap-4 md:grid grid-cols-3 p-4">
@@ -120,7 +128,11 @@ export default function Profile() {
                     alt="User Avatar"
                   />
                   <AvatarFallback className="bg-primary text-primary-foreground text-3xl font-bold uppercase">
-                    {session?.user.fullName?.[0] || "?"}
+                    {isUserLoading ? (
+                      <Loader2 className="h-6 w-6 animate-spin" />
+                    ) : (
+                      session?.user.fullName?.[0] || "?"
+                    )}
                   </AvatarFallback>
                 </>
               )}
@@ -129,7 +141,11 @@ export default function Profile() {
               className="absolute bottom-0 right-0 bg-primary text-primary-foreground rounded-full p-1 cursor-pointer"
               onClick={() => fileInputRef.current?.click()}
             >
-              <Upload className="w-4 h-4" />
+              {isUploading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Upload className="w-4 h-4" />
+              )}
             </div>
             <Input
               ref={fileInputRef}
@@ -143,13 +159,25 @@ export default function Profile() {
           </div>
           <div className="flex flex-col items-center sm:items-start">
             <CardTitle className="capitalize text-stone-900 dark:text-stone-200 font-serif text-2xl sm:text-3xl text-center sm:text-left">
-              {session?.user.fullName}
+              {isUserLoading ? (
+                <Loader2 className="h-6 w-6 animate-spin" />
+              ) : (
+                session?.user.fullName
+              )}
             </CardTitle>
             <CardDescription className="text-sm sm:text-base text-center sm:text-left">
-              {session?.user.email}
+              {isUserLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                session?.user.email
+              )}
             </CardDescription>
             <Badge className="mt-2 capitalize text-xs sm:text-sm">
-              {session?.user.role}
+              {isUserLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                session?.user.role
+              )}
             </Badge>
           </div>
         </CardHeader>
@@ -177,7 +205,13 @@ export default function Profile() {
         )}
        </div>
         <CardContent>
-          <CardDescription className="mb-4">{user?.bio}</CardDescription>
+          <CardDescription className="mb-4">
+            {isUserLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              user?.bio
+            )}
+          </CardDescription>
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <EditUserDetails />
@@ -205,7 +239,7 @@ export default function Profile() {
                 <DrawerTrigger asChild>
                   <Button variant="outline" className="w-full font-semibold">
                     <BarChart className="mr-2 h-4 w-4" />
-                    Dashboard
+                    View Analytic Dashboard
                   </Button>
                 </DrawerTrigger>
                 <DrawerContent>

@@ -27,6 +27,7 @@ model User {
   purchasedCourses purchasedCourses[]
   CreditCard       CreditCard[]
   recordedClass    recordedClass[]
+  savedCourses     savedCourses[]
 }
 
 model Course {
@@ -45,19 +46,31 @@ model Course {
   Review           Review[]
   purchasedCourses purchasedCourses[]
   recordedClass    recordedClass[]
+  savedCourses     savedCourses[]
 }
 
 model recordedClass {
-  id        String   @unique @default(uuid())
-  title     String
-  videoUrl String
-  markAsComplete Boolean @default(false)
-  createdAt DateTime @default(now())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  courseId  String
-  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  id             String   @unique @default(uuid())
+  title          String
+  videoUrl       String
+  markAsComplete Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId       String
+  course         Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
 }
+
+model savedCourses {
+  id       String @id @unique @default(uuid())
+  courseId String
+  userId   String
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([courseId, userId])
+}
+
 
 model CreditCard {
   id             String   @unique @default(uuid())

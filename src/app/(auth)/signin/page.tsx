@@ -1,10 +1,10 @@
 'use client'
 
-import React from "react"
+import React, { useState } from "react"
 import { signIn } from "next-auth/react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Loader2, Github } from "lucide-react"
+import { Loader2, X, Eye, EyeOff } from "lucide-react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
@@ -36,6 +36,7 @@ import { useToast } from "@/hooks/use-toast"
 export default function SignInPage() {
   const { toast } = useToast()
   const router = useRouter()
+  const [showPassword, setShowPassword] = useState(false)
 
   const form = useForm<z.infer<typeof signinValidation>>({
     resolver: zodResolver(signinValidation),
@@ -81,7 +82,10 @@ export default function SignInPage() {
 
   return (
     <div className="flex items-center px-2 justify-center min-h-screen bg-popover">
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md relative">
+        <Link href="/" className="absolute right-4 top-4">
+          <X className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors" />
+        </Link>
         <CardHeader className="space-y-1">
           <CardTitle className="py-1">Sign In</CardTitle>
           <CardDescription>
@@ -111,7 +115,26 @@ export default function SignInPage() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="••••••••" {...field} />
+                      <div className="relative">
+                        <Input 
+                          type={showPassword ? "text" : "password"} 
+                          placeholder="••••••••" 
+                          {...field} 
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          {showPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

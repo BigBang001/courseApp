@@ -47,7 +47,7 @@ const Page = () => {
         <h1 className="text-2xl font-serif text-stone-500 font-bold mb-4">
           Class : {decodeURIComponent(title as string)}
         </h1>
-        {/* <Button onClick={handleToogle}>Mark as Complete/Incomplete</Button> */}
+        <Button onClick={handleToogle}>Mark as Complete/Incomplete</Button>
       </div>
       <VideoPlayer videoUrl={classURL as string} />
     </div>

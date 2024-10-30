@@ -56,7 +56,7 @@ const ReviewCard = ({ fullName, image, content, rating }: ReviewCardProps) => {
         </div>
       </CardHeader>
       <CardContent className="h-40">
-        <p className="text-muted-foreground">{content}</p>
+        <p className="text-muted-foreground italic">"{content}"</p>
       </CardContent>
     </Card>
   );

@@ -6,12 +6,14 @@ interface userData {
     bio: string;
 }
 export const useMe =  () => {
+    const [isLoading, setIsLoading] = useState(true);
     const [user, setUser] = useState<userData>();
     useEffect(() => {
         try {
             const fetchData = async () => {
                 const response = await axios.get("/api/me");
                 setUser(response.data.user);
+                setIsLoading(false);
             };
             fetchData();
         } catch (error) {
@@ -19,5 +21,5 @@ export const useMe =  () => {
         }
     }, [setUser]);
 
-    return { user }
+    return { user, isLoading }
 }
