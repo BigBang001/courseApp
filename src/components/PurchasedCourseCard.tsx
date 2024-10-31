@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import {
   Card,
   CardContent,
@@ -16,15 +17,15 @@ import Link from "next/link";
 
 const PurchasedCourseCard = ({ course }: { course: Course }) => {
   const courseTitle = course.course.title
-  console.log(course.course.id);
-  
   return (
     <Card className="overflow-hidden flex flex-col h-full bg-stone-100 dark:bg-stone-950/50">
-      <div className="aspect-video overflow-hidden">
-        <img
-          className="h-full w-full object-cover transition-transform hover:scale-105"
+      <div className="aspect-video relative overflow-hidden">
+        <Image
+          className="object-cover transition-transform hover:scale-105"
           src={course.course.thumbnail!}
           alt={course.course.title!}
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
       </div>
       <CardHeader className="p-3">

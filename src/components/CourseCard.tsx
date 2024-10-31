@@ -10,6 +10,7 @@ import { Button } from "./ui/button";
 import CourseReviews from "./CourseReviews";
 import Link from "next/link";
 import { Badge } from "./ui/badge";
+import Image from "next/image";
 
 const CourseCard = ({ course }: {course : Course}) => {
   const { data: session } = useSession();
@@ -74,10 +75,12 @@ const CourseCard = ({ course }: {course : Course}) => {
     <div>
       <Card className="overflow-hidden flex flex-col group h-full bg-stone-50 dark:bg-stone-950/50">
         <div className="aspect-video overflow-hidden">
-          <img
+          <Image
             className="h-full w-full object-cover transition-transform hover:scale-105"
             src={course.thumbnail!}
-            alt={course.title}
+            alt="course thumbnail"
+            width={1920}
+            height={1080}
           />
         </div>
         <CardHeader className="p-2 md:p-3">

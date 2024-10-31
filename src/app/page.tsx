@@ -1,6 +1,7 @@
 "use client"
 import "@/app/globals.css";
 import Link from "next/link";
+import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import { GitHubLogoIcon, InstagramLogoIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button";
@@ -63,7 +64,14 @@ export default function LandingPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {featuredCourses.map((course, index) => (
                 <Card key={index} className="overflow-hidden flex flex-col justify-between hover:shadow-lg transition-shadow duration-300">
-                  <img src={course.image} alt={course.title} className="w-full h-48 object-cover" />
+                  <div className="relative w-full h-48">
+                    <Image 
+                      src={course.image}
+                      alt={course.title}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
                   <div className="p-6">
                     <h3 className="text-xl font-semibold mb-2">{course.title}</h3>
                     <p className="text-neutral-400 mb-4">{course.description}</p>
@@ -84,35 +92,47 @@ export default function LandingPage() {
               Trusted by Industry Leaders
             </h2>
             <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">
-              <img
+              <Image
                 className="animate-bounce w-6 md:w-10 duration-2000"
                 src="https://imgs.search.brave.com/WNmYnN33P-81WgMcwlDKQXxypuypMVEcihrqyg27o_s/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9hc3Nl/dHMuc3RpY2twbmcu/Y29tL2ltYWdlcy81/ODQ3ZjljYmNlZjEw/MTRjMGI1ZTQ4Yzgu/cG5n"
                 alt="Google"
+                width={40}
+                height={40}
               />
-              <img
+              <Image
                 className="animate-bounce w-6 md:w-10 duration-2000"
                 src="https://imgs.search.brave.com/Xtc9cnu7MSp8MJG-CMd1STPUHKhnmtGOtqxendOBapg/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9wbmdp/bWcuY29tL3VwbG9h/ZHMvbWV0YS9tZXRh/X1BORzUucG5n"
                 alt="Meta"
+                width={40}
+                height={40}
               />
-              <img
+              <Image
                 className="animate-bounce w-6 md:w-10 duration-2000"
                 src="https://imgs.search.brave.com/R9W6ytA6CRPIO6CcQwJpXjtre717-s3x4uBEb_46awU/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9wbmdp/bWcuY29tL3VwbG9h/ZHMvbWljcm9zb2Z0/L21pY3Jvc29mdF9Q/TkcxMy5wbmc"
                 alt="Microsoft"
+                width={40}
+                height={40}
               />
-              <img
+              <Image
                 src="https://imgs.search.brave.com/aPrgxBXWSqklQUlX7PSqgmQ9VqY0covqRmtewWNuKYc/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9sb2dv/ZGl4LmNvbS9sb2dv/LzE5MjM0LnBuZw"
                 alt="Apple"
                 className="invert dark:invert-0 w-6 md:w-10 animate-bounce duration-2000"
+                width={40}
+                height={40}
               />
-              <img
+              <Image
                 className="invert dark:invert-0 w-6 md:w-10 animate-bounce duration-2000"
                 src="https://imgs.search.brave.com/54_CDPZ-ydG19HDJmLYAkr8UkSkdkKVwGddySwD_vyE/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9mcmVl/bG9nb3BuZy5jb20v/aW1hZ2VzL2FsbF9p/bWcvMTY5MDY0Mzc3/N3R3aXR0ZXIteCUy/MGxvZ28tcG5nLXdo/aXRlLnBuZw"
                 alt="Amazon"
+                width={40}
+                height={40}
               />
-              <img
+              <Image
                 src="https://imgs.search.brave.com/XDxKHAa94hPoQlfKtBX8vLshViu-Xzzc6kp0ZHvLULg/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMudmVjdGVlenku/Y29tL3N5c3RlbS9y/ZXNvdXJjZXMvcHJl/dmlld3MvMDE5Lzk1/Ni8xOTUvbm9uXzJ4/L25ldGZsaXgtdHJh/bnNwYXJlbnQtbmV0/ZmxpeC1mcmVlLWZy/ZWUtcG5nLnBuZw"
                 alt="Netflix"
                 className="animate-bounce w-6 md:w-10 duration-2000"
+                width={40}
+                height={40}
               />
             </div>
           </div>

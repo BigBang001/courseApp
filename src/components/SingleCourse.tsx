@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import {
   Card,
   CardContent,
@@ -32,7 +33,7 @@ const SingleCourse = () => {
       }
     };
     fetchCourse();
-  }, []);
+  }, [courseId]);
 
   if (isLoading) {
     return (
@@ -62,10 +63,13 @@ const SingleCourse = () => {
           </h1>
         </CardHeader>
         <CardContent>
-          <div className="h-20 w-20 overflow-hidden rounded-full">
-            <img
-              className="w-full h-full object-cover"
-              src={course?.thumbnail}
+          <div className="h-20 w-20 overflow-hidden rounded-full relative">
+            <Image
+              src={course?.thumbnail || ''}
+              alt={course?.title || 'Course thumbnail'}
+              fill
+              className="object-cover"
+              sizes="80px"
             />
           </div>
         </CardContent>

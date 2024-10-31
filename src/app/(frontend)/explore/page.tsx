@@ -24,6 +24,8 @@ const CoursesPage = () => {
   const [framework, setFramework] = useState("");
   const [area, setArea] = useState("");
   const { courses, isLoading, setFilter, isSearching } = useFetchCourses();
+  const [currentPage, setCurrentPage] = useState(1);
+  const coursesPerPage = 6;
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -43,6 +45,7 @@ const CoursesPage = () => {
     setFramework("");
     setArea("");
     setFilter("");
+    setCurrentPage(1);
   };
 
   const SkeletonCard = () => (
@@ -56,6 +59,17 @@ const CoursesPage = () => {
       </div>
     </div>
   );
+
+  // Calculate pagination
+  const indexOfLastCourse = currentPage * coursesPerPage;
+  const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
+  const currentCourses = courses.slice(indexOfFirstCourse, indexOfLastCourse);
+  const totalPages = Math.ceil(courses.length / coursesPerPage);
+
+  const paginate = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <div className="min-h-screen rounded-xl mx-3 bg-gradient-to to-background">
@@ -140,7 +154,7 @@ const CoursesPage = () => {
               .fill(null)
               .map((_, index) => <SkeletonCard key={index} />)
           ) : courses.length > 0 ? (
-            courses.map((course: Course) => (
+            currentCourses.map((course: Course) => (
               <CourseCard
                 course={course}
                 key={course.id}
@@ -160,6 +174,34 @@ const CoursesPage = () => {
             </div>
           )}
         </div>
+
+        {courses.length > 0 && !isLoading && (
+          <div className="flex justify-center gap-2 mt-8 mb-10">
+            <Button
+              variant="outline"
+              onClick={() => paginate(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </Button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
+              <Button
+                key={number}
+                variant={currentPage === number ? "default" : "outline"}
+                onClick={() => paginate(number)}
+              >
+                {number}
+              </Button>
+            ))}
+            <Button
+              variant="outline"
+              onClick={() => paginate(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </Button>
+          </div>
+        )}
 
         <div className="text-center mt-20 mb-10 p-8 bg-card rounded-xl border border-border/50">
           <h2 className="text-2xl md:text-3xl font-bold mb-4">
