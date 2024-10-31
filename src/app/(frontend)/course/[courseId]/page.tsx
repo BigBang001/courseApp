@@ -38,6 +38,19 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import * as z from "zod"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { creditCardSValidation } from "@/validations/validation";
+
 
 export default function CoursePurchase() {
   const [isLoading, setIsLoading] = useState(false);
@@ -46,18 +59,21 @@ export default function CoursePurchase() {
   const [paymentMethod, setPaymentMethod] = useState("existing-card");
   const { toast } = useToast();
   const [cards, setCards] = useState<creditCardTypes[]>([]);
-  const [values, setValues] = useState<creditCardTypes>({
-    accountNumber: "",
-    bankName: "",
-    cvv: "",
-    expiryDate: "",
-    cardHolderName: "",
-  });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isLoadingCards, setIsLoadingCards] = useState(true);
 
-  const handleAddCard = async (event: React.FormEvent) => {
-    event.preventDefault();
+  const form = useForm<z.infer<typeof creditCardSValidation>>({
+    resolver: zodResolver(creditCardSValidation),
+    defaultValues: {
+      accountNumber: "",
+      bankName: "",
+      cvv: "",
+      expiryDate: "",
+      cardHolderName: "",
+    },
+  })
+
+  const handleAddCard = async (values: z.infer<typeof creditCardSValidation>) => {
     try {
       setIsLoading(true);
       const response = await axios.post(`/api/credit-card`, values);
@@ -208,7 +224,6 @@ export default function CoursePurchase() {
         </Card>
 
         {paymentMethod === "existing-card" && isLoadingCards ? (
-          // Skeleton loading state
           <div className="space-y-3">
             <Skeleton className="h-[200px] w-full rounded-lg" />
           </div>
@@ -350,110 +365,105 @@ export default function CoursePurchase() {
                   </h1>
                 </DialogDescription>
               </DialogHeader>
-              <form onSubmit={handleAddCard}>
-                <div className="space-y-4">
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(handleAddCard)} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="account-number">Account Number</Label>
-                      <Input
-                        value={values.accountNumber}
-                        onChange={(e) =>
-                          setValues({
-                            ...values,
-                            accountNumber: e.target.value,
-                          })
-                        }
-                        id="account-number"
-                        placeholder="1234 5678 9012 3456"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="name">Card holder name</Label>
-                      <Input
-                        value={values.cardHolderName}
-                        onChange={(e) =>
-                          setValues({
-                            ...values,
-                            cardHolderName: e.target.value,
-                          })
-                        }
-                        id="name"
-                        placeholder="Kush Chaudhary"
-                      />
-                    </div>
-                    <div className="space-y-2 w-full">
-                      <Label htmlFor="expiry-date">Expiry Date</Label>
-                      <Input
-                        value={values.expiryDate}
-                        onChange={(e) =>
-                          setValues({
-                            ...values,
-                            expiryDate: e.target.value,
-                          })
-                        }
-                        placeholder="MM/YY or MM/YYYY format"
-                      />
-                    </div>
+                    <FormField
+                      control={form.control}
+                      name="accountNumber"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Account Number</FormLabel>
+                          <FormControl>
+                            <Input placeholder="1234 5678 9012 3456" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="cardHolderName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Card Holder Name</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Kush Chaudhary" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="expiryDate"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Expiry Date</FormLabel>
+                          <FormControl>
+                            <Input placeholder="MM/YY or MM/YYYY format" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </div>
-                  <div className="grid grid-cols-2  gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="bank">Bank Name</Label>
-                      <Select
-                        value={values.bankName}
-                        onValueChange={(value) =>
-                          setValues({ ...values, bankName: value })
-                        }
-                      >
-                        <SelectTrigger id="bank">
-                          <SelectValue placeholder="Select Bank" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectLabel>Select Role</SelectLabel>
-                            {banks.map((e) => (
-                              <SelectItem
-                                key={e.name}
-                                className="capitalize"
-                                value={e.name}
-                              >
-                                {e.name}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="cvv">CVV</Label>
-                      <Input
-                        value={values.cvv}
-                        onChange={(e) =>
-                          setValues({
-                            ...values,
-                            cvv: e.target.value,
-                          })
-                        }
-                        id="cvv"
-                        placeholder="123"
-                        max={3}
-                        maxLength={3}
-                      />
-                    </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="bankName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Bank Name</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Bank" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectGroup>
+                                <SelectLabel>Select Bank</SelectLabel>
+                                {banks.map((bank) => (
+                                  <SelectItem key={bank.name} value={bank.name}>
+                                    {bank.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="cvv"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>CVV</FormLabel>
+                          <FormControl>
+                            <Input placeholder="123" maxLength={3} {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </div>
-                </div>
-                <DialogFooter className="mt-4">
-                  <Button disabled={isLoading} type="submit">
-                    {isLoading ? (
-                      <div className="flex gap-1 items-center">
-                        <Loader2 className="animate-spin" />
-                        Adding...
-                      </div>
-                    ) : (
-                      "Add Card"
-                    )}
-                  </Button>
-                </DialogFooter>
-              </form>
+                  <DialogFooter>
+                    <Button disabled={isLoading} type="submit">
+                      {isLoading ? (
+                        <div className="flex gap-1 items-center">
+                          <Loader2 className="animate-spin" />
+                          Adding...
+                        </div>
+                      ) : (
+                        "Add Card"
+                      )}
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </Form>
             </DialogContent>
           </Dialog>
         )}

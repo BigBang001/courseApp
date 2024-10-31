@@ -1,29 +1,33 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Check, Minimize, X } from "lucide-react";
-import { DashIcon } from "@radix-ui/react-icons";
+import { Check, X } from "lucide-react";
 
 const ClassCard = ({
   classId,
   title,
   classURL,
-  index,
-  markAsComplete,
+  index
 }: {
   classId: string;
   title: string;
   classURL: string;
   index: number;
-  markAsComplete: boolean;
 }) => {
   const params = useParams();
+  const [isCompleted, setIsCompleted] = useState(false);
+
+  useEffect(() => {
+    const completedClasses = JSON.parse(localStorage.getItem('completedClasses') || '{}');
+    setIsCompleted(!!completedClasses[classId]);
+  }, [classId]);
+
   return (
     <div>
       <Card className="bg-stone-100 overflow-hidden dark:bg-stone-950/50 md:h-80 relative">
-        {markAsComplete ? (
+        {isCompleted ? (
           <div className="bg-green-500 rounded-bl-full  pb-2 pl-2 p-1 lg:pt-1 lg:pr-1 lg:p-2 text-green-950 absolute top-0 right-0">
             <Check className="h-4 w-4" fontWeight={800} />
           </div>
@@ -40,14 +44,14 @@ const ClassCard = ({
               {title}
             </h1>
           </CardTitle>
-          <div className="flex justify-end">
+          <div className="absolute bottom-2 right-2">
             <Link
               href={{
                 pathname: `/classes/${params.courseId}/${title}`,
                 query: { classURL, classId },
               }}
             >
-              <Button>Play</Button>
+              <Button className="bg-blue-500 text-white hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700">Play</Button>
             </Link>
           </div>
         </CardHeader>

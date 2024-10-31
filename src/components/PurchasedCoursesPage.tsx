@@ -10,7 +10,7 @@ const PurchasedCoursesPage = () => {
   const  { purchasedCourses, isLoading } = usePurchasedCourses();
 
   return (
-    <div className="container px-4 w-full mx-auto">
+    <div className="container w-full mx-auto">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {isLoading ? (
           Array(8)
