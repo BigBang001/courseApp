@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-import { authOptions } from "../../auth/[...nextauth]/options";
+import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 import prisma from "@/lib/prisma";
 
 export async function POST(request: NextRequest) {
@@ -13,7 +13,6 @@ export async function POST(request: NextRequest) {
                 message: "Unauthorized",
             }, { status: 401 });
         }
-
         const user = await prisma.user.findFirst({
             where: {
                 email: session.user.email,
@@ -49,7 +48,7 @@ export async function POST(request: NextRequest) {
     }
 }
 
-export async function GET(request: NextRequest) {
+export async function GET() {
     try {
         const session = await getServerSession(authOptions);
         if (!session?.user) {

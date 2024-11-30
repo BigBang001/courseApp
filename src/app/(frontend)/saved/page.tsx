@@ -1,15 +1,19 @@
 "use client";
-import React from "react";
-import { useSavedCourses } from "@/hooks/useSavedCourses";
+
+import React, { useEffect } from "react";
 import CourseCard from "@/components/CourseCard";
 import { Loader2 } from "lucide-react";
+import { useSavedCoursesStore } from "@/store/courseStore/savedCoursesStore";
+
 const Page = () => {
-  const { savedCourses, isLoading } = useSavedCourses();
+  const { fetchSavedCourses, isLoading, savedCourses } = useSavedCoursesStore();
+  useEffect(() => {
+    fetchSavedCourses();
+  }, []);
+
   return (
     <div className="mt-6 md:mt-0 mb-2 px-4 md:px-24">
-      <h1 className="text-2xl font-bold py-2 ">
-        My Saved Courses
-      </h1>
+      <h1 className="text-2xl font-bold py-2 ">My Saved Courses</h1>
       <div>
         {isLoading ? (
           <div className="w-full bgb h-[60vh] flex items-center justify-center">

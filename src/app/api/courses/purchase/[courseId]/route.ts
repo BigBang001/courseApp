@@ -112,7 +112,7 @@ export async function POST(request: Request, { params }: { params: { courseId: s
 
             await prisma.user.update({
                 where: {
-                    id: course.userId,
+                    id: course.instructerId || "",
                 },
                 data: {
                     balance: {

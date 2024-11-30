@@ -36,7 +36,7 @@ const CourseCard = ({ course }: {course : Course}) => {
       const savedCourses = JSON.parse(localStorage.getItem('savedCourses') || '[]');
 
       if (isCourseSaved === false) {
-        await axios.post("/api/courses/bookmark", {
+        await axios.post("/api/courses/save/saved-courses", {
           courseId: course.id,
           userId: session.user.id,
         });
@@ -50,7 +50,7 @@ const CourseCard = ({ course }: {course : Course}) => {
           variant: "success",
         });
       } else {
-        await axios.delete(`/api/courses/bookmark/${course.id}`);
+        await axios.delete(`/api/courses/save/${course.id}`);
         const updatedCourses = savedCourses.filter((id : string) => id !== course.id);
         localStorage.setItem('savedCourses', JSON.stringify(updatedCourses));
         setIsCourseSaved(false);

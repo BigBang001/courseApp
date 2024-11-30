@@ -12,7 +12,6 @@ import { Loader2, Upload, X } from "lucide-react";
 import EditUserDetails from "./EditUserDetails";
 import ChangePassword from "./ChangePassword";
 import AccountManage from "../AccountManage";
-import { useMe } from "@/hooks/userMe";
 import { useToast } from "@/hooks/use-toast";
 import axios from "axios";
 import { useSession } from "next-auth/react";
@@ -23,12 +22,7 @@ import { useProfileStore } from "@/store/ProfileStore/profileStore";
 
 export default function ProfileCard() {
   const { data: session } = useSession();
-  const { user, isLoading: isUserLoading, fetchProfile } = useProfileStore();
-
-  useEffect(() => {
-    fetchProfile();
-  }, []);
-
+  const { user, isLoading: isUserLoading } = useProfileStore();
   const [isUploading, setIsUploading] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const { toast } = useToast();

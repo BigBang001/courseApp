@@ -3,11 +3,15 @@
 import PurchasedCourseCard from "@/components/PurchasedCourseCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import React from "react";
-import { usePurchasedCourses } from "@/hooks/usePurchasedCourses";
+import { usePurchasedCoursesStore } from "@/store/courseStore/purchasesCoursesStore";
 
 const PurchasedCoursesPage = () => {
  
-  const  { purchasedCourses, isLoading } = usePurchasedCourses();
+  const { purchasedCourses, isLoading, fetchPurchasedCourses } = usePurchasedCoursesStore();
+
+  React.useEffect(() => {
+    fetchPurchasedCourses();
+  }, [fetchPurchasedCourses]);
 
   return (
     <div className="container w-full mx-auto">
@@ -17,8 +21,8 @@ const PurchasedCoursesPage = () => {
             .fill(null)
             .map((_, index) => <SkeletonCard key={index} />)
         ) : purchasedCourses.length > 0 ? (
-          purchasedCourses.map((course) => (
-            <PurchasedCourseCard key={course.id} course={course} />
+          purchasedCourses.map(({course}) => (
+            <PurchasedCourseCard key={course.id} {...course} />
           ))
         ) : (
           <div className="font-semibold">

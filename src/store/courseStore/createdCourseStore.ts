@@ -5,16 +5,16 @@ import { create } from 'zustand'
 interface CreatedCourseStore {
     courses: Course[]
     isLoading: boolean
-    fetchCourse: () => Promise<void>
+    fetchCreatedCourses: () => Promise<void>
 }
 
 export const useCreatedCourseStore = create<CreatedCourseStore>((set) => ({
     courses: [],
     isLoading: false,
-    fetchCourse: async () => {
+    fetchCreatedCourses: async () => {
         try {
             set({ isLoading: true })
-            const response = await axios('/api/user-courses')
+            const response = await axios('/api/courses/created-courses')
             set({ courses: response.data.courses })
         } catch (error) {
             console.error(error)

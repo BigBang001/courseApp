@@ -20,18 +20,18 @@ import {
 } from "lucide-react";
 import { Switch } from "./ui/switch";
 import { useTheme } from "next-themes";
-import { useMe } from "@/hooks/userMe";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { useProfileStore } from "@/store/ProfileStore/profileStore";
 
 export default function Navbar() {
   const { data: session, status } = useSession();
   const handleSignOut = async () => {
     await signOut({ callbackUrl: "/signin", redirect: true });
   };
-  const { user } = useMe();
+  const { user } = useProfileStore();
   const { setTheme, theme } = useTheme();
 
-  const toggleTheme = () => { 
+  const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
   };
   // console.log("Theme", theme);
@@ -40,8 +40,8 @@ export default function Navbar() {
     <header className="bg-secondary/15 shadow-lg shadow-neutral-600/5 backdrop-blur-lg border border-primary/10 md:p-4 py-4 rounded-b-2xl">
       <div className="px-5 flex items-center justify-between w-full">
         <Link href={"/explore"}>
-          <h1 className="text-xl font-bold">
-            50<span className="text-blue-500">x</span>Courses
+          <h1 className="text-xl font-bold hover:text-blue-500">
+            Course<span className="text-blue-500 hover:text-white">Pros.</span>
           </h1>
         </Link>
 

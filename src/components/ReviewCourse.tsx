@@ -65,7 +65,7 @@ export default function ReviewCourse({ courseId }: { courseId: string }) {
     <Dialog open={close} onOpenChange={setClose}  >
       <DialogTrigger asChild>
         <Button variant="outline" size="sm" className="gap-2">
-          <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+          <Star className="w-4 h-4" />
           Review Course
         </Button>
       </DialogTrigger>

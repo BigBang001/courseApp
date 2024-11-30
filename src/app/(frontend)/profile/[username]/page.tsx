@@ -12,30 +12,37 @@ import {
   Drawer,
   DrawerClose,
   DrawerContent,
-  DrawerDescription,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import {
-  Loader2,
-  ArrowLeft,
-  BookOpen,
-  Bookmark,
-  PlusCircle,
-} from "lucide-react";
-import PurchasedCoursesPage from "@/components/PurchasedCoursesPage";
+import { Loader2, ArrowLeft } from "lucide-react";
 import { useSession } from "next-auth/react";
-import CreatedCourses from "@/components/CreatedCourses";
+import CreatedCourses from "@/components/Course/CreatedCourses";
 import Link from "next/link";
-import { useMe } from "@/hooks/userMe";
 import { motion } from "framer-motion";
 import ProfileCard from "@/components/Profile/ProfileCard";
 import AdminDashboard from "@/components/Profile/AdminDashboard";
+import SavedCourses from "@/components/Course/SavedCourses";
+import PurchasedCourses from "@/components/Course/purchasedCourses";
+import { useProfileStore } from "@/store/ProfileStore/profileStore";
+import { useEffect } from "react";
+import { useCreatedCourseStore } from "@/store/courseStore/createdCourseStore";
+import { useSavedCoursesStore } from "@/store/courseStore/savedCoursesStore";
+import { usePurchasedCoursesStore } from "@/store/courseStore/purchasesCoursesStore";
 
 export default function Profile() {
   const { data: session, status: sessionStatus } = useSession();
-  const { isLoading } = useMe();
+  const { isLoading, fetchProfile } = useProfileStore();
+  const { fetchCreatedCourses } = useCreatedCourseStore();
+  const { fetchSavedCourses } = useSavedCoursesStore();
+  const { fetchPurchasedCourses } = usePurchasedCoursesStore();
+  useEffect(() => {
+    fetchProfile();
+    fetchCreatedCourses();
+    fetchSavedCourses();
+    fetchPurchasedCourses();
+  }, []);
 
   if (sessionStatus === "loading" || isLoading) {
     return (
@@ -86,79 +93,8 @@ export default function Profile() {
               <CardContent>
                 {session?.user.role !== "admin" ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Drawer>
-                      <DrawerTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className="w-full transition-all duration-300 hover:scale-105"
-                        >
-                          <BookOpen className="mr-2 h-4 w-4" />
-                          Purchased Courses
-                        </Button>
-                      </DrawerTrigger>
-                      <DrawerContent>
-                        <div className="mx-auto w-full">
-                          <DrawerHeader>
-                            <DrawerTitle className="text-3xl font-serif">
-                              Purchased Courses
-                            </DrawerTitle>
-                            <DrawerDescription>
-                              Your learning progress
-                            </DrawerDescription>
-                          </DrawerHeader>
-                          <div className="p-6 space-y-4 max-h-[60vh] overflow-y-auto custom-scrollbar">
-                            <PurchasedCoursesPage />
-                          </div>
-                          <div className="p-4 flex justify-center">
-                            <DrawerClose>
-                              <Button
-                                variant="outline"
-                                className="w-40 transition-all duration-300 hover:scale-105"
-                              >
-                                Close
-                              </Button>
-                            </DrawerClose>
-                          </div>
-                        </div>
-                      </DrawerContent>
-                    </Drawer>
-
-                    <Drawer>
-                      <DrawerTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className="w-full transition-all duration-300 hover:scale-105"
-                        >
-                          <Bookmark className="mr-2 h-4 w-4" />
-                          Saved Courses
-                        </Button>
-                      </DrawerTrigger>
-                      <DrawerContent>
-                        <div className="mx-auto w-full max-w-4xl">
-                          <DrawerHeader>
-                            <DrawerTitle className="text-3xl font-serif">
-                              Saved Courses
-                            </DrawerTitle>
-                            <DrawerDescription>
-                              Courses you've bookmarked for later
-                            </DrawerDescription>
-                          </DrawerHeader>
-                          <div className="p-6 space-y-4 max-h-[60vh] overflow-y-auto custom-scrollbar">
-                            {/* Add your SavedCourses component here */}
-                          </div>
-                          <div className="p-4 flex justify-center">
-                            <DrawerClose>
-                              <Button
-                                variant="outline"
-                                className="w-40 transition-all duration-300 hover:scale-105"
-                              >
-                                Close
-                              </Button>
-                            </DrawerClose>
-                          </div>
-                        </div>
-                      </DrawerContent>
-                    </Drawer>
+                    <PurchasedCourses />
+                    <SavedCourses />
                   </div>
                 ) : (
                   <Drawer>

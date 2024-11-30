@@ -85,7 +85,7 @@ export default function AddCourse() {
   const onSubmit = async (values: z.infer<typeof courseValidation>) => {
     setIsLoading(true);
     try {
-      const response = await axios.post(`/api/create-course`, values);
+      const response = await axios.post(`/api/courses/create-course`, values);
       toast({
         title: "Course Created Successfully! 🎉",
         description: `Your course "${response.data.course.title}" is now live and ready for students.`,

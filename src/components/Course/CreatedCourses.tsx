@@ -1,12 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import axios, { AxiosError } from "axios";
 import {
-  Edit,
   Loader2,
-  LucideChartNoAxesColumnIncreasing,
-  Star,
   Trash2,
 } from "lucide-react";
 import Image from "next/image";
@@ -39,10 +36,7 @@ import AddClass from "@/components/AddClass";
 import { useCreatedCourseStore } from "@/store/courseStore/createdCourseStore";
 
 const CreatedCourses = () => {
-  const { courses, isLoading, fetchCourse } = useCreatedCourseStore();
-  useEffect(() => {
-    fetchCourse();
-  }, []);
+  const { courses, isLoading} = useCreatedCourseStore();
 
   return (
     <div className="container mx-auto py-12">
@@ -69,6 +63,7 @@ const CreatedCourses = () => {
 
 function CourseCard(course: Course) {
   const { toast } = useToast();
+  const { fetchCreatedCourses } = useCreatedCourseStore();
   const [isLoading, setIsLoading] = useState(false);
   const handleDeleteCourse = async () => {
     setIsLoading(true);
@@ -80,6 +75,7 @@ function CourseCard(course: Course) {
           description: "Your course has been successfully removed",
           variant: "success",
         });
+        fetchCreatedCourses();
       }
     } catch (error) {
       const axiosError = error as AxiosError;

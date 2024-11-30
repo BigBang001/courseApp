@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 
-export default function LandingPage() {
+export default async function LandingPage() {
   const featuredCourses = [
     {
       title: "Complete Web Development Bootcamp",
@@ -32,14 +32,13 @@ export default function LandingPage() {
 
   return (
     <div className={`min-h-screen flex flex-col`}>
-      <Navbar />
       <div className="dark:bg-background w-full bg-primary-foreground overflow-x-hidden">
-        <main className="relative z-10 md:mt-32 mt-40 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 text-center">
+        <main className="relative z-10 md:mt-20 mt-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 text-center">
           <h1 className="text-3xl md:text-5xl font-bold mb-4">
             Welcome to
             <br />
             <span className="bg-gradient-to-r text-4xl md:text-8xl from-blue-500 to-white text-transparent bg-clip-text">
-              50xCourses
+            CoursePros
             </span>
           </h1>
           <p className="mt-6 text-sm md:text-xl dark:text-neutral-400 max-w-3xl mx-auto">
