@@ -28,7 +28,7 @@ export async function GET() {
 
         const courses = await prisma.course.findMany({
             where: {
-                userId: user.id
+                instructerId: user.id
             }, orderBy: {
                 createdAt: "desc"
             }

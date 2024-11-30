@@ -69,7 +69,8 @@ export const courseValidation = z.object({
   level: z
     .enum(['beginner', 'intermediate', 'advanced'], { message: "Level must be one of 'beginner', 'intermediate', or 'advanced'" }),
 
-  tags: z.string().min(2, { message: "Add Atleat 1 tag minimum of two charcter" }).max(150, { message: "All Tags should come under 100 characters" })
+  tags: z.string().min(2, { message: "Add Atleat 1 tag minimum of two charcter" }).max(150, { message: "All Tags should come under 100 characters" }),
+  langauge: z.string().min(1, { message: "Language is required" }),
 });
 
 export const creditCardSValidation = z.object({

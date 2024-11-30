@@ -1,8 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios, { AxiosError } from "axios";
-import { Edit, Loader2, Star, Trash2 } from "lucide-react";
+import {
+  Edit,
+  Loader2,
+  LucideChartNoAxesColumnIncreasing,
+  Star,
+  Trash2,
+} from "lucide-react";
 import Image from "next/image";
 
 import {
@@ -29,15 +35,20 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import EditCourse from "@/components/EditCourse";
-import { useCourses } from "@/hooks/useCreateCourse";
 import AddClass from "@/components/AddClass";
+import { useCreatedCourseStore } from "@/store/courseStore/createdCourseStore";
 
 const CreatedCourses = () => {
-  const { courses, isLoading } = useCourses();
+  const { courses, isLoading, fetchCourse } = useCreatedCourseStore();
+  useEffect(() => {
+    fetchCourse();
+  }, []);
 
   return (
     <div className="container mx-auto py-12">
-      <h1 className="text-3xl font-bold mb-8 text-center">Your Created Courses</h1>
+      <h1 className="text-3xl font-bold mb-8 text-center">
+        Your Created Courses
+      </h1>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 relative">
         {isLoading ? (
           Array(6)
@@ -46,7 +57,10 @@ const CreatedCourses = () => {
         ) : courses.length > 0 ? (
           courses.map((course) => <CourseCard key={course.id} {...course} />)
         ) : (
-          <p className="text-lg font-medium text-neutral-600 dark:text-neutral-400">You haven't created any courses yet. Start creating your first course!</p>
+          <p className="text-lg font-medium text-neutral-600 dark:text-neutral-400">
+            You haven't created any courses yet. Start creating your first
+            course!
+          </p>
         )}
       </div>
     </div>
@@ -151,12 +165,17 @@ function CourseCard(course: Course) {
                     Confirm Course Deletion
                   </AlertDialogTitle>
                   <AlertDialogDescription className="text-base">
-                    Are you sure you want to delete <span className="font-semibold">{course.title}</span>? This action cannot be undone.
+                    Are you sure you want to delete{" "}
+                    <span className="font-semibold">{course.title}</span>? This
+                    action cannot be undone.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Keep Course</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDeleteCourse} className="bg-red-600 hover:bg-red-700">
+                  <AlertDialogAction
+                    onClick={handleDeleteCourse}
+                    className="bg-red-600 hover:bg-red-700"
+                  >
                     Delete Course
                   </AlertDialogAction>
                 </AlertDialogFooter>

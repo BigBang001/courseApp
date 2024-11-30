@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import axios from "axios";
-import { Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import dynamic from "next/dynamic";
 import "react-quill/dist/quill.snow.css";
 import { useForm } from "react-hook-form";
@@ -20,7 +20,6 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -36,9 +35,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "./ui/textarea";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { courseValidation } from "@/validations/validation";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -55,13 +56,13 @@ const modules = {
     ["link", "image"],
     ["clean"],
   ],
-};
+  };
 
 const formats = [
   "header",
   "bold",
   "italic",
-  "underline", 
+  "underline",
   "strike",
   "blockquote",
   "list",
@@ -72,6 +73,7 @@ const formats = [
 ];
 
 export default function AddCourse() {
+  const { data: session } = useSession();
   const { toast } = useToast();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -104,14 +106,21 @@ export default function AddCourse() {
 
   return (
     <div className="container mx-auto py-8">
-      <Card className="max-w-4xl mx-auto shadow-lg bg-gradient-to-b from-neutral-50 to-neutral-100 dark:from-neutral-900 dark:to-neutral-950">
+      <Link
+        href={`/profile/${session?.user.fullName}`}
+        className="inline-block mb-4"
+      >
+        <Button variant="outline" className="gap-2">
+          <ArrowLeft className="h-4 w-4" />
+          Back to Profile
+        </Button>
+      </Link>
+      <Card className="max-w-4xl mx-auto shadow-lg">
         <CardHeader className="text-center space-y-2">
-          <CardTitle className="text-4xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+          <CardTitle className="text-3xl font-semibold text-primary">
             Create Your Course
           </CardTitle>
-          <CardDescription className="text-lg">
-            Share your knowledge with the world! 🌟
-          </CardDescription>
+          <CardDescription>Share your knowledge with the world</CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -138,7 +147,10 @@ export default function AddCourse() {
                   <FormItem>
                     <FormLabel>Quick Overview</FormLabel>
                     <FormControl>
-                      <Textarea {...field} placeholder="Hook your students with a compelling summary..." />
+                      <Textarea
+                        {...field}
+                        placeholder="Hook your students with a compelling summary..."
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -146,7 +158,7 @@ export default function AddCourse() {
               />
 
               <FormItem>
-                <Label htmlFor="description">Full Course Description</Label>
+                <Label htmlFor="description">Description</Label>
                 <FormField
                   control={form.control}
                   name="description"
@@ -159,7 +171,7 @@ export default function AddCourse() {
                           formats={formats}
                           theme="snow"
                           placeholder="Paint a picture of your course content..."
-                          className="h-48 md:mb-12 mb-20"
+                          className="h-72 md:mb-12 mb-20"
                         />
                       </FormControl>
                       <FormMessage />
@@ -223,7 +235,7 @@ export default function AddCourse() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <FormField
                   control={form.control}
                   name="thumbnail"
@@ -231,7 +243,10 @@ export default function AddCourse() {
                     <FormItem>
                       <FormLabel>Course Thumbnail</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="Add an eye-catching thumbnail URL" />
+                        <Input
+                          {...field}
+                          placeholder="Add an eye-catching thumbnail URL"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -254,20 +269,45 @@ export default function AddCourse() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="beginner">Perfect for Beginners</SelectItem>
-                          <SelectItem value="intermediate">Intermediate Challengers</SelectItem>
-                          <SelectItem value="advanced">Advanced Masters</SelectItem>
+                          <SelectItem value="beginner">
+                            Perfect for Beginners
+                          </SelectItem>
+                          <SelectItem value="intermediate">
+                            Intermediate Challengers
+                          </SelectItem>
+                          <SelectItem value="advanced">
+                            Advanced Masters
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
+                <FormField
+                  control={form.control}
+                  name="langauge"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Langauge</FormLabel>
+                      <FormControl>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder="English, Spanish, etc."
+                          />
+                        </FormControl>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
 
-              <Button 
-                type="submit" 
-                className="w-full font-semibold" 
+              <Button
+                type="submit"
+                className="w-full font-semibold"
                 disabled={isLoading}
               >
                 {isLoading ? (

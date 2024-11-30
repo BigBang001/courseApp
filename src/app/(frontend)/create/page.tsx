@@ -1,4 +1,4 @@
-import AddCourse from '@/components/AddCourse';
+import AddCourse from '@/components/Course/AddCourse';
 
 import React from 'react'
 

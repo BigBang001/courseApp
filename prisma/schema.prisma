@@ -34,15 +34,17 @@ model Course {
   id               String             @unique @default(uuid())
   title            String
   shortDescription String
-  tags             String
   description      String
   price            Int
   thumbnail        String
+  tags             String
+  langauge         String             @default("English")
+  isPublished      Boolean            @default(false)
   createdAt        DateTime           @default(now())
   duration         String
-  userId           String
   level            String
-  user             User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  instructerId     String?            @default(uuid())
+  instructer       User?              @relation(fields: [instructerId], references: [id], onDelete: Cascade)
   Review           Review[]
   purchasedCourses purchasedCourses[]
   recordedClass    recordedClass[]
@@ -70,7 +72,6 @@ model savedCourses {
 
   @@unique([courseId, userId])
 }
-
 
 model CreditCard {
   id             String   @unique @default(uuid())

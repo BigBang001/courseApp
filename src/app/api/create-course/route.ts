@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 import { authOptions } from "../auth/[...nextauth]/options";
 
 export async function POST(request: Request) {
-    const { title, description, shortDescription, tags, thumbnail, price, duration, level } = await request.json();
+    const { title, description, shortDescription, tags, thumbnail, price, duration,langauge,  level } = await request.json();
     const { success, error } = courseValidation.safeParse({
         title,
         tags,
@@ -14,7 +14,8 @@ export async function POST(request: Request) {
         description,
         thumbnail,
         price,
-        duration
+        duration,
+        langauge
     });
     const session = await getServerSession(authOptions);
     if (!success) {
@@ -56,9 +57,10 @@ export async function POST(request: Request) {
                 duration,
                 level,
                 thumbnail,
-                userId: user.id,
+                instructerId: user.id,
                 shortDescription,
-                tags
+                tags,
+                langauge
             }
         });
 

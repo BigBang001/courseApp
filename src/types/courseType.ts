@@ -8,7 +8,8 @@ export interface Course {
     createdAt?: Date
     shortDescription?: string
     duration?: string
-    userId?: string
+    instructerId?: string
+    langauge?: string
     tags: string
     level?: string
     Review : ReviewTypes[]

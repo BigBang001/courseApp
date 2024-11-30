@@ -3,217 +3,135 @@
 import React, { useState, useEffect } from "react";
 import CourseCard from "@/components/CourseCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useFetchCourses } from "@/hooks/useFetchCourses";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { data } from "@/data/filters";
 import { BarLoader } from "react-spinners";
 import { Course } from "@/types/courseType";
+import { motion } from "framer-motion";
+import DummyFooter from "@/components/ExplorePage/DummyFooter";
+import { Search } from "lucide-react";
+import { useBulkCoursesStore } from "@/store/courseStore/bulkCoursesStore";
 
 const CoursesPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [technology, setTechnology] = useState("");
-  const [database, setDatabase] = useState("");
-  const [framework, setFramework] = useState("");
-  const [area, setArea] = useState("");
-  const { courses, isLoading, setFilter, isSearching } = useFetchCourses();
-  const [currentPage, setCurrentPage] = useState(1);
-  const coursesPerPage = 6;
+  const { setFilter, courses, fetchCourses, isLoading, isSearching } =
+    useBulkCoursesStore();
 
   useEffect(() => {
+    fetchCourses();
+  }, [fetchCourses]);
+
+  //debounce search term
+  useEffect(() => {
     const timer = setTimeout(() => {
-      const filterString = [technology, database, framework, area, searchTerm]
-        .filter(Boolean)
-        .join(",");
-      setFilter(filterString);
+      setFilter(searchTerm);
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [searchTerm, technology, database, framework, area, setFilter]);
+  }, [searchTerm, setFilter]);
 
   const clearFilters = () => {
     setSearchTerm("");
-    setTechnology("");
-    setDatabase("");
-    setFramework("");
-    setArea("");
     setFilter("");
-    setCurrentPage(1);
   };
 
   const SkeletonCard = () => (
     <div className="space-y-4">
-      <Skeleton className="h-48 w-full" />
-      <Skeleton className="h-4 w-3/4" />
-      <Skeleton className="h-4 w-1/2" />
+      <Skeleton className="h-48 w-full rounded-lg" />
+      <Skeleton className="h-4 w-3/4 rounded-full" />
+      <Skeleton className="h-4 w-1/2 rounded-full" />
       <div className="flex justify-between">
-        <Skeleton className="h-4 w-1/4" />
-        <Skeleton className="h-4 w-1/4" />
+        <Skeleton className="h-4 w-1/4 rounded-full" />
+        <Skeleton className="h-4 w-1/4 rounded-full" />
       </div>
     </div>
   );
 
-  // Calculate pagination
-  const indexOfLastCourse = currentPage * coursesPerPage;
-  const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
-  const currentCourses = courses.slice(indexOfFirstCourse, indexOfLastCourse);
-  const totalPages = Math.ceil(courses.length / coursesPerPage);
-
-  const paginate = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
   return (
-    <div className="min-h-screen rounded-xl mx-3 bg-gradient-to to-background">
-      <div className="w-[95%] md:w-[80%] mx-auto pt-8">
-        <div className="text-center mb-4">
-          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Transform Your Career with Expert-Led Courses
+    <div className="min-h-screen bg-gradient-to-b from-background to-background/80 py-12">
+      <div className="container mx-auto px-2 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-center md:mb-12 mb-6"
+        >
+          <h1 className="text-4xl md:text-6xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-foreground mb-4">
+            Transform Your Career
           </h1>
-          <p className="text-muted-foreground mt-4 text-lg max-w-2xl mx-auto">
-            Join thousands of learners who have advanced their careers through our comprehensive course catalog
+          <p className="md:text-xl text-base text-muted-foreground text-center">
+            Join thousands of learners who have advanced their careers through
+            our expert-led courses
           </p>
-        </div>
+        </motion.div>
 
-        <div className="bg-card rounded-xl p-3 md:p-6 shadow-lg border border-border/50 mb-10">
-          <div className="space-y-6">
-            <div className="mx-auto">
-              <Input
-                onChange={(e) => setSearchTerm(e.target.value)}
-                value={searchTerm}
-                placeholder="🔍 Search for your next learning adventure..."
-                className="w-full"
-                aria-label="Search Courses"
-              />
-            </div>
-
-            {isSearching && (
-              <div className="w-full">
-                <BarLoader width={"100%"} color="white" />
-              </div>
-            )}
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
-              <Select onValueChange={setTechnology} value={technology}>
-                <SelectTrigger>
-                  <SelectValue placeholder="🔧 Technology" />
-                </SelectTrigger>
-                <SelectContent>
-                  {data.filters.technology.map((tech) => (
-                    <SelectItem key={tech} value={tech}>
-                      {tech}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <Select onValueChange={setFramework} value={framework}>
-                <SelectTrigger>
-                  <SelectValue placeholder="⚡ Framework" />
-                </SelectTrigger>
-                <SelectContent>
-                  {data.filters.framework.map((fw) => (
-                    <SelectItem key={fw} value={fw}>
-                      {fw}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <Select onValueChange={setArea} value={area}>
-                <SelectTrigger>
-                  <SelectValue placeholder="🎯 Area" />
-                </SelectTrigger>
-                <SelectContent>
-                  {data.filters.area.map((area) => (
-                    <SelectItem key={area} value={area}>
-                      {area}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <Button onClick={clearFilters} variant="destructive">
-                Reset Filters
-              </Button>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="mb-12"
+        >
+          <div className="relative">
+            <Input
+              onChange={(e) => setSearchTerm(e.target.value)}
+              value={searchTerm}
+              placeholder="Search for your next learning adventure..."
+              className="w-full p-6 pl-24 overflow-hidden relative text-lg rounded-full"
+              aria-label="Search Courses"
+            />
+            <div className="bg-secondary w-20 rounded-l-full absolute top-0 left-0 flex items-center justify-center h-full">
+              <Search className="text-neutral-500" />
             </div>
           </div>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {isSearching && (
+            <div className="w-full">
+              <BarLoader width={"100%"} color="hsl(var(--primary))" />
+            </div>
+          )}
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        >
           {isLoading ? (
             Array(6)
               .fill(null)
               .map((_, index) => <SkeletonCard key={index} />)
           ) : courses.length > 0 ? (
-            currentCourses.map((course: Course) => (
-              <CourseCard
-                course={course}
+            courses.map((course: Course) => (
+              <motion.div
                 key={course.id}
-              />
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3 }}
+              >
+                <CourseCard course={course} />
+              </motion.div>
             ))
           ) : (
             <div className="col-span-full text-center py-20">
-              <h2 className="text-3xl font-bold text-muted-foreground">
+              <h2 className="text-3xl font-bold text-muted-foreground mb-4">
                 No Courses Found
               </h2>
-              <p className="text-muted-foreground mt-4 max-w-md mx-auto">
-                We couldn't find any courses matching your criteria. Try adjusting your filters or search terms.
+              <p className="text-muted-foreground mb-8 max-w-md mx-auto">
+                We couldn't find any courses matching your criteria. Try
+                adjusting your filters or search terms.
               </p>
-              <Button onClick={clearFilters} variant="default" className="mt-6">
+              <Button
+                onClick={clearFilters}
+                variant="default"
+                className="rounded-full"
+              >
                 View All Courses
               </Button>
             </div>
           )}
-        </div>
-
-        {courses.length > 0 && !isLoading && (
-          <div className="flex justify-center gap-2 mt-8 mb-10">
-            <Button
-              variant="outline"
-              onClick={() => paginate(currentPage - 1)}
-              disabled={currentPage === 1}
-            >
-              Previous
-            </Button>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
-              <Button
-                key={number}
-                variant={currentPage === number ? "default" : "outline"}
-                onClick={() => paginate(number)}
-              >
-                {number}
-              </Button>
-            ))}
-            <Button
-              variant="outline"
-              onClick={() => paginate(currentPage + 1)}
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </Button>
-          </div>
-        )}
-
-        <div className="text-center mt-20 mb-10 p-8 bg-card rounded-xl border border-border/50">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4">
-            Not sure where to start?
-          </h2>
-          <p className="text-muted-foreground mb-6">
-            Our course advisors are here to help you choose the perfect learning path
-          </p>
-          <Button variant="default" size="lg">
-            Get Personalized Recommendations
-          </Button>
-        </div>
+        </motion.div>
+        <DummyFooter />
       </div>
     </div>
   );
