@@ -2,19 +2,11 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { PlusCircle } from "lucide-react";
+import { Loader2, PlusCircle } from "lucide-react";
 import { useDataStore } from "@/store/dashboardStore/courseDetailsStore";
 import BackButton from "@/components/BackButton";
 import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Skeleton } from "@/components/ui/skeleton";
+import CreatedCourseCard from "@/components/Course/CreatedCourseCard";
 
 export default function CoursesPage() {
   const { courseDetails, fetchData, isLoading } = useDataStore();
@@ -24,10 +16,9 @@ export default function CoursesPage() {
   }, [fetchData]);
 
   return (
-    <div className="container mx-auto py-10">
-      <BackButton href="/dashboard" title="Back to Dashboard" />
+    <div className="container mx-auto px-2 py-10">
       <div className="mb-8 flex items-center justify-between">
-        <h2 className="text-3xl font-bold tracking-tight">Courses</h2>
+        <BackButton href="/dashboard" title="Back to Dashboard" />
         <Link href="/create">
           <Button variant="secondary" size="sm">
             <PlusCircle className="mr-2 h-4 w-4" />
@@ -35,46 +26,15 @@ export default function CoursesPage() {
           </Button>
         </Link>
       </div>
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Title</TableHead>
-              <TableHead>Students</TableHead>
-              <TableHead>Rating</TableHead>
-              <TableHead>Income</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading
-              ? Array.from({ length: 5 }).map((_, index) => (
-                  <TableRow key={index}>
-                    <TableCell>
-                      <Skeleton className="h-5 w-[250px]" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-5 w-[50px]" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-5 w-[50px]" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-5 w-[80px]" />
-                    </TableCell>
-                  </TableRow>
-                ))
-              : courseDetails.map((course) => (
-                  <TableRow key={course.courseId}>
-                    <TableCell className="font-medium">
-                      {course.courseTitle}
-                    </TableCell>
-                    <TableCell>+{course.purchaseCount}</TableCell>
-                    <TableCell>{course.avgRating}</TableCell>
-                    <TableCell>₹{course.coursePrice}</TableCell>
-                  </TableRow>
-                ))}
-          </TableBody>
-        </Table>
+      <h2 className="text-3xl font-bold py-3 tracking-tight">Courses</h2>
+      <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
+        {isLoading ? (
+          <div className="flex h-full w-full items-center justify-center">
+            <Loader2 className="h-10 w-10 animate-spin text-neutral-700" />
+          </div>
+        ) : (
+          courseDetails.map((course) => <CreatedCourseCard key={course.courseId} {...course} />)
+        )}
       </div>
     </div>
   );

@@ -1,30 +1,32 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { BookOpen, DollarSign, Star, Users } from "lucide-react";
 import { useDashboardDataStore } from "@/store/dashboardStore/dashboardDataStore";
 
 export default function DashboardCards() {
   const { dashboardData, fetchDashboardData, isLoading } =
     useDashboardDataStore();
+
   useEffect(() => {
     fetchDashboardData();
-  }, []);
+  }, [fetchDashboardData]);
+
+  if (isLoading) {
+    return <DashboardCardsSkeleton />;
+  }
 
   return (
-    <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4 mb-3">
+    <div className="grid gap-3 grid-cols-2 lg:grid-cols-4 mb-3">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-          <div>
-            <DollarSign className="h-4 w-4 text-neutral-500" />
-          </div>
+          <DollarSign className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">
-            ${dashboardData?.revenue}
-          </div>
+          <div className="text-2xl font-bold">${dashboardData?.revenue}</div>
           <p className="text-xs text-muted-foreground">
             +20.1% from last month
           </p>
@@ -33,9 +35,7 @@ export default function DashboardCards() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Active Students</CardTitle>
-          <div>
-            <Users className="h-4 w-4 text-neutral-500" />
-          </div>
+          <Users className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">+{dashboardData?.totalUsers}</div>
@@ -47,9 +47,7 @@ export default function DashboardCards() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Active Courses</CardTitle>
-          <div>
-            <BookOpen className="h-4 w-4 text-neutral-500" />
-          </div>
+          <BookOpen className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">
@@ -61,15 +59,34 @@ export default function DashboardCards() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Rating</CardTitle>
-          <div>
-            <Star className="h-4 w-4 text-neutral-500" />
-          </div>
+          <Star className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{dashboardData?.avgRating}</div>
+          <div className="text-2xl font-bold">
+            {parseFloat(dashboardData?.avgRating?.toString() || "0").toFixed(2)}
+          </div>
           <p className="text-xs text-muted-foreground">+0.2 from last month</p>
         </CardContent>
       </Card>
+    </div>
+  );
+}
+
+function DashboardCardsSkeleton() {
+  return (
+    <div className="grid gap-3 grid-cols-2 lg:grid-cols-4 mb-3">
+      {[...Array(4)].map((_, index) => (
+        <Card key={index}>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <Skeleton className="h-4 w-[100px]" />
+            <Skeleton className="h-4 w-4 rounded-full" />
+          </CardHeader>
+          <CardContent>
+            <Skeleton className="h-8 w-[80px] mb-2" />
+            <Skeleton className="h-3 w-[120px]" />
+          </CardContent>
+        </Card>
+      ))}
     </div>
   );
 }

@@ -3,20 +3,38 @@ import { Course } from "@/types/courseType";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
 import { Bookmark, Star } from "lucide-react";
-import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "./ui/drawer";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "./ui/drawer";
 import { Button } from "./ui/button";
 import CourseReviews from "./CourseReviews";
 import Link from "next/link";
 import { Badge } from "./ui/badge";
 import Image from "next/image";
 
-const CourseCard = ({ course }: {course : Course}) => {
+const CourseCard = ({ course }: { course: Course }) => {
   const { data: session } = useSession();
   const { toast } = useToast();
   const offerPercentage =
-    ((course.price! - course.price! + parseInt((Math.random() * 2000).toFixed())) /
+    ((course.price! -
+      course.price! +
+      parseInt((Math.random() * 2000).toFixed())) /
       course.price!) *
     100;
 
@@ -26,14 +44,18 @@ const CourseCard = ({ course }: {course : Course}) => {
   const roundedRating = avgRating ? Math.round(avgRating * 2) / 2 : 0;
 
   const [isCourseSaved, setIsCourseSaved] = useState(() => {
-    const savedCourses = JSON.parse(localStorage.getItem('savedCourses') || '[]');
+    const savedCourses = JSON.parse(
+      localStorage.getItem("savedCourses") || "[]"
+    );
     return savedCourses.includes(course.id);
   });
 
   const handleSaveCourse = async () => {
     if (!session?.user) return;
     try {
-      const savedCourses = JSON.parse(localStorage.getItem('savedCourses') || '[]');
+      const savedCourses = JSON.parse(
+        localStorage.getItem("savedCourses") || "[]"
+      );
 
       if (isCourseSaved === false) {
         await axios.post("/api/courses/save/saved-courses", {
@@ -42,7 +64,7 @@ const CourseCard = ({ course }: {course : Course}) => {
         });
 
         savedCourses.push(course.id);
-        localStorage.setItem('savedCourses', JSON.stringify(savedCourses));
+        localStorage.setItem("savedCourses", JSON.stringify(savedCourses));
         setIsCourseSaved(true);
         toast({
           title: "Saved!",
@@ -51,8 +73,10 @@ const CourseCard = ({ course }: {course : Course}) => {
         });
       } else {
         await axios.delete(`/api/courses/save/${course.id}`);
-        const updatedCourses = savedCourses.filter((id : string) => id !== course.id);
-        localStorage.setItem('savedCourses', JSON.stringify(updatedCourses));
+        const updatedCourses = savedCourses.filter(
+          (id: string) => id !== course.id
+        );
+        localStorage.setItem("savedCourses", JSON.stringify(updatedCourses));
         setIsCourseSaved(false);
         toast({
           title: "Removed!",
@@ -69,7 +93,6 @@ const CourseCard = ({ course }: {course : Course}) => {
       });
     }
   };
-  
 
   return (
     <div>
@@ -93,11 +116,18 @@ const CourseCard = ({ course }: {course : Course}) => {
         </CardHeader>
         <CardContent className="p-2 md:p-3 flex-grow">
           <div className="flex flex-wrap gap-2 mb-2 md:mb-4">
-            {course.tags.split(",").slice(0, 10).map((tag, index) => (
-              <Badge key={index} variant="secondary" className="select-none capitalize">
-                {tag}
-              </Badge>
-            ))}
+            {course.tags
+              .split(",")
+              .slice(0, 10)
+              .map((tag, index) => (
+                <Badge
+                  key={index}
+                  variant="secondary"
+                  className="select-none capitalize"
+                >
+                  {tag}
+                </Badge>
+              ))}
           </div>
           <div className="flex items-center gap-2 mb-2">
             {avgRating !== null ? (
@@ -118,15 +148,21 @@ const CourseCard = ({ course }: {course : Course}) => {
                     />
                   ))}
                 </div>
-                <span className="text-sm text-muted-foreground">({reviews.length})</span>
+                <span className="text-sm text-muted-foreground">
+                  ({reviews.length})
+                </span>
               </>
             ) : (
-              <span className="text-sm text-muted-foreground">No reviews yet</span>
+              <span className="text-sm text-muted-foreground">
+                No reviews yet
+              </span>
             )}
           </div>
           <div className="text-lg font-semibold">
             ₹{course.price}
-            <span className="ml-2 text-sm line-through text-muted-foreground">₹{course.price! + 2000}</span>
+            <span className="ml-2 text-sm line-through text-muted-foreground">
+              ₹{course.price! + 2000}
+            </span>
           </div>
         </CardContent>
         <CardFooter>
@@ -147,35 +183,55 @@ const CourseCard = ({ course }: {course : Course}) => {
                   </p>
 
                   <DrawerDescription className="dark:bg-neutral-900 bg-neutral-100 dark:text-white text-black h-[50vh] md:h-[55vh] text-left overflow-y-scroll rounded-xl p-2 md:p-5">
-                    <h1 className="font-semibold text-xl text-blue-500 pb-2">Course Details:</h1>
+                    <h1 className="font-semibold text-xl text-blue-500 pb-2">
+                      Course Details:
+                    </h1>
                     <h1>
-                      Duration: <span className="font-semibold">{course.duration}</span>
+                      Duration:{" "}
+                      <span className="font-semibold">{course.duration}</span>
                     </h1>
                     <h1>
                       Course Created:
                       <span className="font-semibold">
-                        {new Date(course.createdAt!).toLocaleDateString("en-US", {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                        })}
+                        {new Date(course.createdAt!).toLocaleDateString(
+                          "en-US",
+                          {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          }
+                        )}
+                      </span>
+                    </h1>
+                    <h1>
+                      Course Level:{" "}
+                      <span className="font-semibold capitalize">
+                        {course.level}
                       </span>
                     </h1>
                     <h1 className="mb-4">
-                      Course Level:{" "}
-                      <span className="font-semibold capitalize">{course.level}</span>
+                      Langauge:{" "}
+                      <span className="font-semibold capitalize">
+                        {course.language}
+                      </span>
                     </h1>
                     <div className="py-4">
-                      <h1 className="text-blue-500 font-semibold text-lg">Reviews :</h1>
+                      <h1 className="text-blue-500 font-semibold text-lg">
+                        Reviews :
+                      </h1>
                       {reviews.length > 0 ? (
                         <div className="dark:bg-neutral-800 bg-neutral-200 rounded-2xl p-2">
                           <CourseReviews reviews={reviews} />
                         </div>
                       ) : (
-                        <p className="text-neutral-400">No reviews available for this course.</p>
+                        <p className="text-neutral-400">
+                          No reviews available for this course.
+                        </p>
                       )}
                     </div>
-                    <h1 className="font-semibold text-2xl text-blue-500 mb-2">Course description:</h1>
+                    <h1 className="font-semibold text-2xl text-blue-500 mb-2">
+                      Course description:
+                    </h1>
                     <p
                       dangerouslySetInnerHTML={{
                         __html: course.description as string,
@@ -185,8 +241,14 @@ const CourseCard = ({ course }: {course : Course}) => {
                   <div className="dark:bg-neutral-900 bg-neutral-100 dark:text-white text-black flex items-center justify-between rounded-xl p-5">
                     <h1 className="text-blue-500">
                       Price:{" "}
-                      <span className="font-semibold dark:text-white text-black">₹{course.price}</span>{" "}
-                      <span className="text-neutral-500 line-through">₹{course.price! + parseInt((Math.random() * 2000).toFixed())}</span>
+                      <span className="font-semibold dark:text-white text-black">
+                        ₹{course.price}
+                      </span>{" "}
+                      <span className="text-neutral-500 line-through">
+                        ₹
+                        {course.price! +
+                          parseInt((Math.random() * 2000).toFixed())}
+                      </span>
                     </h1>
                     <h2 className="text-green-500 font-semibold">
                       {offerPercentage.toFixed(2)}% off
@@ -196,7 +258,10 @@ const CourseCard = ({ course }: {course : Course}) => {
                 <DrawerFooter className="flex items-center justify-center flex-row">
                   {session?.user.role === "user" && (
                     <Link href={`/course/${course.id}`}>
-                      <Button size={"default"} className="font-semibold bg-green-500 text-green-900 hover:bg-green-600">
+                      <Button
+                        size={"default"}
+                        className="font-semibold bg-green-500 text-green-900 hover:bg-green-600"
+                      >
                         Buy Course
                       </Button>
                     </Link>
@@ -211,11 +276,16 @@ const CourseCard = ({ course }: {course : Course}) => {
             </Drawer>
           </div>
 
-          <div onClick={handleSaveCourse} className="group-hover:opacity-100 opacity-0 cursor-pointer transition-opacity duration-300">
+          <div
+            onClick={handleSaveCourse}
+            className="group-hover:opacity-100 opacity-0 cursor-pointer transition-opacity duration-300"
+          >
             {session?.user.role === "user" && (
               <Bookmark
                 aria-label={isCourseSaved ? "Unsave Course" : "Save Course"}
-                className={`${isCourseSaved ? "fill-white" : "fill-transparent"} cursor-pointer`}
+                className={`${
+                  isCourseSaved ? "fill-white" : "fill-transparent"
+                } cursor-pointer`}
               />
             )}
           </div>

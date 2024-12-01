@@ -14,7 +14,6 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { CreditCard, Loader2, Plus, Trash2, TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SingleCourse from "@/components/SingleCourse";
-import { creditCardTypes } from "@/types/creditCardTypes";
 import { useToast } from "@/hooks/use-toast";
 import banks from "@/data/banks.json";
 import axios from "axios";
@@ -38,9 +37,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 import {
   Form,
   FormControl,
@@ -48,9 +47,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
+} from "@/components/ui/form";
 import { creditCardSValidation } from "@/validations/validation";
-
+import { useCredicardBulkStore } from "@/store/classesStore/creditCardStore";
 
 export default function CoursePurchase() {
   const [isLoading, setIsLoading] = useState(false);
@@ -58,9 +57,9 @@ export default function CoursePurchase() {
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("existing-card");
   const { toast } = useToast();
-  const [cards, setCards] = useState<creditCardTypes[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isLoadingCards, setIsLoadingCards] = useState(true);
+  const { creditCards, fetchCreditCards, isLoadingCards } =
+    useCredicardBulkStore();
 
   const form = useForm<z.infer<typeof creditCardSValidation>>({
     resolver: zodResolver(creditCardSValidation),
@@ -71,9 +70,11 @@ export default function CoursePurchase() {
       expiryDate: "",
       cardHolderName: "",
     },
-  })
+  });
 
-  const handleAddCard = async (values: z.infer<typeof creditCardSValidation>) => {
+  const handleAddCard = async (
+    values: z.infer<typeof creditCardSValidation>
+  ) => {
     try {
       setIsLoading(true);
       const response = await axios.post(`/api/credit-card`, values);
@@ -84,7 +85,7 @@ export default function CoursePurchase() {
           variant: "success",
         });
       }
-      fetchCards();
+      fetchCreditCards();
       setIsDialogOpen(false);
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || "An error occurred";
@@ -98,21 +99,9 @@ export default function CoursePurchase() {
     }
   };
 
-  const fetchCards = async () => {
-    try {
-      setIsLoadingCards(true);
-      const response = await axios.get(`/api/credit-card`);
-      setCards(response.data.cards);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoadingCards(false);
-    }
-  };
-
   useEffect(() => {
-    fetchCards();
-  }, [setCards]);
+    fetchCreditCards();
+  }, []);
 
   const handleDeleteCreditCard = async (id: string) => {
     try {
@@ -124,8 +113,8 @@ export default function CoursePurchase() {
           description: response.data.message || "Course Deleted Succesfully",
           variant: "success",
         });
-        fetchCards();
       }
+      fetchCreditCards();
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || "An error occurred";
       toast({
@@ -147,10 +136,13 @@ export default function CoursePurchase() {
     event.preventDefault();
     try {
       setIsPurchasing(true);
-      const response = await axios.post(`/api/courses/purchase/${creditCardId}`, {
-        courseId: param.courseId,
-        cvv,
-      });
+      const response = await axios.post(
+        `/api/courses/purchase/${creditCardId}`,
+        {
+          courseId: param.courseId,
+          cvv,
+        }
+      );
 
       toast({
         title: "Purchased",
@@ -158,7 +150,6 @@ export default function CoursePurchase() {
         variant: "success",
       });
       setIsDialogOpen(false);
-      fetchCards();
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || "An error occurred";
       toast({
@@ -228,128 +219,127 @@ export default function CoursePurchase() {
           <div className="space-y-3">
             <Skeleton className="h-[200px] w-full rounded-lg" />
           </div>
-        ) : paymentMethod === "existing-card" && cards.length > 0 ? (
-            cards.map((e) => (
-              <Card className="mb-2" key={e.id}>
-                <CardHeader className="flex justify-between flex-row">
-                  <div>
-                    <CardTitle>User Credit Cards</CardTitle>
-                    <CardDescription>Account details:</CardDescription>
-                  </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                      <DialogTrigger asChild>
-                        <Button>Complete Purchase</Button>
-                      </DialogTrigger>
-                      <DialogContent className="sm:max-w-[425px]">
-                        <DialogHeader>
-                          <DialogTitle>Confirm Payment</DialogTitle>
-                          <DialogDescription>
-                            Please confirm your payment to purchase the course.
-                          </DialogDescription>
-                        </DialogHeader>
-                        <form
-                          onSubmit={(event) =>
-                            handlePurchase(event, e.id as string)
-                          }
-                        >
-                          <div className="grid gap-4 py-4">
-                            <div className="flex items-center gap-4">
-                              <CreditCard className="h-6 w-6 text-muted-foreground" />
-                              <div>
-                                <p className="text-sm font-medium">
-                                  Card ending in{" "}
-                                  {e.accountNumber.substring(12, 16)}
-                                </p>
-                                <p className="text-sm text-muted-foreground">
-                                  Expires {e.expiryDate}
-                                </p>
-                              </div>
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                              <Label htmlFor="cvv" className="text-right">
-                                CVV
-                              </Label>
-                              <Input
-                                id="cvv"
-                                type="password"
-                                className="col-span-3"
-                                placeholder="Enter CVV"
-                                value={cvv}
-                                onChange={(e) => setCvv(e.target.value)}
-                                required
-                                maxLength={4}
-                              />
+        ) : paymentMethod === "existing-card" && creditCards.length > 0 ? (
+          creditCards.map((e) => (
+            <Card className="mb-2" key={e.id}>
+              <CardHeader className="flex justify-between flex-row">
+                <div>
+                  <CardTitle>User Credit Cards</CardTitle>
+                  <CardDescription>Account details:</CardDescription>
+                </div>
+                <div className="flex items-center justify-center gap-2">
+                  <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button>Complete Purchase</Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>Confirm Payment</DialogTitle>
+                        <DialogDescription>
+                          Please confirm your payment to purchase the course.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <form
+                        onSubmit={(event) =>
+                          handlePurchase(event, e.id as string)
+                        }
+                      >
+                        <div className="grid gap-4 py-4">
+                          <div className="flex items-center gap-4">
+                            <CreditCard className="h-6 w-6 text-muted-foreground" />
+                            <div>
+                              <p className="text-sm font-medium">
+                                Card ending in{" "}
+                                {e.accountNumber.substring(12, 16)}
+                              </p>
+                              <p className="text-sm text-muted-foreground">
+                                Expires {e.expiryDate}
+                              </p>
                             </div>
                           </div>
-                          <DialogFooter>
-                            <Button type="submit" disabled={isPurchasing}>
-                              {isPurchasing ? (
-                                <div className="flex items-center gap-1">
-                                  <Loader2 className="animate-spin" />
-                                  Purchasing...
-                                </div>
-                              ) : (
-                                "Confirm Payment"
-                              )}
-                            </Button>
-                          </DialogFooter>
-                        </form>
-                      </DialogContent>
-                    </Dialog>
-                    <Button
-                      onClick={() => {
-                        if (e.id) {
-                          handleDeleteCreditCard(e.id);
-                        } else {
-                          toast({
-                            title: "Error",
-                            description: "Credit card ID is not available.",
-                            variant: "destructive",
-                          });
-                        }
-                      }}
-                      size={"sm"}
-                      variant={"destructive"}
-                    >
-                      {isLoading ? (
-                        <Loader2 className="animate-spin" />
-                      ) : (
-                        <Trash2 className="text-red-100" />
-                      )}
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <h1 className="capitalize">
-                    Account Holder :{" "}
-                    <span className="font-semibold">{e.cardHolderName}</span>
-                  </h1>
-                  <h1 className="capitalize">
-                    Bank : <span className="font-semibold">{e.bankName}</span>
-                  </h1>
-                  <h1>
-                    Account Number :{" "}
-                    <span className="font-semibold">
-                      {e.accountNumber.substring(0, 4)} •••• ••••{" "}
-                      {e.accountNumber.substring(12, 16)}
-                    </span>
-                  </h1>
-                  <h1>
-                    Expiry :{" "}
-                    <span className="font-semibold">{e.expiryDate}</span>
-                  </h1>
-                </CardContent>
-              </Card>
-            ))
-          ) : (
-            <div className="p-2 border rounded-lg shadow-sm">
-              <h1 className="font-semibold">No Cards Available</h1>
-              <h1 className="text-neutral-400">
-                Add Credit Card to purchase Course.
-              </h1>
-            </div>
-          )}
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="cvv" className="text-right">
+                              CVV
+                            </Label>
+                            <Input
+                              id="cvv"
+                              type="password"
+                              className="col-span-3"
+                              placeholder="Enter CVV"
+                              value={cvv}
+                              onChange={(e) => setCvv(e.target.value)}
+                              required
+                              maxLength={4}
+                            />
+                          </div>
+                        </div>
+                        <DialogFooter>
+                          <Button type="submit" disabled={isPurchasing}>
+                            {isPurchasing ? (
+                              <div className="flex items-center gap-1">
+                                <Loader2 className="animate-spin" />
+                                Purchasing...
+                              </div>
+                            ) : (
+                              "Confirm Payment"
+                            )}
+                          </Button>
+                        </DialogFooter>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
+                  <Button
+                    onClick={() => {
+                      if (e.id) {
+                        handleDeleteCreditCard(e.id);
+                      } else {
+                        toast({
+                          title: "Error",
+                          description: "Credit card ID is not available.",
+                          variant: "destructive",
+                        });
+                      }
+                    }}
+                    size={"sm"}
+                    variant={"destructive"}
+                  >
+                    {isLoading ? (
+                      <Loader2 className="animate-spin" />
+                    ) : (
+                      <Trash2 className="text-red-100" />
+                    )}
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <h1 className="capitalize">
+                  Account Holder :{" "}
+                  <span className="font-semibold">{e.cardHolderName}</span>
+                </h1>
+                <h1 className="capitalize">
+                  Bank : <span className="font-semibold">{e.bankName}</span>
+                </h1>
+                <h1>
+                  Account Number :{" "}
+                  <span className="font-semibold">
+                    {e.accountNumber.substring(0, 4)} •••• ••••{" "}
+                    {e.accountNumber.substring(12, 16)}
+                  </span>
+                </h1>
+                <h1>
+                  Expiry : <span className="font-semibold">{e.expiryDate}</span>
+                </h1>
+              </CardContent>
+            </Card>
+          ))
+        ) : (
+          <div className="p-2 border rounded-lg shadow-sm">
+            <h1 className="font-semibold">No Cards Available</h1>
+            <h1 className="text-neutral-400">
+              Add Credit Card to purchase Course.
+            </h1>
+          </div>
+        )}
 
         {paymentMethod === "new-card" && (
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -359,15 +349,18 @@ export default function CoursePurchase() {
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
                 <DialogTitle>Add Credit Card</DialogTitle>
-                <DialogDescription >
+                <DialogDescription>
                   <h1 className="flex bg-red-400/5 p-1 text-sm gap-1 rounded-lg text-red-950 font-semibold">
-                    <TriangleAlert /> Don't use your Real Credit Card
-                    details this is just Prototype
+                    <TriangleAlert /> Don't use your Real Credit Card details
+                    this is just Prototype
                   </h1>
                 </DialogDescription>
               </DialogHeader>
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(handleAddCard)} className="space-y-4">
+                <form
+                  onSubmit={form.handleSubmit(handleAddCard)}
+                  className="space-y-4"
+                >
                   <div className="grid grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
@@ -376,7 +369,10 @@ export default function CoursePurchase() {
                         <FormItem>
                           <FormLabel>Account Number</FormLabel>
                           <FormControl>
-                            <Input placeholder="1234 5678 9012 3456" {...field} />
+                            <Input
+                              placeholder="1234 5678 9012 3456"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -402,7 +398,10 @@ export default function CoursePurchase() {
                         <FormItem>
                           <FormLabel>Expiry Date</FormLabel>
                           <FormControl>
-                            <Input placeholder="MM/YY or MM/YYYY format" {...field} />
+                            <Input
+                              placeholder="MM/YY or MM/YYYY format"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -416,7 +415,10 @@ export default function CoursePurchase() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Bank Name</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue placeholder="Select Bank" />

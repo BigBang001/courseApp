@@ -1,5 +1,12 @@
 import { z } from 'zod';
 
+
+export enum CourseLevel {
+  Beginner = "beginner",
+  Intermediate = "intermediate",
+  Advanced = "advanced",
+}
+
 export const signupValidation = z.object({
   fullName: z
     .string()
@@ -66,8 +73,7 @@ export const courseValidation = z.object({
     .min(1, { message: "Duration must be specified" })
     .regex(/^\d+ (month|year)s?$/, { message: "Duration must be in the format 'X months' or 'X years'" }),
 
-  level: z
-    .enum(['beginner', 'intermediate', 'advanced'], { message: "Level must be one of 'beginner', 'intermediate', or 'advanced'" }),
+  level: z.nativeEnum(CourseLevel, { message: "Level must be one of 'beginner', 'intermediate', or 'advanced'" }),
 
   tags: z.string().min(2, { message: "Add Atleat 1 tag minimum of two charcter" }).max(150, { message: "All Tags should come under 100 characters" }),
   language: z.string().min(1, { message: "Language is required" }),

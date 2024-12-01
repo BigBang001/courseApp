@@ -9,7 +9,7 @@ export interface Course {
     shortDescription?: string
     duration?: string
     instructorId?: string
-    langauge?: string
+    language?: string
     tags: string
     level?: string
     Review : ReviewTypes[]

@@ -1,18 +1,18 @@
 import axios from "axios";
 import { create } from "zustand";
 
-interface detail {
+export interface createdCourseDetail {
     avgRating: number
     courseId: string
     courseTitle: string
     purchaseCount: number;
-    coursePrice:  number
+    coursePrice: number
 }
 
 interface dataStore {
     isLoading: boolean,
     fetchData: () => Promise<void>
-    courseDetails: detail[]
+    courseDetails: createdCourseDetail[]
 }
 
 export const useDataStore = create<dataStore>((set) => ({

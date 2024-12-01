@@ -2,7 +2,7 @@ import axios from "axios";
 import { create } from "zustand";
 
 interface detail {
-    avgRating: string
+    avgRating: number
     revenue: string
     totalUsers: string
     totalCourses: string
@@ -17,10 +17,10 @@ interface dashboardDataStore {
 export const useDashboardDataStore = create<dashboardDataStore>((set) => ({
     isLoading: true,
     dashboardData: {
-        avgRating: "",
-        revenue: "",
-        totalUsers: "",
-        totalCourses: ""
+        avgRating: 0,
+        revenue: "00.00",
+        totalUsers: "00",
+        totalCourses: "00"
     },
     fetchDashboardData: async () => {
         try {

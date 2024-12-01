@@ -15,9 +15,12 @@ export function RecentStudents() {
     <div className="space-y-8">
       {isLoading ? (
         <div className="w-full h-[300px] flex items-center justify-center">
-          <Loader2 className="animate-spin text-primary h-8 w-8" />
+          <Loader2 className="animate-spin text-neutral-600 h-8 w-8" />
         </div>
       ) : (
+        recentUsers?.PurchasedCourses.length === 0 ? (
+          <p className="text-neutral-600 text-center">No students enrolled yet!</p>
+        ) :
         recentUsers?.PurchasedCourses.map(({ User }) => (
           <div key={User.id} className="flex items-center">
             <Avatar className="h-9 w-9">

@@ -18,9 +18,14 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 
-export default function AddClass({ courseId }: { courseId: string }) {
+export default function AddClass({
+  courseId,
+  courseName,
+}: {
+  courseId: string;
+  courseName: string;
+}) {
   const { toast } = useToast();
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [values, setValues] = useState({
@@ -83,7 +88,8 @@ export default function AddClass({ courseId }: { courseId: string }) {
       if (uploadProgress === 100) {
         toast({
           title: "Processing...",
-          description: "Your file has been uploaded. Server is processing the data.",
+          description:
+            "Your file has been uploaded. Server is processing the data.",
           variant: "default",
         });
       }
@@ -111,14 +117,14 @@ export default function AddClass({ courseId }: { courseId: string }) {
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        <Button>
+        <Button variant={"default"} size={"sm"}>
           <Plus className="mr-2 h-4 w-4" />
           Add Class
         </Button>
       </SheetTrigger>
       <SheetContent className="sm:max-w-[425px]">
         <SheetHeader>
-          <SheetTitle>Add Class</SheetTitle>
+          <SheetTitle>Add Class to {courseName}</SheetTitle>
           <SheetDescription>
             Enter the details of your new class
           </SheetDescription>
@@ -160,10 +166,10 @@ export default function AddClass({ courseId }: { courseId: string }) {
           </Button>
         </form>
         <div className="mt-10">
-          {
+          {isLoading &&
             <div className="w-full flex flex-col gap-1">
               <p className="text-sm text-neutral-300">Uploading...</p>
-              <Progress value={uploadProgress} />
+              <Progress color="green" value={uploadProgress} />
               <p className="font-semibold text-neutral-300">
                 {uploadProgress}%
               </p>

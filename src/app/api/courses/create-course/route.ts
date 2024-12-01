@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 
 export async function POST(request: Request) {
-    const { title, description, shortDescription, tags, thumbnail, price, duration,language,  level } = await request.json();
+    const { title, description, shortDescription, tags, thumbnail, price, duration, language, level } = await request.json();
     const { success, error } = courseValidation.safeParse({
         title,
         tags,
@@ -29,16 +29,14 @@ export async function POST(request: Request) {
         return NextResponse.json({
             success: false,
             message: "Unauthorized",
-        }, { status: 401 }) 
+        }, { status: 401 })
     }
 
     try {
-        console.log("hlo");
-        
         const user = await prisma.user.findFirst({
             where: {
                 email: session.user.email,
-                role : "admin"
+                role: "admin"
             }
         });
 

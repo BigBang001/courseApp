@@ -20,7 +20,7 @@ export async function GET(request: Request, { params }: { params: { courseId: st
                 id: true,
                 title : true,
                 videoUrl :  true,
-                markAsComplete: true
+                isCompleted: true
             },orderBy:{
                 createdAt: "asc"
             }

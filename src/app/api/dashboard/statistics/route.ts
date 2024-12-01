@@ -35,22 +35,21 @@ export async function GET() {
             }
         });
 
-        // Fetch all the reviews
-        const reviews = await prisma.review.findMany({
-            select: {
-                rating: true
-            }
-        });
-
-        const totalRating = reviews.reduce((acc, review) => acc + review.rating, 0);
-        const avgRating = reviews.length > 0 ? totalRating / reviews.length : 0;
-
         const courseDetails = await Promise.all(
             coursePurchaseCounts.map(async (purchase) => {
                 const course = await prisma.course.findUnique({
                     where: { id: purchase.courseId },
-                    select: { title: true, Review: true, price: true }
+                    select: {
+                        title: true, Review: {
+                            select: {
+                                rating: true
+                            }
+                        }, price: true
+                    }
                 });
+
+                const totalRating = course?.Review.map((e) => e.rating);
+                const avgRating = totalRating?.reduce((acc, r) => (acc + r) / totalRating.length);
 
                 return {
                     courseId: purchase.courseId,

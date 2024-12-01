@@ -7,7 +7,6 @@ export async function PUT(request: Request) {
   const { classId } = await request.json();
 
   try {
-    // Get the session
     const session = await getServerSession(authOptions);
     if (!session || !session.user) {
       return NextResponse.json({
@@ -21,7 +20,7 @@ export async function PUT(request: Request) {
         id: classId,
       },
       select: {
-        markAsComplete: true,
+        isCompleted: true,
         id: true,
       },
     });
@@ -38,13 +37,13 @@ export async function PUT(request: Request) {
         id: prevOption.id,
       },
       data: {
-        markAsComplete: !prevOption.markAsComplete,
+        isCompleted: !prevOption.isCompleted,
       },
     });
 
     return NextResponse.json({
       success: true,
-      message: `Class has been ${updatedClass.markAsComplete ? "marked as complete" : "marked as incomplete"}`
+      message: `Class has been ${updatedClass.isCompleted ? "Marked as complete" : "Marked as incomplete"}`
     });
 
   } catch (error) {

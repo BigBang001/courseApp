@@ -37,7 +37,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { courseValidation } from "@/validations/validation";
+import { CourseLevel, courseValidation } from "@/validations/validation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 
@@ -261,7 +261,7 @@ export default function AddCourse() {
                       <FormLabel>Experience Level</FormLabel>
                       <Select
                         onValueChange={field.onChange}
-                        value={field.value}
+                        value={field.value as CourseLevel}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -270,13 +270,13 @@ export default function AddCourse() {
                         </FormControl>
                         <SelectContent>
                           <SelectItem value="beginner">
-                            Perfect for Beginners
+                            Beginner
                           </SelectItem>
                           <SelectItem value="intermediate">
-                            Intermediate Challengers
+                            Intermediate
                           </SelectItem>
                           <SelectItem value="advanced">
-                            Advanced Masters
+                            Advanced
                           </SelectItem>
                         </SelectContent>
                       </Select>
