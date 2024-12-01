@@ -8,7 +8,7 @@ export interface Course {
     createdAt?: Date
     shortDescription?: string
     duration?: string
-    instructerId?: string
+    instructorId?: string
     langauge?: string
     tags: string
     level?: string

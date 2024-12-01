@@ -32,7 +32,7 @@ export default function ReviewCourse({ courseId }: { courseId: string }) {
     setIsLoading(true);
 
     try {
-      await axios.post("/api/review-course", {
+      await axios.post("/api/courses/review-course", {
         ...values,
         userId: session?.user.id,
         courseId,

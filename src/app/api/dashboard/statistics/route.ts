@@ -32,7 +32,7 @@ export async function GET() {
             by: ['courseId'],
             _count: {
                 userId: true,
-            },
+            }
         });
 
         // Fetch all the reviews
@@ -49,7 +49,7 @@ export async function GET() {
             coursePurchaseCounts.map(async (purchase) => {
                 const course = await prisma.course.findUnique({
                     where: { id: purchase.courseId },
-                    select: { title: true, Review: true }
+                    select: { title: true, Review: true, price: true }
                 });
 
                 return {
@@ -57,6 +57,7 @@ export async function GET() {
                     courseTitle: course?.title,
                     purchaseCount: purchase._count.userId,
                     avgRating: avgRating,
+                    coursePrice: course?.price
                 };
             })
         );

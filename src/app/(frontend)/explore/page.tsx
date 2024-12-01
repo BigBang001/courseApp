@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import CourseCard from "@/components/CourseCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
@@ -13,25 +13,18 @@ import { Search } from "lucide-react";
 import { useBulkCoursesStore } from "@/store/courseStore/bulkCoursesStore";
 
 const CoursesPage = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const { setFilter, courses, fetchCourses, isLoading, isSearching } =
+  const { setFilter, courses, fetchCourses, isLoading, isSearching, filter } =
     useBulkCoursesStore();
 
   useEffect(() => {
-    fetchCourses();
-  }, [fetchCourses]);
-
-  //debounce search term
-  useEffect(() => {
     const timer = setTimeout(() => {
-      setFilter(searchTerm);
+      fetchCourses();
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [searchTerm, setFilter]);
+  }, [filter, fetchCourses]);
 
   const clearFilters = () => {
-    setSearchTerm("");
     setFilter("");
   };
 
@@ -73,8 +66,8 @@ const CoursesPage = () => {
         >
           <div className="relative">
             <Input
-              onChange={(e) => setSearchTerm(e.target.value)}
-              value={searchTerm}
+              onChange={(e) => setFilter(e.target.value)}
+              value={filter}
               placeholder="Search for your next learning adventure..."
               className="w-full p-6 pl-24 overflow-hidden relative text-lg rounded-full"
               aria-label="Search Courses"

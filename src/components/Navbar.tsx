@@ -34,7 +34,6 @@ export default function Navbar() {
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
   };
-  // console.log("Theme", theme);
 
   return (
     <header className="bg-secondary/15 shadow-lg shadow-neutral-600/5 backdrop-blur-lg border border-primary/10 md:p-4 py-4 rounded-b-2xl">
@@ -75,21 +74,30 @@ export default function Navbar() {
                   </Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <Link href={`/profile/${session.user?.fullName}`}>
-                    <DropdownMenuItem>
-                      <User className="mr-2 h-4 w-4" />
-                      <span>Profile</span>
-                    </DropdownMenuItem>
-                  </Link>
                   {session.user.role === "admin" ? (
-                    <Link href={"/create"}>
-                      <DropdownMenuItem>
-                        <LucideEdit className="mr-2 h-4 w-4" />
-                        <span>Add Course</span>
-                      </DropdownMenuItem>
-                    </Link>
+                    <div>
+                      <Link href={"/create"}>
+                        <DropdownMenuItem>
+                          <LucideEdit className="mr-2 h-4 w-4" />
+                          <span>Add Course</span>
+                        </DropdownMenuItem>
+                      </Link>
+
+                      <Link href={`/dashboard`}>
+                        <DropdownMenuItem>
+                          <User className="mr-2 h-4 w-4" />
+                          <span>Dashboard</span>
+                        </DropdownMenuItem>
+                      </Link>
+                    </div>
                   ) : (
                     <div>
+                      <Link href={`/profile/${session.user?.fullName}`}>
+                        <DropdownMenuItem>
+                          <User className="mr-2 h-4 w-4" />
+                          <span>Profile</span>
+                        </DropdownMenuItem>
+                      </Link>
                       <Link href={"/purchased"}>
                         <DropdownMenuItem>
                           <IndianRupee className="mr-2 h-4 w-4" />

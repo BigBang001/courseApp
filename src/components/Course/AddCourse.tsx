@@ -287,10 +287,10 @@ export default function AddCourse() {
 
                 <FormField
                   control={form.control}
-                  name="langauge"
+                  name="language"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Langauge</FormLabel>
+                      <FormLabel>Language</FormLabel>
                       <FormControl>
                         <FormControl>
                           <Input

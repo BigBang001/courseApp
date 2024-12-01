@@ -9,6 +9,7 @@ interface BulkCoursesStore {
     filter: string;
     setFilter: (filter: string) => void;
     fetchCourses: () => Promise<void>;
+    getCourseById: (id: string) => Course | undefined;
 }
 
 export const useBulkCoursesStore = create<BulkCoursesStore>((set, get) => ({
@@ -28,5 +29,8 @@ export const useBulkCoursesStore = create<BulkCoursesStore>((set, get) => ({
             console.log(error);
             set({ isSearching: false, isLoading: false });
         }
-    }
+    },
+    getCourseById: (id: string) => {
+        return get().courses.find((course) => course.id === id);
+    },
 }));

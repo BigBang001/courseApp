@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
 
     // Process file upload
     const file = formData.get("recordedClass") as File | null
-    
+
 
     if (!file) {
       return NextResponse.json({ success: false, message: "No file uploaded" }, { status: 400 })
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(arrayBuffer)
 
     // Upload to Cloudinary
-    const uploadResult :  any = await new Promise((resolve, reject) => {
+    const uploadResult: any = await new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         { folder: "courses/recordedClasses", resource_type: "video" },
         (error, result) => {

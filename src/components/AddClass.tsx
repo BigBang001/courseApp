@@ -1,11 +1,11 @@
-'use client'
+"use client";
 
-import React, { useState } from "react"
-import axios from "axios"
-import { Loader2, Plus } from "lucide-react"
-import { useRouter } from "next/navigation"
-
-import { Button } from "@/components/ui/button"
+import React, { useState } from "react";
+import axios from "axios";
+import { Loader2, Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
@@ -13,73 +13,88 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet"
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
-import { useToast } from "@/hooks/use-toast"
+} from "@/components/ui/sheet";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
 
 export default function AddClass({ courseId }: { courseId: string }) {
-  const { toast } = useToast()
-  const router = useRouter()
-  const [isLoading, setIsLoading] = useState(false)
-  const [isOpen, setIsOpen] = useState(false)
+  const { toast } = useToast();
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [values, setValues] = useState({
     title: "",
-    courseId: courseId
-  })
-  const [file, setFile] = useState<File | null>(null)
-  const [error, setError] = useState<string | null>(null)
+    courseId: courseId,
+  });
+  const [file, setFile] = useState<File | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0]
+    const selectedFile = e.target.files?.[0];
     if (selectedFile) {
-
-      if (!selectedFile.type.startsWith('video/')) {
-        setError('Please upload a valid video file.')
-        setFile(null)
-        return
+      if (!selectedFile.type.startsWith("video/")) {
+        setError("Please upload a valid video file.");
+        setFile(null);
+        return;
       }
 
-      const maxSize = 100 * 1024 * 1024 // 100 MB
+      const maxSize = 1024 * 1024 * 1024; // 1GB
       if (selectedFile.size > maxSize) {
-        setError('File size must be less than 100MB.')
-        setFile(null)
-        return
+        setError("File size must be less than 100MB.");
+        setFile(null);
+        return;
       }
 
-      setFile(selectedFile)
-      setError(null) // Reset error if the file is valid
+      setFile(selectedFile);
+      setError(null); // Reset error if the file is valid
     }
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (!file) {
-      setError("Please upload a valid video file.")
-      return
+      setError("Please upload a valid video file.");
+      return;
     }
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
-      const formData = new FormData()
-      formData.append("title", values.title)
-      formData.append("courseId", values.courseId)
-      formData.append("recordedClass", file)
+      const formData = new FormData();
+      formData.append("title", values.title);
+      formData.append("courseId", values.courseId);
+      formData.append("recordedClass", file);
 
-      await axios.post('/api/add-class', formData, {
+      await axios.post("/api/add-class", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      })
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round(
+            progressEvent.total
+              ? (progressEvent.loaded / progressEvent.total) * 100
+              : 0
+          );
+          setUploadProgress(percentCompleted);
+        },
+      });
+
+      if (uploadProgress === 100) {
+        toast({
+          title: "Processing...",
+          description: "Your file has been uploaded. Server is processing the data.",
+          variant: "default",
+        });
+      }
 
       toast({
         title: "Created!",
         description: `Class added successfully!`,
         variant: "success",
-      })
+      });
 
-      setIsOpen(false)
-      router.refresh() // Refresh the page to show the new class
+      setIsOpen(false);
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || "An error occurred";
 
@@ -87,11 +102,11 @@ export default function AddClass({ courseId }: { courseId: string }) {
         title: "Error",
         description: errorMessage,
         variant: "destructive",
-      })
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -116,9 +131,7 @@ export default function AddClass({ courseId }: { courseId: string }) {
               type="text"
               placeholder="Enter the title of the class"
               value={values.title}
-              onChange={(e) =>
-                setValues({ ...values, title: e.target.value })
-              }
+              onChange={(e) => setValues({ ...values, title: e.target.value })}
               required
             />
           </div>
@@ -146,7 +159,18 @@ export default function AddClass({ courseId }: { courseId: string }) {
             )}
           </Button>
         </form>
+        <div className="mt-10">
+          {
+            <div className="w-full flex flex-col gap-1">
+              <p className="text-sm text-neutral-300">Uploading...</p>
+              <Progress value={uploadProgress} />
+              <p className="font-semibold text-neutral-300">
+                {uploadProgress}%
+              </p>
+            </div>
+          }
+        </div>
       </SheetContent>
     </Sheet>
-  )
+  );
 }

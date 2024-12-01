@@ -24,10 +24,10 @@ model User {
   createdAt        DateTime           @default(now())
   Courses          Course[]
   Review           Review[]
-  purchasedCourses purchasedCourses[]
+  PurchasedCourses PurchasedCourses[]
   CreditCard       CreditCard[]
-  recordedClass    recordedClass[]
-  savedCourses     savedCourses[]
+  recordedClass    RecordedClass[]
+  savedCourses     SavedCourses[]
 }
 
 model Course {
@@ -35,23 +35,34 @@ model Course {
   title            String
   shortDescription String
   description      String
-  price            Int
+  price            Float
   thumbnail        String
   tags             String
-  langauge         String             @default("English")
+  language         String             @default("English")
   isPublished      Boolean            @default(false)
   createdAt        DateTime           @default(now())
   duration         String
   level            String
-  instructerId     String?            @default(uuid())
-  instructer       User?              @relation(fields: [instructerId], references: [id], onDelete: Cascade)
+  instructorId     String?            @default(uuid())
+  instructor       User?              @relation(fields: [instructorId], references: [id], onDelete: Cascade)
   Review           Review[]
-  purchasedCourses purchasedCourses[]
-  recordedClass    recordedClass[]
-  savedCourses     savedCourses[]
+  PurchasedCourses PurchasedCourses[]
+  recordedClass    RecordedClass[]
+  savedCourses     SavedCourses[]
 }
 
-model recordedClass {
+model PurchasedCourses {
+  id        String   @unique @default(uuid())
+  userId    String
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, courseId])
+}
+
+model RecordedClass {
   id             String   @unique @default(uuid())
   title          String
   videoUrl       String
@@ -63,7 +74,7 @@ model recordedClass {
   course         Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
 }
 
-model savedCourses {
+model SavedCourses {
   id       String @id @unique @default(uuid())
   courseId String
   userId   String
@@ -79,7 +90,7 @@ model CreditCard {
   cardHolderName String
   accountNumber  String   @unique
   cvv            String
-  balance        Int      @default(30000)
+  balance        Float      @default(30000)
   expiryDate     String
   createdAt      DateTime @default(now())
   userId         String
@@ -95,15 +106,4 @@ model Review {
   userId    String
   course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [id])
-}
-
-model purchasedCourses {
-  id        String   @unique @default(uuid())
-  userId    String
-  courseId  String
-  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-
-  @@unique([userId, courseId])
 }

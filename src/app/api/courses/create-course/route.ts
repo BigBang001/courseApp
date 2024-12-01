@@ -2,10 +2,10 @@ import prisma from "@/lib/prisma";
 import { courseValidation } from "@/validations/validation";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import { authOptions } from "../auth/[...nextauth]/options";
+import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 
 export async function POST(request: Request) {
-    const { title, description, shortDescription, tags, thumbnail, price, duration,langauge,  level } = await request.json();
+    const { title, description, shortDescription, tags, thumbnail, price, duration,language,  level } = await request.json();
     const { success, error } = courseValidation.safeParse({
         title,
         tags,
@@ -15,7 +15,7 @@ export async function POST(request: Request) {
         thumbnail,
         price,
         duration,
-        langauge
+        language
     });
     const session = await getServerSession(authOptions);
     if (!success) {
@@ -57,10 +57,10 @@ export async function POST(request: Request) {
                 duration,
                 level,
                 thumbnail,
-                instructerId: user.id,
+                instructorId: user.id,
                 shortDescription,
                 tags,
-                langauge
+                language
             }
         });
 

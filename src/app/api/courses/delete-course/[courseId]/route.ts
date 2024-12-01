@@ -1,9 +1,9 @@
 import { getServerSession } from "next-auth";
-import {  NextResponse } from "next/server";
-import { authOptions } from "../../auth/[...nextauth]/options";
+import { NextResponse } from "next/server";
+import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 import prisma from "@/lib/prisma";
 
-export async function POST(request: Request ,{params} : {params : {courseId : string}}) {
+export async function POST(request: Request, { params }: { params: { courseId: string } }) {
     const session = await getServerSession(authOptions)
     if (!session || !session.user) {
         return NextResponse.json({
@@ -14,9 +14,9 @@ export async function POST(request: Request ,{params} : {params : {courseId : st
     try {
 
         const user = await prisma.user.findFirst({
-            where : {
-                id : session.user.id,
-                role : "admin"
+            where: {
+                id: session.user.id,
+                role: "admin"
             }
         })
 
@@ -28,8 +28,8 @@ export async function POST(request: Request ,{params} : {params : {courseId : st
         }
 
         const deleteCourse = await prisma.course.delete({
-            where :{
-                id : params.courseId
+            where: {
+                id: params.courseId
             }
         })
 

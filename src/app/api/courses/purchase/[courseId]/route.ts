@@ -1,11 +1,11 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "../../auth/[...nextauth]/options";
+import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 import { NextResponse } from "next/server";
 import bcrypt from 'bcryptjs';
 import prisma from "@/lib/prisma";
 
 export async function POST(request: Request, { params }: { params: { courseId: string } }) {
-    const { courseId, cvv } = await request.json(); 
+    const { courseId, cvv } = await request.json();
 
     const session = await getServerSession(authOptions);
 
@@ -47,7 +47,7 @@ export async function POST(request: Request, { params }: { params: { courseId: s
 
         const creditCard = await prisma.creditCard.findFirst({
             where: {
-                id: params.courseId, 
+                id: params.courseId,
                 userId: user.id,
             },
         });
@@ -109,10 +109,10 @@ export async function POST(request: Request, { params }: { params: { courseId: s
                     course: true,
                 },
             });
-
+            
             await prisma.user.update({
                 where: {
-                    id: course.instructerId || "",
+                    id: course.instructorId || "",
                 },
                 data: {
                     balance: {
@@ -131,6 +131,7 @@ export async function POST(request: Request, { params }: { params: { courseId: s
         }, { status: 200 });
 
     } catch (error: any) {
+        console.log(error);
         return NextResponse.json({
             success: false,
             message: "Server error",

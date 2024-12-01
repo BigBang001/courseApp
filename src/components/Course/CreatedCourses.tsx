@@ -31,7 +31,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import EditCourse from "@/components/EditCourse";
+import EditCourse from "@/components/Course/EditCourse";
 import AddClass from "@/components/AddClass";
 import { useCreatedCourseStore } from "@/store/courseStore/createdCourseStore";
 

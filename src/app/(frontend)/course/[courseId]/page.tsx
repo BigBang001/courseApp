@@ -139,6 +139,7 @@ export default function CoursePurchase() {
   };
 
   const param = useParams();
+
   const handlePurchase = async (
     event: React.FormEvent,
     creditCardId: string
@@ -146,7 +147,7 @@ export default function CoursePurchase() {
     event.preventDefault();
     try {
       setIsPurchasing(true);
-      const response = await axios.post(`/api/purchase/${creditCardId}`, {
+      const response = await axios.post(`/api/courses/purchase/${creditCardId}`, {
         courseId: param.courseId,
         cvv,
       });
