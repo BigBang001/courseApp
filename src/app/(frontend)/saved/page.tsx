@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import CourseCard from "@/components/CourseCard";
 import { Loader2 } from "lucide-react";
 import { useSavedCoursesStore } from "@/store/courseStore/savedCoursesStore";
+import BackButton from "@/components/BackButton";
 
 const Page = () => {
   const { fetchSavedCourses, isLoading, savedCourses } = useSavedCoursesStore();
@@ -13,6 +14,9 @@ const Page = () => {
 
   return (
     <div className="mt-6 md:mt-0 mb-2 px-4 md:px-24">
+      <div className="py-4">
+        <BackButton href="/explore" title="Back to courses"/>
+      </div>
       <h1 className="text-2xl font-bold py-2 ">My Saved Courses</h1>
       <div>
         {isLoading ? (

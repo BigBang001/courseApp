@@ -104,3 +104,15 @@ export const classValidation = z.object({
   description: z.string().min(1, { message: "Description is required" }).optional(),
 });
 
+export const updateUserDetailsValidation = z.object({
+  fullName: z
+    .string()
+    .min(2, {
+      message: "Full Name must be at least 2 characters.",
+    })
+    .max(30, {
+      message: "Full Name must not be longer than 30 characters.",
+    }).optional(),
+  bio: z.string().max(160).min(4).optional(),
+});
+

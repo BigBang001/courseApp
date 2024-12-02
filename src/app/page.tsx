@@ -2,7 +2,6 @@
 import "@/app/globals.css";
 import Link from "next/link";
 import Image from "next/image";
-import Navbar from "@/components/Navbar";
 import { GitHubLogoIcon, InstagramLogoIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";

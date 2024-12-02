@@ -1,3 +1,4 @@
+"use client";
 import { motion } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -22,7 +23,10 @@ import { useProfileStore } from "@/store/ProfileStore/profileStore";
 
 export default function ProfileCard() {
   const { data: session } = useSession();
-  const { user, isLoading: isUserLoading } = useProfileStore();
+  const { user, fetchProfile } = useProfileStore();
+  useEffect(()=>{
+    fetchProfile()
+  },[])
   const [isUploading, setIsUploading] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const { toast } = useToast();
@@ -90,21 +94,18 @@ export default function ProfileCard() {
         <div>
           <CardHeader className="flex flex-col items-center space-y-4">
             <div className="relative group">
-              <Avatar className="w-32 h-32 border-4 border-primary/20 shadow-lg transition-transform duration-300 group-hover:scale-105">
+              <Avatar className="w-32 h-32 shadow-lg transition-transform duration-300 group-hover:scale-105">
                 {previewImage ? (
-                  <AvatarImage src={previewImage} alt="Preview" />
+                  <AvatarImage src={previewImage} className="object-cover" alt="Preview" />
                 ) : (
                   <>
                     <AvatarImage
                       src={user?.image || undefined}
                       alt="User Avatar"
+                      className="object-cover"
                     />
                     <AvatarFallback className="bg-primary text-primary-foreground text-4xl font-bold uppercase">
-                      {isUserLoading ? (
-                        <Loader2 className="h-8 w-8 animate-spin" />
-                      ) : (
-                        session?.user.fullName?.[0] || "?"
-                      )}
+                      {session?.user.fullName?.[0] || "?"}
                     </AvatarFallback>
                   </>
                 )}
@@ -130,26 +131,14 @@ export default function ProfileCard() {
               />
             </div>
             <div className="text-center">
-              <CardTitle className="capitalize text-3xl font-serif mb-2">
-                {isUserLoading ? (
-                  <Loader2 className="h-6 w-6 animate-spin mx-auto" />
-                ) : (
-                  session?.user.fullName
-                )}
+              <CardTitle className="capitalize text-2xl mb-2">
+                {session?.user.fullName}
               </CardTitle>
-              <CardDescription className="text-lg">
-                {isUserLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin mx-auto" />
-                ) : (
-                  session?.user.email
-                )}
+              <CardDescription className="text-base">
+                {session?.user.email}
               </CardDescription>
               <Badge className="mt-2 capitalize text-sm px-3 py-1">
-                {isUserLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  session?.user.role
-                )}
+                {session?.user.role}
               </Badge>
             </div>
           </CardHeader>
@@ -183,13 +172,9 @@ export default function ProfileCard() {
         </div>
         <CardContent className="space-y-6">
           <CardDescription className="text-center italic">
-            {isUserLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin mx-auto" />
-            ) : (
-              user?.bio || "No bio provided"
-            )}
+            {user?.bio || "No bio provided"}
           </CardDescription>
-          <div className="space-y-4">
+          <div className="md:space-y-4 space-y-2">
             <div className="flex items-center gap-2">
               <EditUserDetails />
               <ChangePassword />

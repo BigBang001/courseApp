@@ -40,6 +40,7 @@ import { useToast } from "@/hooks/use-toast";
 import { CourseLevel, courseValidation } from "@/validations/validation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import BackButton from "../BackButton";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -106,15 +107,7 @@ export default function AddCourse() {
 
   return (
     <div className="container mx-auto py-8">
-      <Link
-        href={`/profile/${session?.user.fullName}`}
-        className="inline-block mb-4"
-      >
-        <Button variant="outline" className="gap-2">
-          <ArrowLeft className="h-4 w-4" />
-          Back to Profile
-        </Button>
-      </Link>
+      <BackButton href="/dashboard" title="Back to dashboard" />
       <Card className="max-w-4xl mx-auto shadow-lg">
         <CardHeader className="text-center space-y-2">
           <CardTitle className="text-3xl font-semibold text-primary">

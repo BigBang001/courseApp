@@ -2,11 +2,11 @@ import axios from "axios";
 import { create } from "zustand";
 
 export interface createdCourseDetail {
-    avgRating: number
-    courseId: string
-    courseTitle: string
-    purchaseCount: number;
-    coursePrice: number
+    courseId: string,
+    Students: number,
+    avgRating: number,
+    Price: number,
+    title: string,
 }
 
 interface dataStore {
@@ -15,16 +15,17 @@ interface dataStore {
     courseDetails: createdCourseDetail[]
 }
 
-export const useDataStore = create<dataStore>((set) => ({
+export const useCourseDetailStore = create<dataStore>((set) => ({
     courseDetails: [],
-    isLoading: false,
+    isLoading: true,
     fetchData: async () => {
         try {
-            set({ isLoading: true })
-            const response = await axios.get("/api/dashboard/statistics");
-            set({ courseDetails: response.data.courseDetails, isLoading: false })
+            const response = await axios.get("/api/dashboard/course-details");
+            set({ courseDetails: response.data.courseDetails})
         } catch (error) {
             console.log(error);
+        }finally{
+            set({isLoading: false})
         }
     },
 }))

@@ -21,16 +21,14 @@ import BackButton from "@/components/BackButton";
 
 export default function Profile() {
   const { status: sessionStatus } = useSession();
-  const { isLoading, fetchProfile } = useProfileStore();
   const { fetchSavedCourses } = useSavedCoursesStore();
   const { fetchPurchasedCourses } = usePurchasedCoursesStore();
   useEffect(() => {
-    fetchProfile();
     fetchSavedCourses();
     fetchPurchasedCourses();
   }, []);
 
-  if (sessionStatus === "loading" || isLoading) {
+  if (sessionStatus === "loading") {
     return (
       <div className="h-screen w-full flex items-center justify-center">
         <Loader2 color="gray" className="h-8 w-8 animate-spin" />
@@ -43,18 +41,20 @@ export default function Profile() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="bg-gradient-to-b from-background to-background/80 py-8"
+      className="bg-gradient-to-b from-background to-background/80 md:py-8 py-4"
     >
-      <div className="container mx-auto px-4">
-        <BackButton href="/explore" title=" Back to Courses" />
-        <div className="grid gap-8 md:grid-cols-3">
+      <div className="container mx-auto px-3">
+        <div className="py-2">
+          <BackButton href="/explore" title=" Back to Courses" />
+        </div>
+        <div className="grid md:gap-8 gap-4 md:grid-cols-3">
           <ProfileCard />
 
           <motion.div
             initial={{ x: 20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="md:col-span-2 space-y-8"
+            className="md:col-span-2 md:space-y-8 space-y-3"
           >
             <Card className="bg-card/50 backdrop-blur-sm border-primary/10 shadow-lg overflow-hidden">
               <CardHeader>

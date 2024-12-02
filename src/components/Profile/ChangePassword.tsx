@@ -61,7 +61,7 @@ export default function ChangePassword() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className='w-full' variant="default" size={"sm"}><KeyRound/> Change Password</Button>
+        <Button size={"sm"} className='w-full' variant="default"><KeyRound/> Change Password</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

@@ -64,7 +64,7 @@ export default function AccountManage() {
     <div className="flex gap-2">
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <Button size="sm" className="w-full flex items-center gap-2">
+          <Button className="w-full flex items-center gap-2" size={"sm"}>
             <LogOut className="h-4 w-4" />
             Logout
           </Button>
@@ -85,7 +85,7 @@ export default function AccountManage() {
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button className="w-full flex items-center gap-2" variant="destructive" size="sm">
+          <Button size={"sm"} className="w-full flex items-center gap-2" variant="destructive">
             <UserMinus className="h-4 w-4" />
             Deactivate Account
           </Button>

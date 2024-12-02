@@ -1,14 +1,39 @@
 "use client";
 
 import { useEffect } from "react";
-import { Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGraphDataStore } from "@/store/dashboardStore/graphDataStore";
 
 export function Overview() {
   const { fetchGraphData, graphData } = useGraphDataStore();
+  const dummmyGraphData = [
+    { month: "Jan", revenue: 4500 },
+    { month: "Feb", revenue: 5200 },
+    { month: "Mar", revenue: 6100 },
+    { month: "Apr", revenue: 4900 },
+    { month: "May", revenue: 5300 },
+    { month: "Jun", revenue: 5800 },
+    { month: "Jul", revenue: 6200 },
+    { month: "Aug", revenue: 5700 },
+    { month: "Sep", revenue: 5900 },
+    { month: "Oct", revenue: 6100 },
+    { month: "Nov", revenue: 5500 },
+    { month: "Dec", revenue: 5989 },
+    { month: "Dec", revenue: 2989 },
+  ];
 
   useEffect(() => {
     fetchGraphData();
@@ -34,7 +59,7 @@ export function Overview() {
             className="min-w-[200px]"
           >
             <ResponsiveContainer width="100%" height={350}>
-              <LineChart data={graphData}>
+              <BarChart data={graphData}>
                 <XAxis
                   dataKey="month"
                   stroke="hsl(var(--muted-foreground))"
@@ -50,15 +75,8 @@ export function Overview() {
                   tickFormatter={(value) => `₹${value}`}
                 />
                 <ChartTooltip content={<ChartTooltipContent />} />
-                <Line
-                  type="monotone"
-                  dataKey="revenue"
-                  stroke="var(--color-revenue)"
-                  strokeWidth={3}
-                  dot={{ r: 5, stroke: "var(--color-revenue)", strokeWidth: 2, fill: "white" }}
-                  activeDot={{ r: 7 }}
-                />
-              </LineChart>
+                <Bar dataKey="revenue" fill="var(--color-revenue)" radius={[4, 4, 0, 0]} maxBarSize={20} /> 
+              </BarChart>
             </ResponsiveContainer>
           </ChartContainer>
         )}

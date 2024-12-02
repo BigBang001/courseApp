@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -15,87 +16,113 @@ import { Textarea } from "@/components/ui/textarea";
 import axios from "axios";
 import { useToast } from "@/hooks/use-toast";
 import { useSession } from "next-auth/react";
-import { Edit, Loader2 } from "lucide-react";
+import { Edit, Loader2, User2 } from "lucide-react";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
+import { updateUserDetailsValidation } from "@/validations/validation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
 export default function EditUserDetails() {
-  const { data: session } = useSession();
-  const name = session?.user.fullName;
-  const [open, setOpen] = useState(false);
-  const [fullName, setFullName] = useState(name);
-  const [bio, setBio] = useState("");
-  const [isloading, setIsLoading] = useState(false);
+  type ProfileFormValues = z.infer<typeof updateUserDetailsValidation>;
   const { toast } = useToast();
+  const { data: session } = useSession();
+  const [open, setOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const form = useForm<ProfileFormValues>({
+    resolver: zodResolver(updateUserDetailsValidation),
+    defaultValues: {
+      bio: "I'm an instructor passionate about teaching web development.",
+      fullName: session?.user?.fullName,
+    },
+    mode: "onChange",
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  async function onSubmit(data: ProfileFormValues) {
     setIsLoading(true);
     try {
-      const response = await axios.put(`/api/edit-user`, {
-        fullName,
-        bio,
-      });
+      await axios.put("/api/edit-user", data);
       toast({
         title: "Updated",
-        description: response.data.message || "User details updated Successfully", 
-        variant: "success",
+        description: `Profile Details Updated Sucessfully`,
+        variant: "default",
       });
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.message || "An error occurred";
+      setOpen(false);
+    } catch (error) {
       toast({
-        title: "Updated",
-        description: errorMessage,
+        title: "Error",
+        description: `Error While Updating profile details`,
         variant: "destructive",
       });
-    } finally {
-      setIsLoading(false);
-    }
-
-    setOpen(false);
-  };
+    }finally{setIsLoading(false)}
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="w-full"  variant="default" size={"sm"}><Edit/>Edit User Details</Button>
+        <Button size={"sm"} variant="default">
+          {" "}
+          <User2 /> Update Profile
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Edit Profile</DialogTitle>
+          <DialogTitle>Edit profile</DialogTitle>
+          <DialogDescription>
+            Make changes to your profile here. Click save when you're done.
+          </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">
-              Name
-            </Label>
-            <Input
-              id="name"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              className="col-span-3"
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="fullName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Username</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Kush Chaudhary" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    This is your public display name.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="bio" className="text-right">
-              Add Bio
-            </Label>
-            <Textarea
-              id="bio"
-              value={bio}
-              onChange={(e) => setBio(e.target.value)}
-              className="col-span-3"
+            <FormField
+              control={form.control}
+              name="bio"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Bio</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Tell us a little bit about yourself"
+                      className="resize-none"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    You can <span>@mention</span> other users and organizations.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <Button disabled={isloading} type="submit" className="ml-auto">
-            {isloading ? (
-              <div className="flex gap-2 items-center">
-                <Loader2 className="animate-spin" />
-                Updating...
-              </div>
-            ) : (
-              "Save changes"
-            )}
-          </Button>
-        </form>
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Updating..." : "Update"}
+            </Button>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

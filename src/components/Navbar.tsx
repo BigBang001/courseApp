@@ -65,6 +65,7 @@ export default function Navbar() {
                         <AvatarImage
                           src={user?.image || undefined}
                           alt="User Avatar"
+                          className="object-cover"
                         />
                         <AvatarFallback className="bg-primary text-primary-foreground  font-semibold uppercase">
                           {session?.user.fullName?.[0] || "?"}

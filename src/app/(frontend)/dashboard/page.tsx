@@ -4,24 +4,32 @@ import { RecentStudents } from "@/components/InstructerDashboard/RecentStudents"
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import DashboardCards from "@/components/InstructerDashboard/DashboardCards";
-import { BookOpen } from "lucide-react";
-import UpdateProfileDialog from "@/components/InstructerDashboard/UpdateProfileDialog";
+import { BookOpen, PlusCircle } from "lucide-react";
 import BackButton from "@/components/BackButton";
+import EditUserDetails from "@/components/Profile/EditUserDetails";
+import ProfileCard from "@/components/Profile/ProfileCard";
 
 export default function DashboardPage() {
   return (
-    <div className="md:px-32 px-2 py-10">
-      <div className="flex gap-2 flex-wrap py-2">
-        <BackButton href="/explore" title="Back to Courses" />
-        <Link href={"/dashboard/courses"}>
-          <Button variant={"outline"}>
-            <BookOpen/> Your Courses
+    <div className="md:px-32 px-2 md:py-10 py-4">
+      <div className="flex gap-2 justify-between flex-wrap py-4">
+        <div className="flex gap-2">
+          <BackButton href="/explore" title="Back to Courses" />
+          <Link href={"/dashboard/courses"}>
+            <Button size={"sm"} variant={"default"}>
+              <BookOpen /> Your Courses
+            </Button>
+          </Link>
+        </div>
+        <Link href="/create">
+          <Button size={"sm"} variant="secondary">
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Add New Course
           </Button>
         </Link>
-        <UpdateProfileDialog/>
       </div>
       <DashboardCards />
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-7">
         <Card className="col-span-4">
           <CardHeader>
             <CardTitle>Overview</CardTitle>
@@ -32,10 +40,11 @@ export default function DashboardPage() {
         </Card>
         <Card className="col-span-3">
           <CardHeader>
-            <CardTitle>Recent Students</CardTitle>
+            <CardTitle>Your Profile</CardTitle>
           </CardHeader>
           <CardContent>
-            <RecentStudents />
+            {/* <RecentStudents /> */}
+            <ProfileCard />
           </CardContent>
         </Card>
       </div>

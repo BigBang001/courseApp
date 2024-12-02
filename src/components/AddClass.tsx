@@ -124,7 +124,9 @@ export default function AddClass({
       </SheetTrigger>
       <SheetContent className="sm:max-w-[425px]">
         <SheetHeader>
-          <SheetTitle>Add Class to {courseName}</SheetTitle>
+          <SheetTitle>
+            Add Class to <span className="text-blue-500">"{courseName}"</span>
+          </SheetTitle>
           <SheetDescription>
             Enter the details of your new class
           </SheetDescription>
@@ -166,7 +168,7 @@ export default function AddClass({
           </Button>
         </form>
         <div className="mt-10">
-          {isLoading &&
+          {isLoading && (
             <div className="w-full flex flex-col gap-1">
               <p className="text-sm text-neutral-300">Uploading...</p>
               <Progress color="green" value={uploadProgress} />
@@ -174,7 +176,7 @@ export default function AddClass({
                 {uploadProgress}%
               </p>
             </div>
-          }
+          )}
         </div>
       </SheetContent>
     </Sheet>
