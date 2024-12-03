@@ -6,9 +6,7 @@ import React from "react";
 import { usePurchasedCoursesStore } from "@/store/courseStore/purchasesCoursesStore";
 
 const PurchasedCoursesPage = () => {
- 
   const { purchasedCourses, isLoading, fetchPurchasedCourses } = usePurchasedCoursesStore();
-
   React.useEffect(() => {
     fetchPurchasedCourses();
   }, [fetchPurchasedCourses]);

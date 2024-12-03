@@ -7,7 +7,7 @@ import { BookOpen, DollarSign, Star, Users } from "lucide-react";
 import { useDashboardDataStore } from "@/store/dashboardStore/dashboardDataStore";
 
 export default function DashboardCards() {
-  const { dashboardData, fetchDashboardData, isLoading } =
+  const { dashboardData, fetchDashboardData, isLoading} =
     useDashboardDataStore();
 
   useEffect(() => {

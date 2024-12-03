@@ -101,7 +101,7 @@ export default function CoursePurchase() {
 
   useEffect(() => {
     fetchCreditCards();
-  }, []);
+  }, [fetchCreditCards]);
 
   const handleDeleteCreditCard = async (id: string) => {
     try {

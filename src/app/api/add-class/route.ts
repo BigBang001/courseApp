@@ -74,14 +74,15 @@ export async function POST(request: NextRequest) {
     })
 
     const classUrl = uploadResult.secure_url
+    const classDuration = uploadResult.duration
 
-    // Save to Prisma
     const recordedClass = await prisma.recordedClass.create({
       data: {
         title,
         userId: user.id,
         courseId,
-        videoUrl: classUrl
+        videoUrl: classUrl,
+        duration: classDuration
       }
     })
 
@@ -89,7 +90,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: "Class Created Successfully",
-      data: { id: recordedClass.id, title: recordedClass.title, videoUrl: recordedClass.videoUrl }
+      data: { id: recordedClass.id, title: recordedClass.title, videoUrl: recordedClass.videoUrl, duration: recordedClass.duration }
     }, { status: 201 })
 
   } catch (error) {

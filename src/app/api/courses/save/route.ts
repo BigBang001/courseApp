@@ -48,7 +48,8 @@ export async function POST(request: NextRequest) {
     }
 }
 
-export async function GET() {
+export async function DELETE(request: NextRequest) {
+    const { courseId } = await request.json();
     try {
         const session = await getServerSession(authOptions);
         if (!session?.user) {
@@ -57,7 +58,6 @@ export async function GET() {
                 message: "Unauthorized",
             }, { status: 401 });
         }
-
         const user = await prisma.user.findFirst({
             where: {
                 email: session.user.email,
@@ -72,24 +72,24 @@ export async function GET() {
             }, { status: 404 });
         }
 
-        const savedCourses = await prisma.savedCourses.findMany({
-            where : {
-                userId : user.id
-            },include : {
-                course : true
+        await prisma.savedCourses.delete({
+            where: {
+                courseId_userId: {
+                    userId: user.id,
+                    courseId:courseId
+                }
             }
         });
 
         return NextResponse.json({
             success: true,
-            message: "Courses fetched successfully",
-            savedCourses
-        }, { status: 201 });
+            message: "Course unsaved successfully",
+        }, { status: 200 });
 
     } catch (error: any) {
         return NextResponse.json({
             success: false,
-            message: "Server error during saving course",
+            message: "Server error during unsaving course",
             error: error.message
         }, { status: 500 });
     }

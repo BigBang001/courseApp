@@ -26,7 +26,7 @@ export default function Profile() {
   useEffect(() => {
     fetchSavedCourses();
     fetchPurchasedCourses();
-  }, []);
+  }, [ fetchSavedCourses, fetchPurchasedCourses ]);
 
   if (sessionStatus === "loading") {
     return (

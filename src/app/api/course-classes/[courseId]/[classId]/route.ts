@@ -1,11 +1,10 @@
 import { getServerSession } from "next-auth";
+import { authOptions } from "../../../auth/[...nextauth]/options";
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { authOptions } from "../../auth/[...nextauth]/options";
 
-export async function GET(request : Request,{ params: { courseId } }: { params: { courseId: string } }) {
+export async function DELETE(request: Request,{ params }: { params: {classId: string , courseId: string} }) {
     try {
-
         const session = await getServerSession(authOptions);
         if (!session || !session.user) {
             return NextResponse.json(
@@ -17,46 +16,37 @@ export async function GET(request : Request,{ params: { courseId } }: { params: 
             );
         }
 
-        if (!courseId) {
+        const { classId } = params;
+
+        if (!classId) {
             return NextResponse.json(
                 {
                     success: false,
-                    message: "CourseId is required",
+                    message: "ClassId is required",
                 },
                 { status: 400 }
             );
         }
 
-        console.log("Fetching Classes for Course ", courseId);
-
-        // Fetch classes from the database
-        const classes = await prisma.recordedClass.findMany({
-            where: { courseId },
-            select: {
-                id: true,
-                title: true,
-                videoUrl: true,
-                duration: true,
-                isCompleted: true,
-                createdAt: true,
-            },
-            orderBy: { createdAt: "asc" },
+        // Delete the class from the database
+        const deletedClass = await prisma.recordedClass.delete({
+            where: { id: classId,courseId: params.courseId },
         });
 
         return NextResponse.json(
             {
                 success: true,
-                message: "Classes fetched successfully",
-                classes,
+                message: "Class deleted successfully",
+                deletedClass,
             },
             { status: 200 }
         );
     } catch (error) {
-        console.error("Error while fetching Classes:", error);
+        console.error("Error while deleting Class:", error);
         return NextResponse.json(
             {
                 success: false,
-                message: "Error while fetching classes",
+                message: "Error while deleting class",
                 error: error instanceof Error ? error.message : "Unknown error",
             },
             { status: 500 }

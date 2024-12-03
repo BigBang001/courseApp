@@ -27,10 +27,11 @@ import CourseReviews from "./CourseReviews";
 import Link from "next/link";
 import { Badge } from "./ui/badge";
 import Image from "next/image";
+import SaveUnsaveButton from "./Course/saveUnsaveButton";
 
 const CourseCard = ({ course }: { course: Course }) => {
   const { data: session } = useSession();
-  const { toast } = useToast();
+  
   const offerPercentage =
     ((course.price! -
       course.price! +
@@ -42,57 +43,6 @@ const CourseCard = ({ course }: { course: Course }) => {
   const rating = reviews.reduce((acc: number, cv: any) => acc + cv.rating, 0);
   const avgRating = reviews.length > 0 ? rating / reviews.length : null;
   const roundedRating = avgRating ? Math.round(avgRating * 2) / 2 : 0;
-
-  const [isCourseSaved, setIsCourseSaved] = useState(() => {
-    const savedCourses = JSON.parse(
-      localStorage.getItem("savedCourses") || "[]"
-    );
-    return savedCourses.includes(course.id);
-  });
-
-  const handleSaveCourse = async () => {
-    if (!session?.user) return;
-    try {
-      const savedCourses = JSON.parse(
-        localStorage.getItem("savedCourses") || "[]"
-      );
-
-      if (isCourseSaved === false) {
-        await axios.post("/api/courses/save/saved-courses", {
-          courseId: course.id,
-          userId: session.user.id,
-        });
-
-        savedCourses.push(course.id);
-        localStorage.setItem("savedCourses", JSON.stringify(savedCourses));
-        setIsCourseSaved(true);
-        toast({
-          title: "Saved!",
-          description: "Course Saved Successfully",
-          variant: "success",
-        });
-      } else {
-        await axios.delete(`/api/courses/save/${course.id}`);
-        const updatedCourses = savedCourses.filter(
-          (id: string) => id !== course.id
-        );
-        localStorage.setItem("savedCourses", JSON.stringify(updatedCourses));
-        setIsCourseSaved(false);
-        toast({
-          title: "Removed!",
-          description: "Course Removed from savedCourses Successfully",
-          variant: "success",
-        });
-      }
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.message || "An error occurred";
-      toast({
-        title: "Error",
-        description: errorMessage,
-        variant: "destructive",
-      });
-    }
-  };
 
   return (
     <div>
@@ -276,18 +226,8 @@ const CourseCard = ({ course }: { course: Course }) => {
             </Drawer>
           </div>
 
-          <div
-            onClick={handleSaveCourse}
-            className="group-hover:opacity-100 opacity-0 cursor-pointer transition-opacity duration-300"
-          >
-            {session?.user.role === "user" && (
-              <Bookmark
-                aria-label={isCourseSaved ? "Unsave Course" : "Save Course"}
-                className={`${
-                  isCourseSaved ? "fill-white" : "fill-transparent"
-                } cursor-pointer`}
-              />
-            )}
+          <div>
+            <SaveUnsaveButton courseId={course.id!} />
           </div>
         </CardFooter>
       </Card>

@@ -1,33 +1,36 @@
 import axios from "axios";
 import { create } from "zustand";
 
-interface detail {
-    avgRating: number
-    revenue: string
-    totalUsers: string
-    totalCourses: string
+interface Detail {
+  avgRating: number;
+  revenue: string;
+  totalUsers: string;
+  totalCourses: string;
 }
 
-interface dashboardDataStore {
-    isLoading: boolean,
-    dashboardData: detail | null,
-    fetchDashboardData: () => Promise<void>
+interface DashboardDataStore {
+  isLoading: boolean;
+  dashboardData: Detail | null;
+  fetchDashboardData: () => Promise<void>;
+  refreshData: () => void; 
 }
 
-export const useDashboardDataStore = create<dashboardDataStore>((set) => ({
-    isLoading: true,
-    dashboardData: {
-        avgRating: 0,
-        revenue: "00.00",
-        totalUsers: "00",
-        totalCourses: "00"
-    },
-    fetchDashboardData: async () => {
-        try {
-            const response = await axios.get("/api/dashboard/dashboardData");
-            set({ dashboardData: response.data.data, isLoading: false })
-        } catch (error) {
-            console.log(error);
-        }
+export const useDashboardDataStore = create<DashboardDataStore>((set, get) => ({
+  isLoading: true,
+  dashboardData: null, 
+  fetchDashboardData: async () => {
+    try {
+      const state = get();
+      if (state.dashboardData) {
+        set({ isLoading: false });
+        return; 
+      }
+      
+      const response = await axios.get("/api/dashboard/dashboardData");
+      set({ dashboardData: response.data.data, isLoading: false });
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
     }
-}))
+  },
+  refreshData: () => set({ dashboardData: null, isLoading: true }),
+}));

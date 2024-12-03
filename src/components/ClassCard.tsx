@@ -9,18 +9,22 @@ const ClassCard = ({
   classId,
   title,
   classURL,
-  index
+  index,
+  duration,
 }: {
   classId: string;
   title: string;
   classURL: string;
   index: number;
+  duration: number;
 }) => {
   const params = useParams();
   const [isCompleted, setIsCompleted] = useState(false);
 
   useEffect(() => {
-    const completedClasses = JSON.parse(localStorage.getItem('completedClasses') || '{}');
+    const completedClasses = JSON.parse(
+      localStorage.getItem("completedClasses") || "{}"
+    );
     setIsCompleted(!!completedClasses[classId]);
   }, [classId]);
 
@@ -38,21 +42,32 @@ const ClassCard = ({
         )}
 
         <CardHeader className="flex flex-col justify-between h-full">
-          <CardTitle className="md:py-8">
+          <CardTitle className="md:py-8 py-3">
             <p className="py-2 text-blue-500">{index}.</p>
             <h1 className="md:text-5xl capitalize font-serif text-lg text-stone-900 dark:text-stone-300">
               {title}
             </h1>
           </CardTitle>
-          <div className="absolute bottom-2 right-2">
-            <Link
-              href={{
-                pathname: `/classes/${params.courseId}/${title}`,
-                query: { classURL, classId },
-              }}
-            >
-              <Button className="bg-blue-500 text-white hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700">Play</Button>
-            </Link>
+          <div className="absolute bottom-2 right-2 w-full">
+            <div className="flex w-full justify-between items-end">
+              <h1 className="pl-5 md:text-base text-sm font-semibold font-serif text-stone-500">
+                {duration < 60
+                  ? `${duration.toFixed(2)} sec`
+                  : duration < 3600
+                  ? `${(duration / 60).toFixed(2)} min`
+                  : `${(duration / 3600).toFixed(2)} hr`}
+              </h1>
+              <Link
+                href={{
+                  pathname: `/classes/${params.courseId}/${title}`,
+                  query: { classURL, classId },
+                }}
+              >
+                <Button className="bg-blue-500 text-white hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700">
+                  Play
+                </Button>
+              </Link>
+            </div>
           </div>
         </CardHeader>
       </Card>

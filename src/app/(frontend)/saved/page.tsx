@@ -10,7 +10,7 @@ const Page = () => {
   const { fetchSavedCourses, isLoading, savedCourses } = useSavedCoursesStore();
   useEffect(() => {
     fetchSavedCourses();
-  }, []);
+  }, [fetchSavedCourses]);
 
   return (
     <div className="mt-6 md:mt-0 mb-2 px-4 md:px-24">

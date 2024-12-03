@@ -160,10 +160,10 @@ export default function AddClass({
             {isLoading ? (
               <span className="flex items-center justify-center">
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Creating...
+                Adding...
               </span>
             ) : (
-              "Create Class"
+              "Add Class"
             )}
           </Button>
         </form>

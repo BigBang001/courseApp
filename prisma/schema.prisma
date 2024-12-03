@@ -74,6 +74,7 @@ model RecordedClass {
   id          String   @unique @default(uuid())
   title       String
   videoUrl    String
+  duration    Float    @default(0)
   isCompleted Boolean  @default(false)
   createdAt   DateTime @default(now())
   userId      String

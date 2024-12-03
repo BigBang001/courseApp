@@ -9,6 +9,8 @@ import {
 import { createdCourseDetail } from "@/store/dashboardStore/courseDetailsStore";
 import AddClass from "../AddClass";
 import { Users, Star, IndianRupee } from "lucide-react";
+import Link from "next/link";
+import { Button } from "../ui/button";
 
 interface CreatedCourseCardProps extends createdCourseDetail {
   idx: number;
@@ -49,8 +51,11 @@ export default function CreatedCourseCard({
             <span className="font-medium">{avgRating}</span>
           </div>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="space-x-2">
           <AddClass courseId={courseId} courseName={title} />
+          <Link href={`/dashboard/courses/${courseId}`}>
+            <Button variant="secondary" >View Classes</Button>
+          </Link>
         </CardFooter>
       </div>
     </Card>

@@ -18,18 +18,15 @@ const Page = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Load completion status from localStorage on mount
     const completedClasses = JSON.parse(localStorage.getItem('completedClasses') || '{}');
     setIsCompleted(!!completedClasses[classId as string]);
   }, [classId]);
 
   const handleToggle = () => {
     try {
-      // Toggle the completion state
       const newCompletionState = !isCompleted;
       setIsCompleted(newCompletionState);
 
-      // Update localStorage
       const completedClasses = JSON.parse(localStorage.getItem('completedClasses') || '{}');
       if (newCompletionState) {
         completedClasses[classId as string] = true;
@@ -49,7 +46,7 @@ const Page = () => {
         description: "Failed to update class status",
         variant: "destructive",
       });
-      setIsCompleted(!isCompleted); // Revert state on error
+      setIsCompleted(!isCompleted);
     }
   };
 

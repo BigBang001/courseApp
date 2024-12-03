@@ -2,7 +2,7 @@
 
 import ClassCard from "@/components/ClassCard";
 import { useParams, useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -19,8 +19,8 @@ export default function Page() {
 
   useEffect(() => {
     fetchClasses(courseId as string);
-  }, [courseId]);
-
+  }, [courseId,fetchClasses]);
+  
   return (
     <div className="container mx-auto px-4 md:px-20 py-8">
       <div className="flex flex-col space-y-6">
@@ -48,11 +48,12 @@ export default function Page() {
           ) : classes.length > 0 ? (
             classes.map((classItem, idx) => (
               <ClassCard
-                classId={classItem.id}
                 key={classItem.id}
                 index={idx + 1}
+                classId={classItem.id}
                 classURL={classItem.videoUrl}
                 title={classItem.title}
+                duration={classItem.duration}
               />
             ))
           ) : (

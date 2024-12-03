@@ -6,8 +6,8 @@ import Link from "next/link";
 import DashboardCards from "@/components/InstructerDashboard/DashboardCards";
 import { BookOpen, PlusCircle } from "lucide-react";
 import BackButton from "@/components/BackButton";
-import EditUserDetails from "@/components/Profile/EditUserDetails";
 import ProfileCard from "@/components/Profile/ProfileCard";
+import RefreshDashboardData from "@/components/InstructerDashboard/RefreshDashboardData";
 
 export default function DashboardPage() {
   return (
@@ -21,12 +21,15 @@ export default function DashboardPage() {
             </Button>
           </Link>
         </div>
-        <Link href="/create">
-          <Button size={"sm"} variant="secondary">
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Add New Course
-          </Button>
-        </Link>
+        <div className="flex gap-1">
+          <RefreshDashboardData/>
+          <Link href="/create">
+            <Button size={"sm"} variant="secondary">
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Add New Course
+            </Button>
+          </Link>
+        </div>
       </div>
       <DashboardCards />
       <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-7">

@@ -1,4 +1,5 @@
-"use client"
+"use client";
+
 import "@/app/globals.css";
 import Link from "next/link";
 import Image from "next/image";
@@ -7,26 +8,29 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 
-export default async function LandingPage() {
+export default function LandingPage() {
   const featuredCourses = [
     {
       title: "Complete Web Development Bootcamp",
       description: "Learn full-stack web development from scratch",
       price: "₹1199",
-      image: "https://imgs.search.brave.com/bCpPEOntXSbX81704d8RG--GaJPpMiEYaNwk0pu9_OU/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93YWxs/cGFwZXJzLmNvbS9p/bWFnZXMvZmVhdHVy/ZWQvYW5pbWUtbGFu/ZHNjYXBlLWNrbDl2/cTlldG9wdGhxNmUu/anBn"
+      image:
+        "https://imgs.search.brave.com/bCpPEOntXSbX81704d8RG--GaJPpMiEYaNwk0pu9_OU/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93YWxs/cGFwZXJzLmNvbS9p/bWFnZXMvZmVhdHVy/ZWQvYW5pbWUtbGFu/ZHNjYXBlLWNrbDl2/cTlldG9wdGhxNmUu/anBn",
     },
     {
       title: "Advanced React & Next.js",
       description: "Master modern React patterns and Next.js features",
       price: "₹1179",
-      image: "https://imgs.search.brave.com/bCpPEOntXSbX81704d8RG--GaJPpMiEYaNwk0pu9_OU/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93YWxs/cGFwZXJzLmNvbS9p/bWFnZXMvZmVhdHVy/ZWQvYW5pbWUtbGFu/ZHNjYXBlLWNrbDl2/cTlldG9wdGhxNmUu/anBn"
+      image:
+        "https://imgs.search.brave.com/bCpPEOntXSbX81704d8RG--GaJPpMiEYaNwk0pu9_OU/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93YWxs/cGFwZXJzLmNvbS9p/bWFnZXMvZmVhdHVy/ZWQvYW5pbWUtbGFu/ZHNjYXBlLWNrbDl2/cTlldG9wdGhxNmUu/anBn",
     },
     {
       title: "Python for Data Science",
       description: "Comprehensive data science with Python",
       price: "₹1189",
-      image: "https://imgs.search.brave.com/dxstLZnjRmQgqaAug1GNBGDlDWT7q0zPjV0Y47lxPVA/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/d2FsbHBhcGVyc2Fm/YXJpLmNvbS82Mi81/Ny9VRFd2cGouanBn"
-    }
+      image:
+        "https://imgs.search.brave.com/dxstLZnjRmQgqaAug1GNBGDlDWT7q0zPjV0Y47lxPVA/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/d2FsbHBhcGVyc2Fm/YXJpLmNvbS82Mi81/Ny9VRFd2cGouanBn",
+    },
   ];
 
   return (
@@ -37,11 +41,13 @@ export default async function LandingPage() {
             Welcome to
             <br />
             <span className="bg-gradient-to-r text-4xl md:text-8xl from-blue-500 to-white text-transparent bg-clip-text">
-            CoursePros
+              CoursePros
             </span>
           </h1>
           <p className="mt-6 text-sm md:text-xl dark:text-neutral-400 max-w-3xl mx-auto">
-            "Transform your career with our expert-led courses. Join thousands of successful learners who have accelerated their careers through our comprehensive learning platform."
+            "Transform your career with our expert-led courses. Join thousands
+            of successful learners who have accelerated their careers through
+            our comprehensive learning platform."
           </p>
           <div className="mt-10">
             <motion.div whileTap={{ scale: 0.95 }} whileHover={{ scale: 1.05 }}>
@@ -58,12 +64,17 @@ export default async function LandingPage() {
 
           {/* Featured Courses Section */}
           <div className="mt-20">
-            <h2 className="text-2xl md:text-4xl font-bold mb-12">Featured Courses</h2>
+            <h2 className="text-2xl md:text-4xl font-bold mb-12">
+              Featured Courses
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {featuredCourses.map((course, index) => (
-                <Card key={index} className="overflow-hidden flex flex-col justify-between hover:shadow-lg transition-shadow duration-300">
+                <Card
+                  key={index}
+                  className="overflow-hidden flex flex-col justify-between hover:shadow-lg transition-shadow duration-300"
+                >
                   <div className="relative w-full h-48">
-                    <Image 
+                    <Image
                       src={course.image}
                       alt={course.title}
                       fill
@@ -71,8 +82,12 @@ export default async function LandingPage() {
                     />
                   </div>
                   <div className="p-6">
-                    <h3 className="text-xl font-semibold mb-2">{course.title}</h3>
-                    <p className="text-neutral-400 mb-4">{course.description}</p>
+                    <h3 className="text-xl font-semibold mb-2">
+                      {course.title}
+                    </h3>
+                    <p className="text-neutral-400 mb-4">
+                      {course.description}
+                    </p>
                     <div className="flex justify-between items-center">
                       <span className="text-2xl font-bold">{course.price}</span>
                       <Link href="/signin">
@@ -149,12 +164,18 @@ export default async function LandingPage() {
                 <h3 className="text-xl font-semibold">Quick Links</h3>
                 <ul className="mt-2 space-y-1">
                   <li>
-                    <Link href="/explore" className="text-neutral-400 hover:text-white">
+                    <Link
+                      href="/explore"
+                      className="text-neutral-400 hover:text-white"
+                    >
                       Browse Courses
                     </Link>
                   </li>
                   <li>
-                    <Link href="/about" className="text-neutral-400 hover:text-white">
+                    <Link
+                      href="/about"
+                      className="text-neutral-400 hover:text-white"
+                    >
                       About Us
                     </Link>
                   </li>

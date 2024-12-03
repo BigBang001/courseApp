@@ -10,12 +10,16 @@ interface graphDataStore {
     isLoading: boolean,
     fetchGraphData: () => Promise<void>
     graphData: graphData[]
+    refreshGraphData: () => void
 }
 
-export const useGraphDataStore = create<graphDataStore>((set) => ({
+export const useGraphDataStore = create<graphDataStore>((set, get) => ({
     graphData: [],
     isLoading: false,
     fetchGraphData: async () => {
+        if (get().graphData.length > 0) {
+            return
+        }
         try {
             set({ isLoading: true })
             const response = await axios.get("/api/dashboard/graph-data");
@@ -24,4 +28,5 @@ export const useGraphDataStore = create<graphDataStore>((set) => ({
             console.log(error);
         }
     },
+    refreshGraphData: () => set({ graphData: [], isLoading: false })
 }));

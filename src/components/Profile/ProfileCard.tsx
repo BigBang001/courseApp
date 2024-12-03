@@ -26,7 +26,7 @@ export default function ProfileCard() {
   const { user, fetchProfile } = useProfileStore();
   useEffect(()=>{
     fetchProfile()
-  },[])
+  },[fetchProfile])
   const [isUploading, setIsUploading] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const { toast } = useToast();
