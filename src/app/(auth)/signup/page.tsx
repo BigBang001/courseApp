@@ -50,7 +50,7 @@ export default function SignUpPage() {
       fullName: "",
       email: "",
       password: "",
-      role: "user",
+      role: 'USER',
     },
   });
 
@@ -127,8 +127,8 @@ export default function SignUpPage() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="admin">Admin</SelectItem>
-                          <SelectItem value="user">User</SelectItem>
+                          <SelectItem value="INSTRUCTOR">Instructor</SelectItem>
+                          <SelectItem value="USER">User</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />

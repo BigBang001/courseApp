@@ -36,14 +36,14 @@ export async function POST(request: Request) {
         const user = await prisma.user.findFirst({
             where: {
                 email: session.user.email,
-                role: "admin"
+                role: "INSTRUCTOR"
             }
         });
 
         if (!user) {
             return NextResponse.json({
                 success: false,
-                message: "User not found || User not admin",
+                message: "User not found || User not INSTRUCTOR",
             }, { status: 404 });
         }
 

@@ -206,7 +206,7 @@ const CourseCard = ({ course }: { course: Course }) => {
                   </div>
                 </DrawerHeader>
                 <DrawerFooter className="flex items-center justify-center flex-row">
-                  {session?.user.role === "user" && (
+                  {session?.user.role === "USER" && (
                     <Link href={`/course/${course.id}`}>
                       <Button
                         size={"default"}

@@ -16,7 +16,7 @@ export async function POST(request: Request, { params }: { params: { courseId: s
         const user = await prisma.user.findFirst({
             where: {
                 id: session.user.id,
-                role: "admin"
+                role: "INSTRUCTOR"
             }
         })
 

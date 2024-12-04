@@ -8,8 +8,21 @@ datasource db {
 }
 
 enum Role {
-  admin
-  user
+  USER
+  INSTRUCTOR
+  ADMIN
+}
+
+enum PaymentStatus {
+  SUCCESS
+  FAILED
+  PENDING
+}
+
+enum PayoutStatus {
+  SUCCESS
+  FAILED
+  PENDING
 }
 
 enum CourseLevel {
@@ -20,21 +33,24 @@ enum CourseLevel {
 
 model User {
   id               String             @id @unique @default(uuid())
+  email            String             @unique
   fullName         String
   bio              String?
+  phone            String?
+  bankAccount      String?
   image            String?
-  email            String             @unique
   password         String
-  role             Role
-  balance          Float              @default(0)
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
+  role             Role               @default(USER)
   Courses          Course[]
   Review           Review[]
   PurchasedCourses PurchasedCourses[]
-  CreditCard       CreditCard[]
   recordedClass    RecordedClass[]
   savedCourses     SavedCourses[]
+  Purchase         Purchase[]
+  BankAccount      BankAccount[]
+  Payout           Payout[]
+  updatedAt        DateTime           @updatedAt
+  createdAt        DateTime           @default(now())
 }
 
 model Course {
@@ -57,6 +73,43 @@ model Course {
   PurchasedCourses PurchasedCourses[]
   recordedClass    RecordedClass[]
   savedCourses     SavedCourses[]
+  Purchase         Purchase[]
+}
+
+model Purchase {
+  id         String        @id @default(uuid())
+  courseId   String
+  course     Course        @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  studentId  String
+  student    User          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  amountPaid Float
+  paymentId  String?
+  status     PaymentStatus @default(PENDING)
+  createdAt  DateTime      @default(now())
+}
+
+model BankAccount {
+  id                String   @id @default(uuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountNumber     String
+  ifsc              String
+  accountHolderName String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model Payout {
+  id            String       @id @default(uuid())
+  instructorId  String
+  instructor    User         @relation(fields: [instructorId], references: [id], onDelete: Cascade)
+  amount        Float
+  status        PayoutStatus @default(PENDING)
+  fundAccountId String
+  transactionId String
+  narration     String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
 }
 
 model PurchasedCourses {
@@ -91,19 +144,6 @@ model SavedCourses {
   user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([courseId, userId])
-}
-
-model CreditCard {
-  id             String   @unique @default(uuid())
-  bankName       String
-  cardHolderName String
-  accountNumber  String   @unique
-  cvv            String
-  balance        Float    @default(30000)
-  expiryDate     String
-  createdAt      DateTime @default(now())
-  userId         String
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Review {

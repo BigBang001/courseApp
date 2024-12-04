@@ -16,7 +16,7 @@ export async function GET() {
             },
         });
 
-        if (!user || user.role !== 'admin') {
+        if (!user || user.role !== 'INSTRUCTOR') {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 

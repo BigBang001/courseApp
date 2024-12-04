@@ -11,7 +11,7 @@ export async function middleware(request: NextRequest) {
             return NextResponse.redirect(new URL(`/profile/${token.fullName}`, request.url))
         }
         if (request.nextUrl.pathname === "/create") {
-            if (token.role !== "admin") {
+            if (token.role !== "INSTRUCTOR") {
                 return NextResponse.redirect(new URL("/explore", request.url))
             }
         }

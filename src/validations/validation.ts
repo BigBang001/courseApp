@@ -7,6 +7,12 @@ export enum CourseLevel {
   Advanced = "advanced",
 }
 
+enum Role {
+  USER = "USER",
+  INSTRUCTOR = "INSTRUCTOR",
+  // ADMIN = "ADMIN"
+}
+
 export const signupValidation = z.object({
   fullName: z
     .string()
@@ -26,8 +32,7 @@ export const signupValidation = z.object({
     .regex(/[0-9]/, { message: "Password must contain at least one number" })
     .regex(/[^a-zA-Z0-9]/, { message: "Password must contain at least one special character" })
   ,
-  role: z
-    .enum(['admin', 'user'], { message: "Role must be either 'admin' or 'user'" }),
+  role: z.enum(["USER", "INSTRUCTOR"],{ message: "Role must be either 'INSTRUCTOR' or 'USER'" })
 });
 
 export const signinValidation = z.object({
@@ -78,17 +83,6 @@ export const courseValidation = z.object({
   tags: z.string().min(2, { message: "Add Atleat 1 tag minimum of two charcter" }).max(150, { message: "All Tags should come under 100 characters" }),
   language: z.string().min(1, { message: "Language is required" }),
 });
-
-export const creditCardSValidation = z.object({
-  cardHolderName: z.string().min(2, { message: "Card Holder name must have at least 2 characters" }),
-  bankName: z.string().min(1, { message: "Bank name is required" }),
-  accountNumber: z.string().length(16, { message: "Account number must have exactly 12 characters" }),
-  cvv: z.string().length(3, { message: "CVV must be a 3-digit number" }),
-  expiryDate: z.string().regex(/^(0[1-9]|1[0-2])\/([0-9]{2})$/, {
-    message: "Expiry date must be in MM/YY format with a valid month (01-12)"
-  }),
-});
-
 
 export const reviewValidation = z.object({
   content: z.string().min(1, { message: "Please give some message also" }),

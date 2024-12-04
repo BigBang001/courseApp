@@ -75,7 +75,7 @@ export default function Navbar() {
                   </Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  {session.user.role === "admin" ? (
+                  {session.user.role === "INSTRUCTOR" ? (
                     <div>
                       <Link href={"/create"}>
                         <DropdownMenuItem>

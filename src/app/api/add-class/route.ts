@@ -31,8 +31,8 @@ export async function POST(request: NextRequest) {
       where: { id: session.user.id }
     })
 
-    // Check if user exists and is an admin
-    if (!user || user.role !== "admin") {
+    // Check if user exists and is an INSTRUCTOR
+    if (!user || user.role !== "INSTRUCTOR") {
       return NextResponse.json({ success: false, message: "User not authorized" }, { status: 403 })
     }
 
