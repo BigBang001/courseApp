@@ -54,7 +54,7 @@ export default function SaveUnsaveButton({ courseId }: { courseId: string }) {
       onClick={handleSaveCourse}
       className="group-hover:opacity-100 opacity-0 cursor-pointer transition-opacity duration-300"
     >
-      {session?.user.role === "user" && (
+      {session?.user.role === "USER" && (
         <Bookmark
           aria-label={isCourseSaved ? "Unsave Course" : "Save Course"}
           className={`${

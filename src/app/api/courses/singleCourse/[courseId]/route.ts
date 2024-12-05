@@ -18,6 +18,16 @@ export async function GET(request: NextRequest, { params }: { params: { courseId
 
         const course = await prisma.course.findUnique({
             where: { id: courseId },
+            include: {
+                instructor: {
+                    select: {
+                        fullName: true,
+                        email: true,
+                        bio: true,
+                        image: true
+                    }
+                },
+            }
         });
 
         if (!course) {

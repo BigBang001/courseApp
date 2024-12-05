@@ -1,25 +1,27 @@
+import { toast } from "@/hooks/use-toast";
+import axios from "axios";
 
-export const createOrderId = async (amount: number) => {
+export const createOrderId = async (amount: number, courseId: string) => {
   try {
-    const response = await fetch("/api/purchase/createOrder", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        amount: amount * 100, // Convert to paisa
-      }),
+    const response = await axios.post("/api/purchase/createOrder", {
+      amount: amount * 100, // Convert to paisa
+      courseId: courseId
     });
 
-    if (!response.ok) {
-      throw new Error("Failed to create order. Please try again.");
+    
+    if (response.status != 200) {
+      toast({
+        title: "Error",
+        description: response.data
+      })
     }
-
-    const data = await response.json();;
-    return data.orderId;
+    console.log("res: ",response);
+    return response.data.orderId;
   } catch (error: any) {
     console.error("Order creation error:", error);
-    alert(error.message || "Something went wrong while creating the order.");
-    throw error;
+    toast({
+      title: "Error",
+      description: error.message
+    })
   }
 };

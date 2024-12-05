@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
         const user = await prisma.user.findFirst({
             where: {
                 email: session.user.email,
-                role: "user"
+                role: "USER"
             }
         });
 
@@ -61,7 +61,7 @@ export async function DELETE(request: NextRequest) {
         const user = await prisma.user.findFirst({
             where: {
                 email: session.user.email,
-                role: "user"
+                role: "USER"
             }
         });
 
@@ -90,6 +90,51 @@ export async function DELETE(request: NextRequest) {
         return NextResponse.json({
             success: false,
             message: "Server error during unsaving course",
+            error: error.message
+        }, { status: 500 });
+    }
+}
+
+export async function GET(request: NextRequest) {
+    try {
+        const session = await getServerSession(authOptions);
+        if (!session?.user) {
+            return NextResponse.json({
+                success: false,
+                message: "Unauthorized",
+            }, { status: 401 });
+        }
+        const user = await prisma.user.findFirst({
+            where: {
+                email: session.user.email,
+                role: "USER"
+            }
+        });
+
+        if (!user) {
+            return NextResponse.json({
+                success: false,
+                message: "User not found",
+            }, { status: 404 });
+        }
+
+        const savedCourses = await prisma.savedCourses.findMany({
+            where: {
+                userId: user.id
+            },
+            select: {
+                course: true
+            }
+        });
+
+        return NextResponse.json({
+            savedCourses
+        }, { status: 200 });
+
+    } catch (error: any) {
+        return NextResponse.json({
+            success: false,
+            message: "Server error during fetching saved courses",
             error: error.message
         }, { status: 500 });
     }

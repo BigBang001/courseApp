@@ -21,7 +21,7 @@ export const usePurchasedCoursesStore = create<purchasedCoursesStore>((set) => (
     isLoading: true,
     fetchPurchasedCourses: async () => {
         try {
-            const response = await axios('/api/courses/purchase');    
+            const response = await axios('/api/courses/purchasedCourses');    
             set({ purchasedCourses: response.data.purchasedCourses, isLoading: false });
         } catch (error) {
             console.log(error);

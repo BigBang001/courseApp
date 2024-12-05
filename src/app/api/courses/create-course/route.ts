@@ -5,6 +5,14 @@ import { NextResponse } from "next/server";
 import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 
 export async function POST(request: Request) {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user) {
+        return NextResponse.json({
+            success: false,
+            message: "Unauthorized",
+        }, { status: 401 });
+    }
+
     const { title, description, shortDescription, tags, thumbnail, price, duration, language, level } = await request.json();
     const { success, error } = courseValidation.safeParse({
         title,
@@ -17,7 +25,6 @@ export async function POST(request: Request) {
         duration,
         language
     });
-    const session = await getServerSession(authOptions);
     if (!success) {
         return NextResponse.json({
             success: false,
@@ -25,22 +32,17 @@ export async function POST(request: Request) {
         }, { status: 400 })
     }
 
-    if (!session?.user || !session) {
-        return NextResponse.json({
-            success: false,
-            message: "Unauthorized",
-        }, { status: 401 })
-    }
-
     try {
-        const user = await prisma.user.findFirst({
+        const user = await prisma.user.findUnique({
             where: {
-                email: session.user.email,
-                role: "INSTRUCTOR"
+                id: session.user.id,
             }
         });
 
-        if (!user) {
+        console.log(user);
+
+
+        if (!user || user.role != "INSTRUCTOR") {
             return NextResponse.json({
                 success: false,
                 message: "User not found || User not INSTRUCTOR",

@@ -29,7 +29,7 @@ export async function POST(request: Request) {
         const user = await prisma.user.findFirst({
             where: {
                 email: session.user.email,
-                role: "user"
+                role: "USER"
             }
         });
 
@@ -40,9 +40,9 @@ export async function POST(request: Request) {
             }, { status: 404 });
         }
 
-        const purchasedCourseUser = await prisma.purchasedCourses.findFirst({
+        const purchasedCourseUser = await prisma.purchase.findFirst({
             where: {
-                userId,
+                studentId: user.id,
                 courseId
             }
         });
