@@ -30,7 +30,8 @@ export async function GET() {
 
         const purchasedCourses = await prisma.purchase.findMany({
             where: {
-                studentId: student.id
+                studentId: student.id,
+                status: "SUCCESS"
             }, select: {
                 course: true
             }

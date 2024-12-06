@@ -60,6 +60,7 @@ model Course {
   description      String
   price            Float
   thumbnail        String
+  category         String            @default("Development")
   tags             String
   language         String             @default("English")
   isPublished      Boolean            @default(false)

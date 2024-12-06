@@ -17,6 +17,7 @@ import {
   LucideEdit,
   IndianRupee,
   Bookmark,
+  LayoutDashboard,
 } from "lucide-react";
 import { Switch } from "./ui/switch";
 import { useTheme } from "next-themes";
@@ -39,8 +40,8 @@ export default function Navbar() {
     <header className="bg-secondary/15 shadow-lg shadow-neutral-600/5 backdrop-blur-lg border border-primary/10 md:p-4 py-4 rounded-b-2xl">
       <div className="px-5 flex items-center justify-between w-full">
         <Link href={"/explore"}>
-          <h1 className="text-xl font-bold hover:text-blue-500">
-            Course<span className="text-blue-500 hover:text-white">Pros.</span>
+          <h1 className="text-xl font-bold transition-colors duration-300 hover:text-blue-500">
+            Course<span className="text-blue-500 transition-colors duration-300 hover:text-white">Pros.</span>
           </h1>
         </Link>
 
@@ -74,40 +75,84 @@ export default function Navbar() {
                     }
                   </Avatar>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align="end" className="p-0 rounded-none">
                   {session.user.role === "INSTRUCTOR" ? (
                     <div>
-                      <Link href={"/create"}>
+                      <Link href={`/profile/${session.user?.fullName}`}>
                         <DropdownMenuItem>
-                          <LucideEdit className="mr-2 h-4 w-4" />
-                          <span>Add Course</span>
+                          <Avatar>
+                            <AvatarImage
+                              className="object-cover"
+                              src={session.user.image || ""}
+                            />
+                            <AvatarFallback className="uppercase">
+                              {session.user.fullName[0]}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex flex-col pl-2">
+                            <span className="text-base font-semibold leading-none text-blue-500">
+                              {session.user.fullName}
+                            </span>
+                            <span className="text-sm text-neutral-500">
+                              {session.user.email}
+                            </span>
+                          </div>
                         </DropdownMenuItem>
                       </Link>
 
-                      <Link href={`/dashboard`}>
+                      <Link href={"/instructor/profile/edit"}>
                         <DropdownMenuItem>
-                          <User className="mr-2 h-4 w-4" />
-                          <span>Dashboard</span>
+                          <span className="text-base">Edit Profile</span>
                         </DropdownMenuItem>
                       </Link>
+
+                      <div className="border-y ">
+                        <Link href={`/dashboard`}>
+                          <DropdownMenuItem>
+                            <span className="text-base">Dashboard</span>
+                          </DropdownMenuItem>
+                        </Link>
+
+                        <Link href={"/create"}>
+                          <DropdownMenuItem>
+                            <span className="text-base">Add Course</span>
+                          </DropdownMenuItem>
+                        </Link>
+                      </div>
+
+                      <div className="border-b">
+                        <Link href={"/create"}>
+                          <DropdownMenuItem>
+                            <span className="text-base">
+                              Payout & tax setting
+                            </span>
+                          </DropdownMenuItem>
+                        </Link>
+
+                        <Link href={"/create"}>
+                          <DropdownMenuItem>
+                            <span className="text-base">Account Setting</span>
+                          </DropdownMenuItem>
+                        </Link>
+                      </div>
                     </div>
                   ) : (
                     <div>
                       <Link href={`/profile/${session.user?.fullName}`}>
                         <DropdownMenuItem>
-                          <User className="mr-2 h-4 w-4" />
+                          <User className="mr-1 h-4 w-4" />
                           <span>Profile</span>
                         </DropdownMenuItem>
                       </Link>
                       <Link href={"/purchased"}>
                         <DropdownMenuItem>
-                          <IndianRupee className="mr-2 h-4 w-4" />
+                          <IndianRupee className="mr-1 h-4 w-4" />
                           <span>Purchased Courses</span>
                         </DropdownMenuItem>
                       </Link>
                       <Link href={"/saved"}>
                         <DropdownMenuItem>
-                          <Bookmark className="mr-2 h-4 w-4" />
+                          <Bookmark className="mr-1 h-4 w-4" />
                           <span>Saved Courses</span>
                         </DropdownMenuItem>
                       </Link>

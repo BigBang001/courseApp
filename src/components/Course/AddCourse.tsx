@@ -20,6 +20,7 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -39,8 +40,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { CourseLevel, courseValidation } from "@/validations/validation";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
+import { courseCategories } from "@/data/CourseCategories";
 import BackButton from "../BackButton";
+import PriceBreakdown from "../InstructerDashboard/PriceBreakdown";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -57,7 +59,7 @@ const modules = {
     ["link", "image"],
     ["clean"],
   ],
-  };
+};
 
 const formats = [
   "header",
@@ -73,7 +75,21 @@ const formats = [
   "image",
 ];
 
+const calculateTotalPrice = (price: number) => {
+  const platformFee = price * 0.03;
+  return {
+    originalPrice: price,
+    platformFee: platformFee,
+    totalPrice: price + platformFee,
+  };
+};
+
 export default function AddCourse() {
+  const [calculatedPrice, setCalculatedPrice] = useState({
+    originalPrice: 0,
+    platformFee: 0,
+    totalPrice: 0,
+  });
   const { data: session } = useSession();
   const { toast } = useToast();
   const router = useRouter();
@@ -108,12 +124,11 @@ export default function AddCourse() {
   return (
     <div className="container mx-auto py-8">
       <BackButton href="/dashboard" title="Back to dashboard" />
-      <Card className="max-w-4xl mx-auto shadow-lg">
+      <Card className="max-w-4xl bg-popover rounded-none shadow-none mx-auto">
         <CardHeader className="text-center space-y-2">
-          <CardTitle className="text-3xl font-semibold text-primary">
+          <CardTitle className="text-3xl font-serif text-stone-300 font-semibold">
             Create Your Course
           </CardTitle>
-          <CardDescription>Share your knowledge with the world</CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -126,8 +141,16 @@ export default function AddCourse() {
                   <FormItem>
                     <FormLabel>Course Title</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="What will you teach?" />
+                      <Input
+                        className="rounded-none text-lg"
+                        {...field}
+                        placeholder="What will you teach?"
+                      />
                     </FormControl>
+                    <FormDescription>
+                      Your title should be a mix of attention-grabbing,
+                      informative, and optimized for search
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -138,20 +161,25 @@ export default function AddCourse() {
                 name="shortDescription"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Quick Overview</FormLabel>
+                    <FormLabel>Course subtitle</FormLabel>
                     <FormControl>
                       <Textarea
+                        className="rounded-none text-lg h-28"
                         {...field}
                         placeholder="Hook your students with a compelling summary..."
                       />
                     </FormControl>
+                    <FormDescription>
+                      Use 1 or 2 related keywords, and mention 3-4 of the most
+                      important areas that you've covered during your course.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
               <FormItem>
-                <Label htmlFor="description">Description</Label>
+                <Label htmlFor="description">Course description</Label>
                 <FormField
                   control={form.control}
                   name="description"
@@ -167,13 +195,18 @@ export default function AddCourse() {
                           className="h-72 md:mb-12 mb-20"
                         />
                       </FormControl>
+                      <FormDescription>
+                        Use this space to describe your course in detail. The
+                        more information you provide, the more likely students
+                        are to enroll.
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </FormItem>
 
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
                   name="duration"
@@ -181,8 +214,16 @@ export default function AddCourse() {
                     <FormItem>
                       <FormLabel>Duration</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="e.g., 8 weeks" />
+                        <Input
+                          className="rounded-none text-lg"
+                          {...field}
+                          placeholder="e.g., 8 weeks"
+                        />
                       </FormControl>
+                      <FormDescription>
+                        Provide an estimate of how long it will take to complete
+                        your course.
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -193,42 +234,59 @@ export default function AddCourse() {
                   name="price"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Value</FormLabel>
+                      <FormLabel>Course Price</FormLabel>
                       <FormControl>
                         <Input
+                          className="rounded-none text-lg"
                           type="number"
                           {...field}
                           placeholder="Set your price"
                           onChange={(e) => {
                             const value = parseFloat(e.target.value);
                             field.onChange(isNaN(value) ? "" : value);
+                            setCalculatedPrice(
+                              calculateTotalPrice(isNaN(value) ? 0 : value)
+                            );
                           }}
                         />
                       </FormControl>
                       <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="tags"
-                  render={({ field }) => (
-                    <FormItem className="col-span-2">
-                      <FormLabel>Course Tags</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          {...field}
-                          placeholder="Add relevant tags (e.g., Programming, Design, Business)"
-                        />
-                      </FormControl>
-                      <FormMessage />
+                      {field.value && (
+                        <p className="text-base text-blue-500 mt-2">
+                          Price: ₹{calculatedPrice.originalPrice.toFixed(2)} +
+                          3% platform fee (₹
+                          {calculatedPrice.platformFee.toFixed(2)}) = ₹
+                          {calculatedPrice.totalPrice.toFixed(2)}
+                        </p>
+                      )}
+                      <PriceBreakdown />
                     </FormItem>
                   )}
                 />
               </div>
+              <FormField
+                control={form.control}
+                name="tags"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Course Tags</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        className="rounded-none text-lg h-24"
+                        {...field}
+                        placeholder="Add relevant tags (e.g., Programming, Design, Business)"
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Add tags that describe your course. Separate each tag with
+                      a comma.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
                   name="thumbnail"
@@ -237,42 +295,15 @@ export default function AddCourse() {
                       <FormLabel>Course Thumbnail</FormLabel>
                       <FormControl>
                         <Input
+                          className="rounded-none text-lg"
                           {...field}
                           placeholder="Add an eye-catching thumbnail URL"
                         />
                       </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="level"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Experience Level</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value as CourseLevel}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Choose course level" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="beginner">
-                            Beginner
-                          </SelectItem>
-                          <SelectItem value="intermediate">
-                            Intermediate
-                          </SelectItem>
-                          <SelectItem value="advanced">
-                            Advanced
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <FormDescription>
+                        This image will be displayed in search results and on
+                        your course page.
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -287,11 +318,78 @@ export default function AddCourse() {
                       <FormControl>
                         <FormControl>
                           <Input
+                            className="rounded-none text-lg"
                             {...field}
                             placeholder="English, Spanish, etc."
                           />
                         </FormControl>
                       </FormControl>
+                      <FormDescription>
+                        In which language is your course taught?
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="level"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Experience Level</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value as CourseLevel}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="rounded-none text-lg">
+                            <SelectValue placeholder="Select Course Level" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="beginner">Beginner</SelectItem>
+                          <SelectItem value="intermediate">
+                            Intermediate
+                          </SelectItem>
+                          <SelectItem value="advanced">Advanced</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        Choose the level that best describes your course.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="category"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Course Category</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="rounded-none text-lg">
+                            <SelectValue placeholder="Select Course Category" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {courseCategories.map((category) => (
+                            <SelectItem key={category} value={category}>
+                              {category}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        Choose the level that best describes your course.
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}

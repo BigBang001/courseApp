@@ -46,8 +46,8 @@ export default function DashboardPage() {
             <CardTitle>Your Profile</CardTitle>
           </CardHeader>
           <CardContent>
-            {/* <RecentStudents /> */}
-            <ProfileCard />
+            <RecentStudents />
+            {/* <ProfileCard /> */}
           </CardContent>
         </Card>
       </div>

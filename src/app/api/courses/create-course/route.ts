@@ -13,7 +13,7 @@ export async function POST(request: Request) {
         }, { status: 401 });
     }
 
-    const { title, description, shortDescription, tags, thumbnail, price, duration, language, level } = await request.json();
+    const { title, description, category , shortDescription, tags, thumbnail, price, duration, language, level } = await request.json();
     const { success, error } = courseValidation.safeParse({
         title,
         tags,
@@ -23,7 +23,8 @@ export async function POST(request: Request) {
         thumbnail,
         price,
         duration,
-        language
+        language,
+        category,
     });
     if (!success) {
         return NextResponse.json({
@@ -60,7 +61,8 @@ export async function POST(request: Request) {
                 instructorId: user.id,
                 shortDescription,
                 tags,
-                language
+                language,
+                category,
             }
         });
 

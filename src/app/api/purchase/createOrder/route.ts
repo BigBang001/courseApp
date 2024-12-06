@@ -28,11 +28,15 @@ export async function POST(request: NextRequest) {
 
         const alreadyPurchasedCourse = await prisma.purchase.findFirst({
             where: {
-                courseId
+                courseId,
+                studentId: session.user.id,
             }
         })
 
-        if (alreadyPurchasedCourse?.status == "SUCCESS") {
+        console.log(alreadyPurchasedCourse);
+        
+
+        if (alreadyPurchasedCourse?.status === "SUCCESS") {
             return NextResponse.json({
                 success: false,
                 message: "Course Already Purchased"

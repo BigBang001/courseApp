@@ -27,7 +27,7 @@ export function BuyButtonPopUp(course: Course) {
   });
 
   useEffect(() => {
-    const platformFee = coursePrice * 0.01;
+    const platformFee = coursePrice * 0.03; // 3% platform fee
     const total = coursePrice + platformFee;
 
     setPriceDetails({
@@ -42,7 +42,7 @@ export function BuyButtonPopUp(course: Course) {
       setIsPurchasing(true);
       const orderId: string = await createOrderId(
         priceDetails.total,
-        course?.id!
+        course.id as string
       );
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
@@ -58,9 +58,9 @@ export function BuyButtonPopUp(course: Course) {
             razorpaySignature: response.razorpay_signature,
           };
 
-          const result = await axios.post("/api/purchase/verifyOrder", {
-            data,
-          });
+          console.log(data);
+
+          const result = await axios.post("/api/purchase/verifyOrder", data);
           if (result.status === 200) {
             toast({
               title: "Success",
@@ -103,7 +103,9 @@ export function BuyButtonPopUp(course: Course) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Buy Now</Button>
+        <Button variant="default" className="w-full">
+          Buy Now
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] p-0 overflow-hidden">
         <div className="overflow-hidden">

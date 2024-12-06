@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect} from "react";
 import Script from "next/script";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -26,8 +25,6 @@ export default function CourseDetail() {
   useEffect(() => {
     fetchSingleCourse(courseId as string);
   }, [fetchSingleCourse, courseId]);
-
-  const price = course?.price! + course?.price! * 0.1;
 
   if (isLoading || !course) {
     return (

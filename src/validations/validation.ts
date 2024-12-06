@@ -32,7 +32,7 @@ export const signupValidation = z.object({
     .regex(/[0-9]/, { message: "Password must contain at least one number" })
     .regex(/[^a-zA-Z0-9]/, { message: "Password must contain at least one special character" })
   ,
-  role: z.enum(["USER", "INSTRUCTOR"],{ message: "Role must be either 'INSTRUCTOR' or 'USER'" })
+  role: z.enum(["USER", "INSTRUCTOR"], { message: "Role must be either 'INSTRUCTOR' or 'USER'" })
 });
 
 export const signinValidation = z.object({
@@ -60,10 +60,10 @@ export const courseValidation = z.object({
 
   description: z
     .string()
-    .min(10, { message: "Description must be at least 10 characters long" })
+    .min(10, { message: "Description must be at least 200 characters long" })
     .max(3000, { message: "Description must be less than 3000 characters" }),
 
-  shortDescription: z.string().min(5, { message: "Short Description must be at least 5 characters long" }).max(200, { message: "Short Description must be less than 200 characters" }),
+  shortDescription: z.string().min(20, { message: "Short Description must be at least 20 characters long" }).max(200, { message: "Short Description must be less than 200 characters" }),
 
   price: z
     .number()
@@ -82,6 +82,7 @@ export const courseValidation = z.object({
 
   tags: z.string().min(2, { message: "Add Atleat 1 tag minimum of two charcter" }).max(150, { message: "All Tags should come under 100 characters" }),
   language: z.string().min(1, { message: "Language is required" }),
+  category: z.string().min(1, { message: "Category is required" }),
 });
 
 export const reviewValidation = z.object({

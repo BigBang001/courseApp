@@ -36,7 +36,6 @@ export async function POST(request: NextRequest) {
     const { orderCreationId, razorpayPaymentId, razorpaySignature } =
         await request.json();
     try {
-
         if (!orderCreationId || !razorpayPaymentId || !razorpaySignature) {
             return NextResponse.json(
                 { message: 'Invalid request payload', success: false },
