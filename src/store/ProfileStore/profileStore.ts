@@ -1,17 +1,13 @@
+import { User } from "@/types/UserTypes";
 import { create } from "zustand";
 
-interface userData {
-    image: string;
-    bio: string;
-}
-
 interface ProfileStore {
-    user: userData | null
+    user: User | null
     isLoading: boolean
     fetchProfile: () => Promise<void>
 }
 export const useProfileStore = create<ProfileStore>((set) => ({
-    user: null,
+    user:  null,
     isLoading: true,
     fetchProfile: async () => {
         try {

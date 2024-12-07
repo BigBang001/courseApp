@@ -37,10 +37,12 @@ export default function ForgotPassword() {
         })
         setIsEmailVerified(true)
       }
-    } catch (error) {
+    } catch (error : any) {
+      console.log(error);
+      
       toast({
         title: "Error",
-        description: "Failed to verify email. Please try again.",
+        description: error.response.data.message || "Failed to verify . Please try again.",
         variant: "destructive",
       })
     } finally {

@@ -15,7 +15,6 @@ export const createOrderId = async (amount: number, courseId: string) => {
         description: response.data
       })
     }
-    console.log("res: ",response);
     return response.data.orderId;
   } catch (error: any) {
     console.error("Order creation error:", error);

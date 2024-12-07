@@ -1,8 +1,15 @@
 import prisma from "@/lib/prisma";
-import { courseValidation } from "@/validations/validation";
+import { CourseLevel, courseValidation } from "@/validations/validation";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { authOptions } from "@/app/api/auth/[...nextauth]/options";
+import { v2 as cloudinary } from "cloudinary";
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+})
 
 export async function POST(request: Request) {
     const session = await getServerSession(authOptions);
@@ -13,34 +20,12 @@ export async function POST(request: Request) {
         }, { status: 401 });
     }
 
-    const { title, description, category , shortDescription, tags, thumbnail, price, duration, language, level } = await request.json();
-    const { success, error } = courseValidation.safeParse({
-        title,
-        tags,
-        level,
-        shortDescription,
-        description,
-        thumbnail,
-        price,
-        duration,
-        language,
-        category,
-    });
-    if (!success) {
-        return NextResponse.json({
-            success: false,
-            message: error.errors[0].message
-        }, { status: 400 })
-    }
-
     try {
         const user = await prisma.user.findUnique({
             where: {
                 id: session.user.id,
             }
         });
-
-        console.log(user);
 
 
         if (!user || user.role != "INSTRUCTOR") {
@@ -50,26 +35,61 @@ export async function POST(request: Request) {
             }, { status: 404 });
         }
 
+        const formData = await request.formData();
+
+        const file = formData.get("thumbnail") as File;
+        if (!file || file.size === 0) {
+            return NextResponse.json({ success: false, message: "No file uploaded" }, { status: 400 });
+        }
+
+
+        const arrayBuffer = await file.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+
+        const uploadResult = await new Promise((resolve, reject) => {
+            cloudinary.uploader.upload_stream(
+                {
+                    folder: "course-thumbnails",
+                    quality: "auto:best",
+                    format: "jpg",
+                },
+                (error, result) => {
+                    if (error) reject(error);
+                    else resolve(result);
+                }
+            ).end(buffer);
+        });
+
+        if (!uploadResult || typeof uploadResult !== "object" || !("secure_url" in uploadResult)) {
+            throw new Error("Invalid upload result");
+
+        }
+
+        const thumbnail = uploadResult.secure_url;
+
+
         const course = await prisma.course.create({
             data: {
-                title,
-                description,
-                price,
-                duration,
-                level,
-                thumbnail,
+                title: formData.get("title") as string,
+                description: formData.get("description") as string,
+                price: parseInt(formData.get("price") as string),
+                duration: formData.get("duration") as string,
+                level: formData.get("level") as CourseLevel,
+                thumbnail: thumbnail as string,
                 instructorId: user.id,
-                shortDescription,
-                tags,
-                language,
-                category,
+                shortDescription: formData.get("shortDescription") as string,
+                tags: formData.get("tags") as string,
+                language: formData.get("language") as string,
+                category: formData.get("category") as string,
             }
         });
 
         return NextResponse.json({
             success: true,
-            message: "Course created successfully",
-            course
+            message: `Course created successfully with title ${course.title}`,
+            course: {
+                title: course.title,
+            }
         }, { status: 201 });
 
     } catch (error: any) {

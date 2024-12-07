@@ -36,7 +36,10 @@ export async function GET(request: Request) {
                                 image: true,
                             },
                         },
+                        createdAt: true,
                     },
+                    take: 10,
+                    orderBy: { createdAt: "desc" },
                 },
             },
         });

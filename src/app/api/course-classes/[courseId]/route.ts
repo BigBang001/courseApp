@@ -27,8 +27,6 @@ export async function GET(request : Request,{ params: { courseId } }: { params: 
             );
         }
 
-        console.log("Fetching Classes for Course ", courseId);
-
         // Fetch classes from the database
         const classes = await prisma.recordedClass.findMany({
             where: { courseId },

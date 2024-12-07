@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import axios from "axios";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, X } from "lucide-react";
 import dynamic from "next/dynamic";
 import "react-quill/dist/quill.snow.css";
 import { useForm } from "react-hook-form";
@@ -43,6 +43,10 @@ import { useSession } from "next-auth/react";
 import { courseCategories } from "@/data/CourseCategories";
 import BackButton from "../BackButton";
 import PriceBreakdown from "../InstructerDashboard/PriceBreakdown";
+import { useTheme } from "next-themes";
+import { log } from "console";
+import LoadingButton from "../LoadingButton";
+import Image from "next/image";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -85,24 +89,81 @@ const calculateTotalPrice = (price: number) => {
 };
 
 export default function AddCourse() {
+  const { theme } = useTheme();
+  const { toast } = useToast();
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const [previewThumbnail, setPreviewThumbnail] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleThumbnailSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setPreviewThumbnail(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const [calculatedPrice, setCalculatedPrice] = useState({
     originalPrice: 0,
     platformFee: 0,
     totalPrice: 0,
   });
-  const { data: session } = useSession();
-  const { toast } = useToast();
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof courseValidation>>({
     resolver: zodResolver(courseValidation),
   });
 
   const onSubmit = async (values: z.infer<typeof courseValidation>) => {
+    if (!previewThumbnail) {
+      return toast({
+        title: "Error",
+        description: "Please upload a course thumbnail",
+        variant: "destructive",
+      });
+    }
+    const formData = new FormData();
+    const blob = await fetch(previewThumbnail).then((r) => r.blob());
+
+    formData.append("thumbnail", blob, "thumbnail.jpg");
+    formData.append("title", values.title);
+    formData.append("shortDescription", values.shortDescription);
+    formData.append("description", values.description);
+    formData.append("duration", values.duration);
+    formData.append("price", values.price.toString());
+    formData.append("tags", values.tags);
+    formData.append("language", values.language);
+    formData.append("level", values.level);
+    formData.append("category", values.category);
+
+    //dev only
+    // toast({
+    //   title: "You submitted the following values:",
+    //   description: (
+    //     <p>
+    //       <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+    //         <code className="text-white">
+    //           {JSON.stringify(values, null, 2)}
+    //         </code>
+    //       </pre>
+    //     </p>
+    //   ),
+    // });
+
     setIsLoading(true);
     try {
-      const response = await axios.post(`/api/courses/create-course`, values);
+      const response = await axios.post(
+        `/api/courses/create-course`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
       toast({
         title: "Course Created Successfully! 🎉",
         description: `Your course "${response.data.course.title}" is now live and ready for students.`,
@@ -111,6 +172,8 @@ export default function AddCourse() {
       router.push("/explore");
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || "An error occurred";
+      console.log(error);
+      
       toast({
         title: "Oops! Something went wrong",
         description: errorMessage,
@@ -122,15 +185,18 @@ export default function AddCourse() {
   };
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="container max-w-5xl mx-auto py-8">
       <BackButton href="/dashboard" title="Back to dashboard" />
-      <Card className="max-w-4xl bg-popover rounded-none shadow-none mx-auto">
-        <CardHeader className="text-center space-y-2">
-          <CardTitle className="text-3xl font-serif text-stone-300 font-semibold">
-            Create Your Course
-          </CardTitle>
-        </CardHeader>
-
+      <div className="py-4">
+        <h1 className="text-3xl font-serif dark:text-stone-200 font-semibold">
+          Create Your Course
+        </h1>
+        <p className="font-serif text-sm text-neutral-500">
+          Fill all the details below to create your course and make it available
+          for students
+        </p>
+      </div>
+      <Card className="border-none dark:bg-neutral-900 bg-neutral-100 rounded-lg shadow-none mx-auto">
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -142,7 +208,7 @@ export default function AddCourse() {
                     <FormLabel>Course Title</FormLabel>
                     <FormControl>
                       <Input
-                        className="rounded-none text-lg"
+                        className=" text-lg"
                         {...field}
                         placeholder="What will you teach?"
                       />
@@ -164,7 +230,7 @@ export default function AddCourse() {
                     <FormLabel>Course subtitle</FormLabel>
                     <FormControl>
                       <Textarea
-                        className="rounded-none text-lg h-28"
+                        className="text-lg h-28"
                         {...field}
                         placeholder="Hook your students with a compelling summary..."
                       />
@@ -191,15 +257,17 @@ export default function AddCourse() {
                           modules={modules}
                           formats={formats}
                           theme="snow"
+                          style={{
+                            backgroundColor:
+                              theme === "dark" ? "#262626" : "white",
+                            color: "white",
+                            borderRadius: "20px",
+                            paddingBottom: "40px",
+                          }}
                           placeholder="Paint a picture of your course content..."
-                          className="h-72 md:mb-12 mb-20"
+                          className="h-96"
                         />
                       </FormControl>
-                      <FormDescription>
-                        Use this space to describe your course in detail. The
-                        more information you provide, the more likely students
-                        are to enroll.
-                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -215,7 +283,7 @@ export default function AddCourse() {
                       <FormLabel>Duration</FormLabel>
                       <FormControl>
                         <Input
-                          className="rounded-none text-lg"
+                          className=" text-lg"
                           {...field}
                           placeholder="e.g., 8 weeks"
                         />
@@ -237,7 +305,7 @@ export default function AddCourse() {
                       <FormLabel>Course Price</FormLabel>
                       <FormControl>
                         <Input
-                          className="rounded-none text-lg"
+                          className=" text-lg"
                           type="number"
                           {...field}
                           placeholder="Set your price"
@@ -272,7 +340,7 @@ export default function AddCourse() {
                     <FormLabel>Course Tags</FormLabel>
                     <FormControl>
                       <Textarea
-                        className="rounded-none text-lg h-24"
+                        className="text-lg h-24"
                         {...field}
                         placeholder="Add relevant tags (e.g., Programming, Design, Business)"
                       />
@@ -286,29 +354,37 @@ export default function AddCourse() {
                 )}
               />
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormField
-                  control={form.control}
-                  name="thumbnail"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Course Thumbnail</FormLabel>
-                      <FormControl>
-                        <Input
-                          className="rounded-none text-lg"
-                          {...field}
-                          placeholder="Add an eye-catching thumbnail URL"
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        This image will be displayed in search results and on
-                        your course page.
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
+              <div>
+                <Label>Course image</Label>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="relative">
+                    <Image
+                      src={
+                        previewThumbnail ||
+                        "https://s.udemycdn.com/course/750x422/placeholder.jpg"
+                      }
+                      alt="Thumbnail Preview"
+                      className="w-full h-fullobject-cover rounded-lg"
+                    />
+                  </div>
+                  <div>
+                    <Input
+                      ref={fileInputRef}
+                      type="file"
+                      className=" text-lg"
+                      accept="image/*"
+                      onChange={handleThumbnailSelect}
+                      placeholder="Select an image"
+                    />
+                    <p className="text-sm py-2 text-neutral-400">
+                      Upload your course image here. Important guidelines:
+                      750x422 pixels; .jpg, .jpeg , or .png. no text on the
+                      image.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div>
                 <FormField
                   control={form.control}
                   name="language"
@@ -318,7 +394,7 @@ export default function AddCourse() {
                       <FormControl>
                         <FormControl>
                           <Input
-                            className="rounded-none text-lg"
+                            className=" text-lg"
                             {...field}
                             placeholder="English, Spanish, etc."
                           />
@@ -344,7 +420,7 @@ export default function AddCourse() {
                         value={field.value as CourseLevel}
                       >
                         <FormControl>
-                          <SelectTrigger className="rounded-none text-lg">
+                          <SelectTrigger className="dark:bg-neutral-800 bg-white text-lg">
                             <SelectValue placeholder="Select Course Level" />
                           </SelectTrigger>
                         </FormControl>
@@ -375,7 +451,7 @@ export default function AddCourse() {
                         value={field.value}
                       >
                         <FormControl>
-                          <SelectTrigger className="rounded-none text-lg">
+                          <SelectTrigger className="dark:bg-neutral-800 bg-white text-lg">
                             <SelectValue placeholder="Select Course Category" />
                           </SelectTrigger>
                         </FormControl>
@@ -395,21 +471,13 @@ export default function AddCourse() {
                   )}
                 />
               </div>
-
-              <Button
-                type="submit"
-                className="w-full font-semibold"
+              <LoadingButton
+                isLoading={isLoading}
+                loadingTitle=" Creating Your Masterpiece..."
+                title="Launch Your Course"
                 disabled={isLoading}
-              >
-                {isLoading ? (
-                  <span className="flex items-center justify-center">
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    Creating Your Masterpiece...
-                  </span>
-                ) : (
-                  "Launch Your Course 🚀"
-                )}
-              </Button>
+                type="submit"
+              />
             </form>
           </Form>
         </CardContent>

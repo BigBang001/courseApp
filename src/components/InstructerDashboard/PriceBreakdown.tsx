@@ -16,7 +16,6 @@ export default function PriceBreakdown() {
         <DialogTrigger asChild>
           <Button
             variant="destructive"
-            className="rounded-none"
             size={"sm"}
             type="button"
           >

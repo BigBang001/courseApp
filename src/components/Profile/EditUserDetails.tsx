@@ -40,7 +40,7 @@ export default function EditUserDetails() {
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(updateUserDetailsValidation),
     defaultValues: {
-      bio: "I'm an instructor passionate about teaching web development.",
+      bio: session?.user.bio || "I'm a developer",
       fullName: session?.user?.fullName,
     },
     mode: "onChange",

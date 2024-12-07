@@ -12,9 +12,17 @@ import { Button } from "../ui/button";
 import { Bookmark, Loader2 } from "lucide-react";
 import { useSavedCoursesStore } from "@/store/courseStore/savedCoursesStore";
 import CourseCard from "../CourseCard";
+import { useCreatedCourseStore } from "@/store/courseStore/createdCourseStore";
+import { useSession } from "next-auth/react";
+import CreatedCourseCard from "./CreatedCourseCard";
 
 export default function SavedCourses() {
-  const { isLoading, savedCourses } = useSavedCoursesStore();
+  const { data: session } = useSession();
+  const { isLoading: isLoadingSavedCourses, savedCourses } =
+    useSavedCoursesStore();
+  const { isLoading: isLoadingCreatedCourses, createdCourses } =
+    useCreatedCourseStore();
+    
   return (
     <div>
       <Drawer>
@@ -23,27 +31,61 @@ export default function SavedCourses() {
             variant="outline"
             className="w-full transition-all duration-300 hover:scale-105"
           >
-            <Bookmark className="mr-2 h-4 w-4" />
-            Saved Courses
+            {session?.user.role === "INSTRUCTOR"
+              ? "Created Courses"
+              : "Saved Courses"}
           </Button>
         </DrawerTrigger>
         <DrawerContent>
           <div className="mx-auto w-full max-w-4xl">
             <DrawerHeader>
               <DrawerTitle className="text-3xl font-serif">
-                Saved Courses
+                {session?.user.role === "INSTRUCTOR"
+                  ? "Created Courses"
+                  : "Saved Courses"}
               </DrawerTitle>
               <DrawerDescription>
-                Courses you've bookmarked for later
+                {session?.user.role === "INSTRUCTOR"
+                  ? "Courses you've created"
+                  : "Courses you've bookmarked for later"}
               </DrawerDescription>
             </DrawerHeader>
             <div className="p-6 space-y-4 max-h-[60vh] overflow-y-auto custom-scrollbar">
-              {isLoading ? (
+              {session?.user.role === "INSTRUCTOR" ? (
+                isLoadingCreatedCourses ? (
+                  <div className="w-full bgb h-[60vh] flex items-center justify-center">
+                    <Loader2 className="animate-spin" />
+                  </div>
+                ) : createdCourses.length > 0 ? (
+                  <div className="grid md:grid-cols-2 grid-cols-1 gap-4 lg:grid-cols-3">
+                    {createdCourses.map((createdCourse, index) => (
+                      <CreatedCourseCard
+                        key={createdCourse.id}
+                        Price={createdCourse.price!}
+                        Students={2}
+                        avgRating={4.5}
+                        courseId={createdCourse.id!}
+                        title={createdCourse.title!}
+                        idx={index + 1}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="col-span-full mt-40 text-center">
+                    <h2 className="text-2xl font-semibold italic">
+                      No Courses Available!
+                    </h2>
+                    <p className="text-neutral-400 italic">
+                      Try creating courses from dashboard.
+                    </p>
+                  </div>
+                )
+              ) : isLoadingSavedCourses ? (
                 <div className="w-full bgb h-[60vh] flex items-center justify-center">
                   <Loader2 className="animate-spin" />
                 </div>
               ) : savedCourses.length > 0 ? (
-                <div className="grid md:grid-cols-2 grid-cols-1 gap-4 lg:grid-cols-4">
+                <div className="grid md:grid-cols-2 grid-cols-1 gap-4 lg:grid-cols-3">
                   {savedCourses.map((savedCourse) => (
                     <CourseCard
                       key={savedCourse.id}

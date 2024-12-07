@@ -68,11 +68,6 @@ export const courseValidation = z.object({
   price: z
     .number()
     .min(1, { message: "Price must be a positive number" }),
-
-  thumbnail: z
-    .string()
-    .url({ message: "Thumbnail must be a valid URL" }),
-
   duration: z
     .string()
     .min(1, { message: "Duration must be specified" })
@@ -109,5 +104,29 @@ export const updateUserDetailsValidation = z.object({
       message: "Full Name must not be longer than 30 characters.",
     }).optional(),
   bio: z.string().max(160).min(4).optional(),
+});
+
+export const instructorAccountSettingsSchema = z.object({
+  fullName: z
+    .string()
+    .min(2, {
+      message: "Full name must be at least 2 characters long.",
+    })
+    .optional(),
+  bio: z.string().max(160, { message: "Bio must be in 160 characters" }).min(4, { message: "Bio must contain atleat 4 characters" }).optional(),
+  accountHolderName: z.string().min(2, {
+    message: "Account holder name must be at least 2 characters long.",
+  }),
+  accountNumber: z.string().min(8, {
+    message: "Account number must be at least 8 characters long and numeric.",
+  }),
+  ifscCode: z.string().regex(/^[A-Z]{4}0[A-Z0-9]{6}$/, {
+    message:
+      "IFSC code must be exactly 11 characters long and follow the format: 4 letters, the digit 0, and 6 alphanumeric characters.",
+  }),
+  paypalEmail: z.string().email({
+    message:
+      "Please provide a valid PayPal email address in the correct format (e.g., name@example.com).",
+  }),
 });
 

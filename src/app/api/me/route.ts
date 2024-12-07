@@ -16,8 +16,6 @@ export async function GET() {
         const user = await prisma.user.findUnique({
             where: {
                 id: session.user.id
-            }, select: {
-                bio: true, image: true
             }
         })
         return NextResponse.json({

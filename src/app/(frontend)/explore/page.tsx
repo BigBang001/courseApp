@@ -11,18 +11,21 @@ import { motion } from "framer-motion";
 import DummyFooter from "@/components/ExplorePage/DummyFooter";
 import { Search } from "lucide-react";
 import { useBulkCoursesStore } from "@/store/courseStore/bulkCoursesStore";
+import { useProfileStore } from "@/store/ProfileStore/profileStore";
 
 const CoursesPage = () => {
   const { setFilter, courses, fetchCourses, isLoading, isSearching, filter } =
     useBulkCoursesStore();
+  const { fetchProfile } = useProfileStore();
 
   useEffect(() => {
+    fetchProfile();
     const timer = setTimeout(() => {
       fetchCourses();
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [filter, fetchCourses]);
+  }, [filter, fetchCourses, fetchProfile]);
 
   const clearFilters = () => {
     setFilter("");

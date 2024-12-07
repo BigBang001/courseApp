@@ -14,10 +14,8 @@ import {
   LogOut,
   Moon,
   Sun,
-  LucideEdit,
   IndianRupee,
   Bookmark,
-  LayoutDashboard,
 } from "lucide-react";
 import { Switch } from "./ui/switch";
 import { useTheme } from "next-themes";
@@ -41,7 +39,10 @@ export default function Navbar() {
       <div className="px-5 flex items-center justify-between w-full">
         <Link href={"/explore"}>
           <h1 className="text-xl font-bold transition-colors duration-300 hover:text-blue-500">
-            Course<span className="text-blue-500 transition-colors duration-300 hover:text-white">Pros.</span>
+            Course
+            <span className="text-blue-500 transition-colors duration-300 hover:text-white">
+              Pros.
+            </span>
           </h1>
         </Link>
 
@@ -100,7 +101,7 @@ export default function Navbar() {
                         </DropdownMenuItem>
                       </Link>
 
-                      <Link href={"/instructor/profile/edit"}>
+                      <Link href={"/account/profile"}>
                         <DropdownMenuItem>
                           <span className="text-base">Edit Profile</span>
                         </DropdownMenuItem>
@@ -121,7 +122,7 @@ export default function Navbar() {
                       </div>
 
                       <div className="border-b">
-                        <Link href={"/create"}>
+                        <Link href={"/account/bank"}>
                           <DropdownMenuItem>
                             <span className="text-base">
                               Payout & tax setting
@@ -129,7 +130,7 @@ export default function Navbar() {
                           </DropdownMenuItem>
                         </Link>
 
-                        <Link href={"/create"}>
+                        <Link href={"/account"}>
                           <DropdownMenuItem>
                             <span className="text-base">Account Setting</span>
                           </DropdownMenuItem>

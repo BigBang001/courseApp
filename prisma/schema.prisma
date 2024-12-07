@@ -36,7 +36,7 @@ model User {
   email            String             @unique
   fullName         String
   bio              String?
-  phone            String?
+  phoneNumber      String?
   bankAccount      String?
   image            String?
   password         String
@@ -60,7 +60,7 @@ model Course {
   description      String
   price            Float
   thumbnail        String
-  category         String            @default("Development")
+  category         String             @default("Development")
   tags             String
   language         String             @default("English")
   isPublished      Boolean            @default(false)
@@ -94,7 +94,7 @@ model BankAccount {
   userId            String
   user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   accountNumber     String
-  ifsc              String
+  ifscCode          String
   accountHolderName String
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
