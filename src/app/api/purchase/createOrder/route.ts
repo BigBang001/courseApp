@@ -5,7 +5,7 @@ import Razorpay from 'razorpay'
 import { authOptions } from '../../auth/[...nextauth]/options';
 
 const razorpay = new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID!,
+    key_id: process.env.RAZORPAY_KEY_ID as string,
     key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
