@@ -28,10 +28,9 @@ export async function GET() {
 
         }
 
-        const purchasedCourses = await prisma.purchase.findMany({
+        const purchasedCourses = await prisma.purchasedCourses.findMany({
             where: {
-                studentId: student.id,
-                status: "SUCCESS"
+                userId: session.user.id,
             }, select: {
                 course: true
             }

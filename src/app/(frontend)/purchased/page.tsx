@@ -6,7 +6,7 @@ import Link from "next/link";
 
 const Page = () => {
   return (
-    <div className="container mx-auto px-4 md:px-24 py-8">
+    <div className="container mx-auto px-4 max-w-5xl py-8">
       <div className="flex flex-col space-y-6">
         <Link href="/explore" className="w-fit">
           <Button variant="outline" className="gap-2">
@@ -23,7 +23,6 @@ const Page = () => {
             View and access all your purchased courses
           </p>
         </div>
-
         <PurchasedCoursesPage />
       </div>
     </div>

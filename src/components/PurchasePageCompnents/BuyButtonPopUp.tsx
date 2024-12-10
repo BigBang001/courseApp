@@ -20,39 +20,24 @@ export function BuyButtonPopUp(course: Course) {
   const [isPurchasing, setIsPurchasing] = useState(false);
 
   const coursePrice = course.price!;
-  const [priceDetails, setPriceDetails] = useState({
-    basePrice: coursePrice ?? 0,
-    platformFee: 0,
-    total: 0,
-  });
-
-  useEffect(() => {
-    const platformFee = coursePrice * 0.03; // 3% platform fee
-    const total = coursePrice + platformFee;
-
-    setPriceDetails({
-      basePrice: coursePrice,
-      platformFee: platformFee,
-      total: total,
-    });
-  }, [coursePrice]);
 
   const processPayment = async () => {
     try {
       setIsPurchasing(true);
       const orderId: string = await createOrderId(
-        priceDetails.total,
+        coursePrice,
         course.id as string
       );
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        amount: priceDetails.total * 100, // Amount in paisa
+        amount: coursePrice * 100, // Amount in paisa
         currency: "INR",
         name: course?.title,
         order_id: orderId,
         handler: async function (response: any) {
           const data = {
             orderCreationId: orderId,
+            courseId : course.id,
             razorpayPaymentId: response.razorpay_payment_id,
             razorpayOrderId: response.razorpay_order_id,
             razorpaySignature: response.razorpay_signature,
@@ -122,17 +107,20 @@ export function BuyButtonPopUp(course: Course) {
           <CardContent className="p-4">
             <h3 className="font-semibold text-lg mb-2">{course.title}</h3>
             <div className="space-y-2">
-              <div className="flex justify-between">
+              {/* <div className="flex justify-between">
                 <span>Base Price:</span>
                 <span>₹{priceDetails.basePrice.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span>Platform Fee (5%):</span>
                 <span>₹{priceDetails.platformFee.toFixed(2)}</span>
-              </div>
+              </div> */}
+              {/* 
+                for now, we are not charging any platform fee or charging directly to the instructor
+              */}
               <div className="flex justify-between font-bold pt-2 border-t">
                 <span>Total:</span>
-                <span>₹{priceDetails.total.toFixed(2)}</span>
+                <span>₹{coursePrice}</span>
               </div>
             </div>
           </CardContent>

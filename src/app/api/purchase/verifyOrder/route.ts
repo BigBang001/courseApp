@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
 
     }
 
-    const { orderCreationId, razorpayPaymentId, razorpaySignature } =
+    const { courseId, orderCreationId, razorpayPaymentId, razorpaySignature } =
         await request.json();
     try {
         if (!orderCreationId || !razorpayPaymentId || !razorpaySignature) {
@@ -64,6 +64,14 @@ export async function POST(request: NextRequest) {
             data: {
                 status: 'SUCCESS',
                 paymentId: razorpayPaymentId,
+                courseId: courseId,
+            },
+        });
+
+        await prisma.purchasedCourses.create({
+            data: {
+                userId: session.user.id,
+                courseId: courseId,
             },
         });
 

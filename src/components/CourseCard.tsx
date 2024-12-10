@@ -132,7 +132,7 @@ const CourseCard = ({ course }: { course: Course }) => {
                     {course.shortDescription}
                   </p>
 
-                  <DrawerDescription className="dark:bg-neutral-900 bg-neutral-100 dark:text-white text-black h-[50vh] md:h-[55vh] text-left overflow-y-scroll rounded-xl p-2 md:p-5">
+                  <DrawerDescription className="dark:bg-neutral-900 bg-neutral-100 dark:text-white text-black h-[50vh] md:h-[65vh] text-left overflow-y-scroll rounded-xl p-2 md:p-5">
                     <h1 className="font-semibold text-xl text-blue-500 pb-2">
                       Course Details:
                     </h1>

@@ -359,6 +359,8 @@ export default function AddCourse() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="relative">
                     <Image
+                      width={750}
+                      height={422}
                       src={
                         previewThumbnail ||
                         "https://s.udemycdn.com/course/750x422/placeholder.jpg"

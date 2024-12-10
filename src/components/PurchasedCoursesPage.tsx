@@ -6,31 +6,32 @@ import React from "react";
 import { usePurchasedCoursesStore } from "@/store/courseStore/purchasesCoursesStore";
 
 const PurchasedCoursesPage = () => {
-  const { purchasedCourses, isLoading, fetchPurchasedCourses } = usePurchasedCoursesStore();
+  const { purchasedCourses, isLoading, fetchPurchasedCourses } =
+    usePurchasedCoursesStore();
   React.useEffect(() => {
     fetchPurchasedCourses();
   }, [fetchPurchasedCourses]);
 
   return (
-    <div className="container w-full mx-auto">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {isLoading ? (
-          Array(8)
-            .fill(null)
-            .map((_, index) => <SkeletonCard key={index} />)
-        ) : purchasedCourses.length > 0 ? (
-          purchasedCourses.map(({course}) => (
+    <div className="container w-full h-full">
+      {isLoading ? (
+        Array(8)
+          .fill(null)
+          .map((_, index) => <SkeletonCard key={index} />)
+      ) : purchasedCourses.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {purchasedCourses.map(({ course }) => (
             <PurchasedCourseCard key={course.id} {...course} />
-          ))
-        ) : (
-          <div className="font-semibold">
-            <h1>No Course Found</h1>
-            <h1 className="text-sm text-neutral-400 italic">
-              First Purchase the course...
-            </h1>
-          </div>
-        )}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <div className="font-semibold flex flex-col items-center justify-center py-10 border rounded-md border-secondary w-full h-full">
+          <h1>No Course Found</h1>
+          <h1 className="text-sm text-neutral-400 italic">
+            Buy a course to see it here...
+          </h1>
+        </div>
+      )}
     </div>
   );
 };

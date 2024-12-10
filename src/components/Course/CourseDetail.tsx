@@ -17,6 +17,7 @@ import { toast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "../ui/skeleton";
 import { BuyButtonPopUp } from "../PurchasePageCompnents/BuyButtonPopUp";
+import BackButton from "../BackButton";
 
 export default function CourseDetail() {
   const { courseId } = useParams();
@@ -72,6 +73,7 @@ export default function CourseDetail() {
       />
 
       <section className="container mx-auto px-3 md:py-14 py-4">
+        <BackButton href="/explore" title="Back to Explore Courses" />
         <CardTitle className="text-3xl md:hidden block text-blue-500 pb-2 font-bold">
           {course.title}
         </CardTitle>

@@ -26,17 +26,16 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ message: 'Invalid request payload', success: false }, { status: 400 });
         }
 
-        const alreadyPurchasedCourse = await prisma.purchase.findFirst({
+        const alreadyPurchasedCourse = await prisma.purchasedCourses.findUnique({
             where: {
-                courseId,
-                studentId: session.user.id,
+                userId_courseId:{
+                    userId: session.user.id,
+                    courseId: courseId
+                }
             }
         })
 
-        console.log(alreadyPurchasedCourse);
-        
-
-        if (alreadyPurchasedCourse?.status === "SUCCESS") {
+        if (alreadyPurchasedCourse) {
             return NextResponse.json({
                 success: false,
                 message: "Course Already Purchased"

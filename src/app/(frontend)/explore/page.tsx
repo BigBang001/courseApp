@@ -12,6 +12,7 @@ import DummyFooter from "@/components/ExplorePage/DummyFooter";
 import { Search } from "lucide-react";
 import { useBulkCoursesStore } from "@/store/courseStore/bulkCoursesStore";
 import { useProfileStore } from "@/store/ProfileStore/profileStore";
+import CategoryFilters from "@/components/ExplorePage/CategoryFilters";
 
 const CoursesPage = () => {
   const { setFilter, courses, fetchCourses, isLoading, isSearching, filter } =
@@ -31,17 +32,20 @@ const CoursesPage = () => {
     setFilter("");
   };
 
-  const SkeletonCard = () => (
-    <div className="space-y-4">
-      <Skeleton className="h-48 w-full rounded-lg" />
-      <Skeleton className="h-4 w-3/4 rounded-full" />
-      <Skeleton className="h-4 w-1/2 rounded-full" />
-      <div className="flex justify-between">
-        <Skeleton className="h-4 w-1/4 rounded-full" />
-        <Skeleton className="h-4 w-1/4 rounded-full" />
-      </div>
-    </div>
-  );
+  const searchInputRef = React.useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const keyDownHandler = (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.key === "k") {
+        if (event.key === "k") {
+          event.preventDefault();
+          searchInputRef.current?.focus();
+        }
+      }
+    };
+    window.addEventListener("keydown", keyDownHandler);
+    return () => window.removeEventListener("keydown", keyDownHandler);
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-background/80 py-12">
@@ -69,9 +73,10 @@ const CoursesPage = () => {
         >
           <div className="relative">
             <Input
+              ref={searchInputRef}
               onChange={(e) => setFilter(e.target.value)}
               value={filter}
-              placeholder="Search for your next learning adventure..."
+              placeholder="Ctrl + K to Search Courses"
               className="w-full p-6 pl-24 overflow-hidden relative text-lg rounded-full"
               aria-label="Search Courses"
             />
@@ -80,8 +85,10 @@ const CoursesPage = () => {
             </div>
           </div>
 
+          <CategoryFilters setFilter={setFilter} />
+
           {isSearching && (
-            <div className="w-full">
+            <div className="w-full mt-2">
               <BarLoader width={"100%"} color="hsl(var(--primary))" />
             </div>
           )}
@@ -132,5 +139,17 @@ const CoursesPage = () => {
     </div>
   );
 };
+
+const SkeletonCard = () => (
+  <div className="space-y-4">
+    <Skeleton className="h-48 w-full rounded-lg" />
+    <Skeleton className="h-4 w-3/4 rounded-full" />
+    <Skeleton className="h-4 w-1/2 rounded-full" />
+    <div className="flex justify-between">
+      <Skeleton className="h-4 w-1/4 rounded-full" />
+      <Skeleton className="h-4 w-1/4 rounded-full" />
+    </div>
+  </div>
+);
 
 export default CoursesPage;
