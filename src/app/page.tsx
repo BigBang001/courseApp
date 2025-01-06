@@ -9,6 +9,7 @@ import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 
 export default function LandingPage() {
+  const currentYear = new Date().getFullYear();
   const featuredCourses = [
     {
       title: "Complete Web Development Bootcamp",
@@ -206,7 +207,7 @@ export default function LandingPage() {
 
             <div className="mt-8 flex justify-between items-center">
               <p className="text-neutral-400">
-                &copy; 2024 50xOpportunities. All rights reserved.
+                &copy; {currentYear} 50xOpportunities. All rights reserved.
               </p>
               <div className="flex space-x-4">
                 <a href="">
