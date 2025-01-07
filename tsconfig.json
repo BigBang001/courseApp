@@ -36,5 +36,8 @@
   ],
   "exclude": [
     "node_modules"
-  ]
+  ],
+  "types": ["node", "react", "d3-time"],
+  "typeRoots": ["node_modules/@types"]
+
 }
